@@ -6,6 +6,7 @@ Created repo in home. Require files to be explicitly added.
 $ cd
 $ git init
 $ echo "*" >> ~/.git/info/exclude
+$ git add -f ~/.vimrc
 ```
 
 #### applications
