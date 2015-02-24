@@ -10,6 +10,7 @@ $ git add -f ~/.vimrc
 ```
 
 #### applications
- - tmux
  - screen
+ - tmux
  - vim
+ - zsh
