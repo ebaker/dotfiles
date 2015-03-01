@@ -13,3 +13,9 @@
 [submodule "/Users/eliot/.oh-my-zsh"]
 	path = /Users/eliot/.oh-my-zsh
 	url = git@github.com:robbyrussell/oh-my-zsh.git
+[submodule ".vim/bundle/vim-javascript"]
+	path = .vim/bundle/vim-javascript
+	url = git@github.com:pangloss/vim-javascript.git
+[submodule ".vim/bundle/vim-indent-guides"]
+	path = .vim/bundle/vim-indent-guides
+	url = git@github.com:nathanaelkane/vim-indent-guides.git
