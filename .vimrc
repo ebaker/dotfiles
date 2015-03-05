@@ -34,8 +34,9 @@ autocmd FileType styl
  \ setlocal shiftwidth=2 |
  \ setlocal tabstop=2
 
+
 " desert is a pretty good color scheme
-" colorscheme desert
+colorscheme default
 
 " tab navigating
 map <F5> gT
@@ -62,6 +63,15 @@ imap <C-W> <C-O>:w<CR>
 " i don't really know why i have this or if it's necessary
 autocmd BufRead *.py set cinwords=if,elif,else,for,while,try,except,finally,def,class
 autocmd BufRead *.cgi set cinwords=if,elif,else,for,while,try,except,finally,def,class
+
+" javascript
+let g:javascript_conceal_function   = "ƒ"
+
+" indent guides
+let g:indent_guides_start_level = 2
+let g:indent_guides_guide_size = 1
+" let g:indent_guides_auto_colors = 0
+" autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=black
 
 " cson files are coffee
 :au BufNewFile,BufRead *.cson set filetype=coffee
