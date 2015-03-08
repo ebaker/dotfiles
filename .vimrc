@@ -66,6 +66,8 @@ autocmd BufRead *.cgi set cinwords=if,elif,else,for,while,try,except,finally,def
 
 " javascript
 let g:javascript_conceal_function   = "ƒ"
+autocmd FileType javascript,css imap ;; <Esc>A;<Esc>o
+autocmd FileType javascript,css map ;; A;<Esc>
 
 " indent guides
 let g:indent_guides_start_level = 2
