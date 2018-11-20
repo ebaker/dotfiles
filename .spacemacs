@@ -31,6 +31,7 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     ;; osx
      yaml
      markdown
      html
@@ -55,6 +56,7 @@ values."
      ;; spell-checking
      ;; syntax-checking
      ;; version-control
+     ;; themes-megapack
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -74,29 +76,6 @@ values."
    ;; Spacemacs and never uninstall them. (default is `used-only')
    dotspacemacs-install-packages 'used-only))
 
-;; eliot indentation setup
-;; https://stackoverflow.com/a/36719614
-(defun my-setup-indent (n)
-  ;; java/c/c++
-  (setq c-basic-offset n)
-  ;; web development
-  (setq coffee-tab-width n) ; coffeescript
-  (setq javascript-indent-level n) ; javascript-mode
-  (setq js-indent-level n) ; js-mode
-  (setq js2-basic-offset n) ; js2-mode, in latest js2-mode, it's alias of js-indent-level
-  (setq web-mode-markup-indent-offset n) ; web-mode, html tag in html file
-  (setq web-mode-css-indent-offset n) ; web-mode, css in html file
-  (setq web-mode-code-indent-offset n) ; web-mode, js code in html file
-  (setq web-mode-attr-indent-offset n)
-  (setq css-indent-offset n) ; css-mode
-
-  (with-eval-after-load 'web-mode
-    (add-to-list 'web-mode-indentation-params '("lineup-args" . nil))
-    (add-to-list 'web-mode-indentation-params '("lineup-concats" . nil))
-    (add-to-list 'web-mode-indentation-params '("lineup-calls" . nil)))
-
-  )
-
 (defun dotspacemacs/init ()
   "Initialization function.
 This function is called at the very startup of Spacemacs initialization
@@ -104,8 +83,6 @@ before layers configuration.
 You should not put any user code in there besides modifying the variable
 values."
 
-  ;; eliot indentation setup
-  (my-setup-indent 2) ; indent 2 spaces width
 
   ;; This setq-default sexp is an exhaustive list of all the supported
   ;; spacemacs settings.
@@ -134,7 +111,7 @@ values."
    ;; with `:variables' keyword (similar to layers). Check the editing styles
    ;; section of the documentation for details on available variables.
    ;; (default 'vim)
-   dotspacemacs-editing-style 'vim
+   dotspacemacs-editing-style 'hybrid
    ;; If non nil output loading progress in `*Messages*' buffer. (default nil)
    dotspacemacs-verbose-loading nil
    ;; Specify the startup banner. Default value is `official', it displays
@@ -165,8 +142,12 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Source Code Pro"
-                               :size 13
+
+   ;; eliot custom font
+   dotspacemacs-default-font '("Space Mono"
+                               ;; "Inconsolata-dz for Powerline"
+                               ;; "Source Code Pro"
+                               :size 14
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
@@ -324,6 +305,8 @@ values."
    ;; delete only whitespace for changed lines or `nil' to disable cleanup.
    ;; (default nil)
    dotspacemacs-whitespace-cleanup nil
+   ;; eliot
+   dotspacemacs-mode-line-theme '(all-the-icons :separator none :separator-scale 1.0)
    ))
 
 (defun dotspacemacs/user-init ()
@@ -333,7 +316,22 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
+
+  ;; @ebaker - add ~/elisp load-path
+  (push "~/elisp" load-path)
+
+  ;; @ebaker - melpa
+  (add-to-list 'package-archives
+               '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+
+  ;; @ebaker - indentation setup
+  (require 'setup-indent)
+  (setup-indent 2) ; indent 2 spaces width
+
+  ;; @ebaker - org variables
+  (require 'eliot-org-variables)
   )
+
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
@@ -342,21 +340,43 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+
+  ;; @ebaker - remove keybinding eyebrowse
+  (assq-delete-all 'eyebrowse-mode minor-mode-map-alist)
+
+  ;; @ebaker - typescript files
   (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
-  )
 
-(with-eval-after-load 'org
-  ;; here goes your Org config :)
+  ;; @ebaker - comment-or-uncomment-region-or-line
+  (require 'comment-or-uncomment-region-or-line)
 
-  ;; mobile org-mode setup
-  ;; Set to the location of your Org files on your local system
-  (setq org-directory "~/org")
-  ;; Set to the name of the file where new notes will be stored
-  (setq org-mobile-inbox-for-pull "~/org/flagged.org")
-  ;; Set to <your Dropbox root directory>/MobileOrg.
-  (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")  ;; ....
-  (setq org-mobile-files '("~/org"))
-  )
+  ;; @ebaker - global custom hotkeys
+  (global-set-key (kbd "s-/") 'comment-or-uncomment-region-or-line)
+  (global-set-key (kbd "s-o") 'other-window)
+  (global-set-key (kbd "s-0") 'delete-window)
+  (global-set-key (kbd "s-1") 'spacemacs/toggle-maximize-buffer)
+  (global-set-key (kbd "s-2") 'split-window-below)
+  (global-set-key (kbd "s-3") 'split-window-right)
+  (global-set-key (kbd "s-b") 'helm-buffers-list)
+  (global-set-key (kbd "s-k") 'ido-kill-buffer)
+  (global-set-key (kbd "s-a") 'org-agenda)
+
+  ;; @ebaker - hide .dropbox
+  ;; TODO Debug
+  (add-hook 'dired-mode-hook 'dired-omit-mode)
+  (setq dired-omit-files
+        (rx (or (seq bol (? ".") "#")
+                (seq bol "." eol)
+                (seq bol ".dropbox" eol)
+                )))
+
+  ;; @ebaker - custom org settings
+  ;; @ebaker/el/eliot-org.el
+  ;; TODO create environments file, work or home
+  ;; - change directories & plugins depending
+
+  (require 'eliot-org)
+)
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
 (custom-set-variables
@@ -364,9 +384,10 @@ you should place your code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("5f27195e3f4b85ac50c1e2fac080f0dd6535440891c54fcfa62cdcefedf56b1b" default))
  '(package-selected-packages
-   (quote
-    (tern org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download htmlize gnuplot yaml-mode markdown-toc mmm-mode markdown-mode gh-md web-mode tagedit slim-mode scss-mode sass-mode pug-mode helm-css-scss haml-mode emmet-mode web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor yasnippet multiple-cursors js2-mode js-doc coffee-mode tide typescript-mode flycheck ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async))))
+   '(tern define-word monokai-theme yaml-mode ws-butler winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tide tagedit spaceline slim-mode scss-mode sass-mode restart-emacs request rainbow-delimiters pug-mode popwin persp-mode pcre2el paradox org-projectile org-present org-pomodoro org-mime org-download org-bullets open-junk-file neotree move-text mmm-mode markdown-toc macrostep lorem-ipsum livid-mode linum-relative link-hint json-mode js2-refactor js-doc indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-css-scss helm-ag google-translate golden-ratio gnuplot gh-md flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu emmet-mode elisp-slime-nav dumb-jump diminish column-enforce-mode coffee-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -374,36 +395,32 @@ you should place your code here."
  ;; If there is more than one, they won't work right.
  )
 
-
-;; eliot
-
-;; ;; org-mode fix
-;; (defun org-meta-return* (&optional ignore)
-;;   "context respecting org-insert"
-;;   (interactive "P")
-;;   (if ignore
-;;       (org-return-indent)
-;;     (cond
-;;      ;; checkbox
-;;      ((org-at-item-checkbox-p) (org-insert-todo-heading nil))
-;;      ;; item
-;;      ((org-at-item-p) (org-insert-item))
-;;      ;; todo element
-;;      ((org-element-property :todo-keyword (org-element-context))
-;;       (org-insert-todo-heading 4))
-;;      ;; heading
-;;      ((org-at-heading-p) (org-insert-heading-respect-content))
-;;      ;; plain text item
-;;      ((string-or-null-p (org-context))
-;;       (progn
-;;         (let ((org-list-use-circular-motion t))
-;;           (org-beginning-of-item)
-;;           (end-of-line)
-;;           (org-meta-return*))))
-;;      ;; fall-through case
-;;      (t (org-return-indent)))))
-
-;; (evil-define-key 'insert org-mode-map (kbd "M-RET") #'org-meta-return*)
-;; (evil-define-key 'insert org-mode-map (kbd "RET") #'org-return-indent)
-;; (evil-define-key 'insert org-mode-map (kbd "<S-return>") #'org-return)
-;; (evil-define-key 'insert org-mode-map (kbd "<M-S-return>") #'org-insert-todo-heading)
+(defun dotspacemacs/emacs-custom-settings ()
+  "Emacs custom settings.
+This is an auto-generated function, do not modify its content directly, use
+Emacs customize menu instead.
+This function is called at the very end of Spacemacs initialization."
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("5f27195e3f4b85ac50c1e2fac080f0dd6535440891c54fcfa62cdcefedf56b1b" default)))
+ '(package-selected-packages
+   (quote
+    (tern define-word monokai-theme yaml-mode ws-butler winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tide tagedit spaceline slim-mode scss-mode sass-mode restart-emacs request rainbow-delimiters pug-mode popwin persp-mode pcre2el paradox org-projectile org-present org-pomodoro org-mime org-download org-bullets open-junk-file neotree move-text mmm-mode markdown-toc macrostep lorem-ipsum livid-mode linum-relative link-hint json-mode js2-refactor js-doc indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-css-scss helm-ag google-translate golden-ratio gnuplot gh-md flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu emmet-mode elisp-slime-nav dumb-jump diminish column-enforce-mode coffee-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line)))
+ '(spacemacs-theme-custom-colors
+   (quote
+    ((head1 . "#b48ead")
+     (head2 . "#a7a6d4")
+     (head3 . "#bfebbf")
+     (head4 . "#f0dfaf")))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(org-todo ((t (:inherit bold :background "#32322c" :foreground "##ff39a3")))))
+)
