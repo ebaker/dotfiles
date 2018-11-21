@@ -66,7 +66,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(org-jira)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -328,6 +328,9 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (add-to-list 'package-archives
                '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 
+  ;; @ebaker - environment - work - yara jira
+  (setq jiralib-url "https://yaradigitalfactory.atlassian.net")
+
   ;; @ebaker - indentation setup
   (require 'setup-indent)
   (setup-indent 2) ; indent 2 spaces width
@@ -380,6 +383,12 @@ you should place your code here."
   ;; - change directories & plugins depending
 
   (require 'eliot-org)
+
+  ;; (custom-set-variables '(org-jira-default-jql
+	;;                         "project = SMART AND ((status = IN_REVIEW AND assignee != currentUser()) OR (status = IN_PROGRESS AND assignee = currentUser())) ORDER BY status DESC, priority DESC, updated ASC"
+	;;   "Default jql for querying your Jira tickets."
+	;;   :group 'org-jira
+  ;;   :type 'string))
 )
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
@@ -411,8 +420,10 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    '("5f27195e3f4b85ac50c1e2fac080f0dd6535440891c54fcfa62cdcefedf56b1b" default))
+ '(org-jira-default-jql
+   "project = SMART AND ((status = IN_REVIEW AND assignee != currentUser()) OR (status = IN_PROGRESS AND assignee = currentUser())) ORDER BY status DESC, priority DESC, updated ASC")
  '(package-selected-packages
-   '(confluence xml-rpc tern define-word monokai-theme yaml-mode ws-butler winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tide tagedit spaceline slim-mode scss-mode sass-mode restart-emacs request rainbow-delimiters pug-mode popwin persp-mode pcre2el paradox org-projectile org-present org-pomodoro org-mime org-download org-bullets open-junk-file neotree move-text mmm-mode markdown-toc macrostep lorem-ipsum livid-mode linum-relative link-hint json-mode js2-refactor js-doc indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-css-scss helm-ag google-translate golden-ratio gnuplot gh-md flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu emmet-mode elisp-slime-nav dumb-jump diminish column-enforce-mode coffee-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))
+   '(org-jira tern define-word monokai-theme yaml-mode ws-butler winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tide tagedit spaceline slim-mode scss-mode sass-mode restart-emacs request rainbow-delimiters pug-mode popwin persp-mode pcre2el paradox org-projectile org-present org-pomodoro org-mime org-download org-bullets open-junk-file neotree move-text mmm-mode markdown-toc macrostep lorem-ipsum livid-mode linum-relative link-hint json-mode js2-refactor js-doc indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-css-scss helm-ag google-translate golden-ratio gnuplot gh-md flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu emmet-mode elisp-slime-nav dumb-jump diminish column-enforce-mode coffee-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))
  '(spacemacs-theme-custom-colors
    '((head1 . "#b48ead")
      (head2 . "#a7a6d4")
@@ -423,5 +434,5 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-todo ((t (:inherit bold :background "#32322c" :foreground "##ff39a3")))))
+ )
 )
