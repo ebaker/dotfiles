@@ -10,9 +10,6 @@
 [submodule ".vim/bundle/vim-surround"]
 	path = .vim/bundle/vim-surround
 	url = git@github.com:tpope/vim-surround.git
-[submodule "/Users/eliot/.oh-my-zsh"]
-	path = /Users/eliot/.oh-my-zsh
-	url = git@github.com:robbyrussell/oh-my-zsh.git
 [submodule ".vim/bundle/vim-javascript"]
 	path = .vim/bundle/vim-javascript
 	url = git@github.com:pangloss/vim-javascript.git
@@ -28,3 +25,9 @@
 [submodule ".vim/bundle/closetag.vim"]
 	path = .vim/bundle/closetag.vim
 	url = git@github.com:vim-scripts/closetag.vim.git
+[submodule "zsh-oh-my-zsh/.oh-my-zsh"]
+	path = zsh-oh-my-zsh/.oh-my-zsh
+	url = git@github.com:robbyrussell/oh-my-zsh.git
+[submodule "zsh-zim/.zim"]
+	path = zsh-zim/.zim
+	url = git@github.com:zimfw/zimfw.git
