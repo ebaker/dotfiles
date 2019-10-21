@@ -32,10 +32,10 @@ done
 compinit -C
 
 # zsh-autosuggestions
-source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # docker - aliases
-source ~/.zsh/docker-alias/zshrc
+# source ~/.zsh/docker-alias/zshrc
 
 # eliot - git
 alias gs='git status'
@@ -68,9 +68,9 @@ if [ -f ${ZSHRC_LOCAL} ]; then
 fi
 
 # nvm
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # place this after nvm initialization!
 autoload -U add-zsh-hook
@@ -92,4 +92,4 @@ load-nvmrc() {
   fi
 }
 add-zsh-hook chpwd load-nvmrc
-load-nvmrc
+# load-nvmrc

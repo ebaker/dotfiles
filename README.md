@@ -2,8 +2,19 @@
 
 ```sh
 # clone dotfiles repo
-$ git clone git@github.com:ebaker/dotfiles.git
+$ git clone --recursive git@github.com:ebaker/dotfiles.git
 
+# git submopdules update if there are nested submodules:
+git submodule update --init --recursive
+
+# pull all changes in the repo including changes in the submodules
+git pull --recurse-submodules
+
+# pull all changes for the submodules
+git submodule update --remote
+
+# install nvm
+$ ln -vs dotfiles/.nvm ~/.nvm
 
 # symlink zsh & zim config files into home
 $ find dotfiles/zsh-zim -name \* -exec ln -vs "{}" ~ ';'

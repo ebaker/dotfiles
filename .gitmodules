@@ -31,3 +31,9 @@
 [submodule "zsh-zim/.zim"]
 	path = zsh-zim/.zim
 	url = git@github.com:zimfw/zimfw.git
+[submodule "zsh-zim/.zsh/zsh-autosuggestions"]
+	path = zsh-zim/.zsh/zsh-autosuggestions
+	url = git@github.com:zsh-users/zsh-autosuggestions.git
+[submodule ".nvm"]
+	path = .nvm
+	url = git@github.com:nvm-sh/nvm.git
