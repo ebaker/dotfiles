@@ -17,7 +17,7 @@ git submodule update --remote
 $ ln -vs dotfiles/.nvm ~/.nvm
 
 # symlink zsh & zim config files into home
-$ find dotfiles/zsh-zim -name \* -exec ln -vs "{}" ~ ';'
+$ find dotfiles/zsh-zim -name .z\* -exec ln -vs "{}" ~ ';'
 ```
 
 ## Depricated Setup
