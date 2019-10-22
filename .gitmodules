@@ -37,3 +37,6 @@
 [submodule ".nvm"]
 	path = .nvm
 	url = git@github.com:nvm-sh/nvm.git
+[submodule ".vim/bundle/vim-yaml"]
+	path = .vim/bundle/vim-yaml
+	url = git@github.com:stephpy/vim-yaml.git
