@@ -13,6 +13,10 @@ git pull --recurse-submodules
 # pull all changes for the submodules
 git submodule update --remote
 
+# setup vim symlinks
+$ ln -vs dotfiles/.vim ~/.vim
+$ ln -vs dotfiles/.vimrc ~/.vimrc
+
 # install nvm
 $ ln -vs dotfiles/.nvm ~/.nvm
 $ export NVM_DIR="$HOME/.nvm"
