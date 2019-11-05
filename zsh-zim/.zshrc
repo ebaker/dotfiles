@@ -20,6 +20,15 @@ SAVEHIST=1000
 # The following lines were added by compinstall
 zstyle :compinstall filename '~/.zshrc'
 
+# better history searching w/ arrow keys
+# https://coderwall.com/p/jpj_6q/zsh-better-history-searching-with-arrow-keys
+autoload -U up-line-or-beginning-search
+autoload -U down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey "^[[A" up-line-or-beginning-search # Up
+bindkey "^[[B" down-line-or-beginning-search # Down
+
 # autoload -Uz compinit
 # compinit
 # End of lines added by compinstall
@@ -55,10 +64,13 @@ alias gcp='git cherry-pick'
 alias grm='git rm'
 
 ## eliot - docker
-#alias d=docker
-#alias dps='docker ps'
-#alias dl='docker logs'
-#alias di='docker images'
+alias d=docker
+alias dps='docker ps'
+alias dl='docker logs'
+alias di='docker images'
+alias dcst='docker container stop $(docker container ls -aq)' # docker stop (all containers)
+alias dcrm='docker container rm $(docker container ls -aq)'
+
 
 # docker autocomplete - https://medium.com/@MicoDer/docker-zsh-autocomplete-and-denter-on-macos-easy-tutorial-630c46836652
 
