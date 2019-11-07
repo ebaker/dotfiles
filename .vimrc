@@ -33,6 +33,9 @@ autocmd FileType js
 autocmd FileType styl
  \ setlocal shiftwidth=2 |
  \ setlocal tabstop=2
+autocmd FileType py
+ \ setlocal shiftwidth=2 |
+ \ setlocal tabstop=2
 
 
 " desert is a pretty good color scheme
