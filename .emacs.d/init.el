@@ -1,3 +1,18 @@
+;; Use a hook so the message doesn't get clobbered by other messages.
+(add-hook 'emacs-startup-hook
+	  (lambda ()
+	    (message "Emacs ready in %s with %d garbage collections."
+		     (format "%.2f seconds"
+			     (float-time
+			      (time-subtract after-init-time before-init-time)))
+		     gcs-done)))
+
+;; Make startup faster by reducing the frequency of garbage
+;; collection.  The default is 800 kilobytes.  Measured in bytes.
+(setq gc-cons-threshold (* 50 1000 1000))
+
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+
 ;; super
 (setq mac-command-modifier 'super
       mac-option-modifier  'meta
@@ -39,6 +54,9 @@
 ;; (setq default-fill-column 140)		; toggle wrapping text at the 80th character
 (setq initial-scratch-message "") ; print a default message in the empty scratch buffer opened at startup
 
+;; https://emacs.stackexchange.com/questions/28736/emacs-pointcursor-movement-lag/28746
+(setq auto-window-vscroll nil)
+
 ;; remembers minibuffer history between sessions
 (save-place-mode t)
 
@@ -54,7 +72,11 @@
 (menu-bar-mode   -1)
 
 ;; check this
-(add-to-list 'default-frame-alist '(font . "Inconsolata-dz for Powerline"))
+;; (add-to-list 'default-frame-alist '(font . "Inconsolata-dz for Powerline"))
+;; (add-to-list 'default-frame-alist '(font . "Space Mono"))
+
+;; https://emacs.stackexchange.com/questions/16818/cocoa-emacs-24-5-font-issues-inconsolata-dz
+(add-to-list 'default-frame-alist '(font . "InconsolataDZ for Powerline"))
 (add-to-list 'default-frame-alist '(height . 44))
 (add-to-list 'default-frame-alist '(width . 100))
 
@@ -67,7 +89,7 @@
 (setq package-enable-at-startup nil)
 (setq package-archives '(("org"   . "http://orgmode.org/elpa/")
 			 ("melpa" . "https://melpa.org/packages/")
-			 ("gnu"   . "http://mirrors.163.com/elpa/gnu/")
+			 ("gnu"   . "https://elpa.gnu.org/packages/")
 			 ))
 (package-initialize)
 
@@ -76,6 +98,16 @@
   (package-refresh-contents)
   (package-install 'use-package))
 (require 'use-package)
+
+
+;; Defer Packages you don’t need Immediately with Idle Timers
+(use-package recentf
+  ;; Loads after 1 second of idle time.
+  :defer 1)
+
+(use-package uniquify
+  ;; Less important than recentf.
+  :defer 2)
 
 (defun ebaker/emacsify-evil-mode ()
   "Remove Evil Normal state bindings and add some Emacs bindings in Evil Normal state."
@@ -98,6 +130,7 @@
 ;; Vim mode
 (use-package evil
   :ensure t
+  :defer 1
   :init
   (setq evil-disable-insert-state-bindings t)
   (setq evil-want-C-u-scroll t)
@@ -134,13 +167,15 @@
 
 (use-package org
   :ensure t
+  :defer 1
   :config
-   (add-hook 'org-agenda-mode-hook #'ebaker/evilify-org-agenda-mode)
-  )
+   (add-hook 'org-agenda-mode-hook #'ebaker/evilify-org-agenda-mode))
 
 ;; ore pretty bullets
 (use-package org-bullets
   :ensure t
+  :defer 2
+  :after (org)
   :hook (org-mode . org-bullets-mode))
 
 ;; Theme
@@ -151,6 +186,8 @@
 
 ;; ivy
 (use-package ivy :demand
+  :ensure t
+  :defer 1
   :config
   (setq ivy-use-virtual-buffers t
 	ivy-count-format "%d/%d ")
@@ -159,6 +196,7 @@
 ;; Which Key
 (use-package which-key
   :ensure t
+  :defer 1
   :init
   (setq which-key-separator " ")
   (setq which-key-prefix-prefix "+")
@@ -168,6 +206,7 @@
 ;; Custom keybinding
 (use-package general
   :ensure t
+  :defer 1
   :config (general-define-key
   :states '(normal visual insert emacs)
   :prefix "SPC"
@@ -197,7 +236,7 @@
 
 ;; Fancy titlebar for MacOS
 (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-(add-to-list 'default-frame-alist '(ns-appearance . dark))
+(add-to-list 'default-frame-alist '(ns-appearance . dark)) ;; light
 (setq ns-use-proxy-icon  nil)
 (setq frame-title-format nil)
 
@@ -209,12 +248,13 @@
 (setq make-backup-files nil) ; stop creating backup~ files
 (setq auto-save-default nil) ; stop creating #autosave# files
 
-(let ((path (shell-command-to-string ". ~/.zshrc; echo -n $PATH")))
-  (setenv "PATH" path)
-  (setq exec-path
-	(append
-	 (split-string-and-unquote path ":")
-	 exec-path)))
+;; @ebaker - review - very slow
+;; (let ((path (shell-command-to-string ". ~/.zshrc; echo -n $PATH")))
+;;   (setenv "PATH" path)
+;;   (setq exec-path
+;;	(append
+;;	 (split-string-and-unquote path ":")
+;;	 exec-path)))
 
 ;; @ebaker - org
 
@@ -222,7 +262,9 @@
 (require 'eliot-org)
 
 ;; ranger
-(use-package ranger :ensure t
+(use-package ranger
+  :ensure t
+  :defer 2
   :commands (ranger)
   :bind (("C-x d" . deer))
   :config
@@ -232,6 +274,7 @@
 ;; Projectile
 (use-package projectile
   :ensure t
+  :defer 2
   :init
   (setq projectile-require-project-root nil)
   :config
@@ -248,12 +291,14 @@
 ;; NeoTree
 (use-package neotree
   :ensure t
+  :defer 2
   :init
   (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 
 ;; Flycheck
 (use-package flycheck
   :ensure t
+  :defer 2
   :init (global-flycheck-mode))
 
 ;; flycheck - official flycheck-pos-tip
@@ -265,6 +310,7 @@
 ;; flycheck-popup-tip - https://github.com/flycheck/flycheck-popup-tip
 (use-package flycheck-popup-tip
   :ensure t
+   :defer 2
   :init (with-eval-after-load 'flycheck
   '(add-hook 'flycheck-mode-hook 'flycheck-popup-tip-mode)))
 
@@ -286,21 +332,40 @@
 ;; (diminish 'org-indent-mode)
 ;; (diminish 'subword-mode)
 
+;; https://emacs.stackexchange.com/questions/20946/generate-mouse-2-event-from-macbook-trackpad
+(defun my-flyspell-mode-hook ()
+  ;; Do things when flyspell enters of leaves flyspell mode.
+  ;; Added manually
+  ;;
+  ;; Magic Mouse Fixes
+  (if flyspell-mode (progn
+       (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
+       (define-key flyspell-mouse-map [mouse-3] #'undefined))
+    nil)
+  ;; End my-flyspell-mode-hook
+  )
+
 (use-package flyspell
-  :hook (	   (text-mode . flyspell-mode))
+  :defer 2
+  :init
+  (add-hook 'flyspell-mode-hook 'my-flyspell-mode-hook)
+
+  :hook ((text-mode . flyspell-mode))
+
   )
 
 (setq ispell-program-name "/usr/local/bin/aspell")
 (setq ispell-dictionary "en_US") ;; set the default dictionary
 
 ;; (diminish 'flyspell-mode) ;; Don't show it in the modeline.
-(use-package flyspell-correct-popup
-  :bind (("C-M-;" . flyspell-correct-wrapper)
-	 (:map popup-menu-keymap
-	      ("TAB" . popup-next)
-	      ("S-TAB" . popup-previous)))
-  :init
-  (setq flyspell-correct-interface #'flyspell-correct-popup))
+;; https://github.com/d12frosted/flyspell-correct/issues/30
+;; (use-package flyspell-correct-popup
+;;   :bind (("C-M-;" . flyspell-correct-wrapper)
+;;	 (:map popup-menu-keymap
+;;	      ("TAB" . popup-next)
+;;	      ("S-TAB" . popup-previous)))
+;;   :init
+;;   (setq flyspell-correct-interface #'flyspell-correct-popup))
 
 
 
@@ -316,53 +381,57 @@
 ;; LSP
 (use-package lsp-mode
   :ensure t
+  :defer 2
   :init
   (add-hook 'prog-major-mode #'lsp-prog-major-mode-enable))
 
 (use-package lsp-ui
   :ensure t
+  :defer 2
   :init
   (add-hook 'lsp-mode-hook 'lsp-ui-mode))
 
 ;; Company mode
 (use-package company
-:ensure t
-:init
-(setq company-minimum-prefix-length 3)
-(setq company-auto-complete nil)
-(setq company-idle-delay 0)
-(setq company-require-match 'never)
-(setq company-frontends
-  '(company-pseudo-tooltip-unless-just-one-frontend
-    company-preview-frontend
-    company-echo-metadata-frontend))
-(setq tab-always-indent 'complete)
-(defvar completion-at-point-functions-saved nil)
-:config
-(global-company-mode 1)
-(define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
-(define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
-(define-key company-active-map (kbd "S-TAB") 'company-select-previous)
-(define-key company-active-map (kbd "<backtab>") 'company-select-previous)
-(define-key company-mode-map [remap indent-for-tab-command] 'company-indent-for-tab-command)
-(defun company-indent-for-tab-command (&optional arg)
-  (interactive "P")
-  (let ((completion-at-point-functions-saved completion-at-point-functions)
-	(completion-at-point-functions '(company-complete-common-wrapper)))
-	(indent-for-tab-command arg)))
+  :ensure t
+  :init
+  (setq company-minimum-prefix-length 3)
+  (setq company-auto-complete nil)
+  (setq company-idle-delay 0)
+  (setq company-require-match 'never)
+  (setq company-frontends
+	'(company-pseudo-tooltip-unless-just-one-frontend
+	  company-preview-frontend
+	  company-echo-metadata-frontend))
+  (setq tab-always-indent 'complete)
+  (defvar completion-at-point-functions-saved nil)
+  :config
+  (global-company-mode 1)
+  (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
+  (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
+  (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
+  (define-key company-active-map (kbd "<backtab>") 'company-select-previous)
+  (define-key company-mode-map [remap indent-for-tab-command] 'company-indent-for-tab-command)
+  (defun company-indent-for-tab-command (&optional arg)
+    (interactive "P")
+    (let ((completion-at-point-functions-saved completion-at-point-functions)
+	  (completion-at-point-functions '(company-complete-common-wrapper)))
+      (indent-for-tab-command arg)))
 
 (defun company-complete-common-wrapper ()
-	(let ((completion-at-point-functions completion-at-point-functions-saved))
-	(company-complete-common))))
+  (let ((completion-at-point-functions completion-at-point-functions-saved))
+    (company-complete-common))))
 
 (use-package company-lsp
-:ensure t
-:init
-(push 'company-lsp company-backends))
+  :ensure t
+  :defer 2
+  :init
+  (push 'company-lsp company-backends))
 
 ;; Powerline
 (use-package spaceline
   :ensure t
+  :defer 2
   :init
   (setq powerline-default-separator 'slant)
   :config
@@ -378,6 +447,7 @@
 ;; JavaScript
 (use-package js2-mode
   :ensure t
+  :defer 2
   :init
   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode)))
 (use-package tern :ensure t)
@@ -385,36 +455,37 @@
  ;; Typescript
 (use-package typescript-mode
   :ensure t
+  :defer 2
   :init
   (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode)))
 
 (add-hook 'js2-mode-hook 'lsp)
 
-;; Dashboard
-(use-package dashboard
-  :ensure t
-  :config
-  (dashboard-setup-startup-hook))
+;; ;; Dashboard
+;; (use-package dashboard
+;;   :ensure t
+;;   :config
+;;   (dashboard-setup-startup-hook))
 
-;; Set the title
-(setq dashboard-banner-logo-title "Welcome to Emacs Dashboard")
-;; Set the banner
-(setq dashboard-startup-banner 3)
-;; Value can be
-;; 'official which displays the official emacs logo
-;; 'logo which displays an alternative emacs logo
-;; 1, 2 or 3 which displays one of the text banners
-;; "path/to/your/image.png" which displays whatever image you would prefer
+;; ;; Set the title
+;; (setq dashboard-banner-logo-title "Welcome to Emacs Dashboard")
+;; ;; Set the banner
+;; (setq dashboard-startup-banner 3)
+;; ;; Value can be
+;; ;; 'official which displays the official emacs logo
+;; ;; 'logo which displays an alternative emacs logo
+;; ;; 1, 2 or 3 which displays one of the text banners
+;; ;; "path/to/your/image.png" which displays whatever image you would prefer
 
-;; Content is not centered by default. To center, set
-(setq dashboard-center-content t)
+;; ;; Content is not centered by default. To center, set
+;; (setq dashboard-center-content t)
 
-;; To disable shortcut "jump" indicators for each section, set
-(setq dashboard-show-shortcuts nil)
+;; ;; To disable shortcut "jump" indicators for each section, set
+;; (setq dashboard-show-shortcuts nil)
 
-;; go to dashboard on startup
+;; ;; go to dashboard on startup
 
-(setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+;; (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
 
 
 (custom-set-variables
@@ -427,7 +498,7 @@
     ("7dc3fe8fadb914563790a3fbe587fd455626442f66da333ea4de2c455feefb98" "fa1fa0bc00fc80f5466cfd6b595e4a010d0c1953b7f135fd2658ca93ff8c8a17" "423435c7b0e6c0942f16519fa9e17793da940184a50201a4d932eafe4c94c92d" default)))
  '(package-selected-packages
    (quote
-    (flyspell-correct-popup page-break-lines counsel doom-themes evil use-package)))
+    (org-bullets org ivy undo-tree gnu-elpa-keyring-update esup flyspell-correct-popup page-break-lines counsel doom-themes evil use-package)))
  '(spacemacs-theme-custom-colors
    (quote
     ((head1 . "#b48ead")
@@ -441,3 +512,7 @@
  ;; If there is more than one, they won't work right.
  '(org-done ((t (:foreground "#A2FF38" :weight bold))))
  '(org-todo ((t (:foreground "#ff39a3" :weight bold)))))
+
+
+;; Make gc pauses faster by decreasing the threshold.
+(setq gc-cons-threshold (* 2 1000 1000))
