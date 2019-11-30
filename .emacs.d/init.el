@@ -454,6 +454,54 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :init
   (push 'company-lsp company-backends))
 
+;; Yet another snippet extension program
+(use-package yasnippet
+  :ensure t
+  :diminish yas-minor-mode
+  :config
+    (yas-global-mode 1)
+    ;; respect the spacing in my snippet declarations
+    (setq yas-indent-line 'fixed)
+)
+
+;; Nice “interface” to said program
+(use-package yankpad
+  ;; :if company-mode ;; load & initialise only if company-mode is defined
+  :demand t
+  :ensure t
+  :init
+    ;; Location of templates
+    (setq yankpad-file "~/.emacs.d/yankpad.org")
+    (setq yankpad-category "Category: Default")
+  :config
+    ;; If you want to complete snippets using company-mode
+    ;; (add-to-list 'company-backends #'company-yankpad)
+    ;; If you want to expand snippets with hippie-expand
+    (add-to-list 'hippie-expand-try-functions-list #'yankpad-expand)
+    ;; Load the snippet templates -- useful after yankpad is altered
+    ;; (add-hook 'after-init-hook 'yankpad-reload)
+)
+
+;; Elementary textual completion backend.
+(setq company-backends
+   (add-to-list 'company-backends 'company-dabbrev))
+;;
+;; Add yasnippet support for all company backends
+;; https://emacs.stackexchange.com/a/10520/10352
+;;
+(defvar company-mode/enable-yas t
+  "There can only be one main completition backend, so let's
+   enable yasnippet/yankpad as a secondary for all completion backends.")
+
+(defun company-mode/backend-with-yas (backend)
+  (if (or (not company-mode/enable-yas)
+	  (and (listp backend) (member 'company-yankpad backend)))
+      backend
+    (append (if (consp backend) backend (list backend))
+	    '(:with company-yankpad))))
+
+(setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
+
 ;; Powerline
 (use-package spaceline
   :ensure t
@@ -468,6 +516,20 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language Supports ;;
 ;;;;;;;;;;;;;;;;;;;;;;;
+;; (when (file-exists-p "~/.nvm")
+;; (use-package nvm
+;;   :ensure t
+;;   :commands (nvm-use
+;;	     nvm-use-for)))
+(setq exec-path (append exec-path '("~/.nvm/versions/node/v12.6.0/bin")))
+
+
+;; (when (file-exists-p "~/.nvm")
+;;   (use-package nvm
+;;     :ensure t
+;;     :defer 5
+;;     :config
+;;     (nvm-use (caar (last (nvm--installed-versions))))))
 
 ;; elisp
 (use-package highlight-defined
@@ -500,6 +562,16 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;;   (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode)))
 
 (add-hook 'js2-mode-hook 'lsp)
+
+
+(use-package rjsx-mode
+  :ensure t
+  :mode
+  (("/\\(containers\\)/[^/]*\\.js" . rjsx-mode)
+   ("/\\(components\\)/[^/]*\\.js" . rjsx-mode)
+   ("\\.jsx\\'" . rjsx-mode))
+  :config
+  (add-to-list 'lsp-language-id-configuration '(rjsx-mode . "javascript")))
 
 ;; ;; Dashboard
 ;; (use-package dashboard
