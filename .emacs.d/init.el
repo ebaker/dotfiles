@@ -7,6 +7,25 @@
 			      (time-subtract after-init-time before-init-time)))
 		     gcs-done)))
 
+
+;; heavily insprired by https://blog.jft.rocks/emacs/emacs-from-scratch.html
+
+;; Minimal UI
+(scroll-bar-mode -1)
+(tool-bar-mode   -1)
+(tooltip-mode    -1)
+(menu-bar-mode   -1)
+
+;; check this
+;; (add-to-list 'default-frame-alist '(font . "Inconsolata-dz for Powerline"))
+;; (add-to-list 'default-frame-alist '(font . "Space Mono"))
+
+;; https://emacs.stackexchange.com/questions/16818/cocoa-emacs-24-5-font-issues-inconsolata-dz
+(add-to-list 'default-frame-alist '(font . "InconsolataDZ for Powerline"))
+(add-to-list 'default-frame-alist '(height . 44))
+(add-to-list 'default-frame-alist '(width . 100))
+
+
 ;; Make startup faster by reducing the frequency of garbage
 ;; collection.  The default is 800 kilobytes.  Measured in bytes.
 (setq gc-cons-threshold (* 50 1000 1000))
@@ -54,6 +73,9 @@
 ;; (setq default-fill-column 140)		; toggle wrapping text at the 80th character
 (setq initial-scratch-message "") ; print a default message in the empty scratch buffer opened at startup
 
+;; line numbers
+;; (global-display-line-numbers-mode)
+
 ;; https://emacs.stackexchange.com/questions/28736/emacs-pointcursor-movement-lag/28746
 (setq auto-window-vscroll nil)
 
@@ -62,23 +84,6 @@
 
 ;; cursor at the same place it was at before
 (savehist-mode t)
-
-;; heavily insprired by https://blog.jft.rocks/emacs/emacs-from-scratch.html
-
-;; Minimal UI
-(scroll-bar-mode -1)
-(tool-bar-mode   -1)
-(tooltip-mode    -1)
-(menu-bar-mode   -1)
-
-;; check this
-;; (add-to-list 'default-frame-alist '(font . "Inconsolata-dz for Powerline"))
-;; (add-to-list 'default-frame-alist '(font . "Space Mono"))
-
-;; https://emacs.stackexchange.com/questions/16818/cocoa-emacs-24-5-font-issues-inconsolata-dz
-(add-to-list 'default-frame-alist '(font . "InconsolataDZ for Powerline"))
-(add-to-list 'default-frame-alist '(height . 44))
-(add-to-list 'default-frame-alist '(width . 100))
 
 ;; Show matching parens
 (setq show-paren-delay 0)
@@ -169,7 +174,10 @@
   :ensure t
   :defer 1
   :config
-   (add-hook 'org-agenda-mode-hook #'ebaker/evilify-org-agenda-mode))
+  (add-hook 'org-agenda-mode-hook #'ebaker/evilify-org-agenda-mode)
+
+  (require 'eliot-org)
+  )
 
 ;; ore pretty bullets
 (use-package org-bullets
@@ -240,14 +248,6 @@
 (setq ns-use-proxy-icon  nil)
 (setq frame-title-format nil)
 
-;; Show matching parens
-(setq show-paren-delay 0)
-(show-paren-mode 1)
-
-;; Disable backup files
-(setq make-backup-files nil) ; stop creating backup~ files
-(setq auto-save-default nil) ; stop creating #autosave# files
-
 ;; @ebaker - review - very slow
 ;; (let ((path (shell-command-to-string ". ~/.zshrc; echo -n $PATH")))
 ;;   (setenv "PATH" path)
@@ -258,18 +258,15 @@
 
 ;; @ebaker - org
 
-(require 'eliot-org-variables)
-(require 'eliot-org)
 
 ;; ranger
-(use-package ranger
-  :ensure t
-  :defer 2
-  :commands (ranger)
-  :bind (("C-x d" . deer))
-  :config
-  (setq ranger-cleanup-eagerly t)
-  )
+;; (use-package ranger
+;;   :ensure t
+;;   :defer 2
+;;   :commands (ranger)
+;;   :bind (("C-x d" . deer))
+;;   :config
+;;   (setq ranger-cleanup-eagerly t))
 
 ;; Projectile
 (use-package projectile
@@ -311,8 +308,8 @@
 (use-package flycheck-popup-tip
   :ensure t
    :defer 2
-  :init (with-eval-after-load 'flycheck
-  '(add-hook 'flycheck-mode-hook 'flycheck-popup-tip-mode)))
+   :init
+   (with-eval-after-load 'flycheck '(add-hook 'flycheck-mode-hook 'flycheck-popup-tip-mode)))
 
 (with-eval-after-load 'flycheck (flycheck-popup-tip-mode))
 
@@ -349,8 +346,8 @@
   :defer 2
   :init
   (add-hook 'flyspell-mode-hook 'my-flyspell-mode-hook)
-
-  :hook ((text-mode . flyspell-mode))
+  :hook
+  ((text-mode . flyspell-mode))
 
   )
 
@@ -431,9 +428,8 @@
 ;; Powerline
 (use-package spaceline
   :ensure t
-  :defer 2
   :init
-  (setq powerline-default-separator 'slant)
+  (setq powerline-default-separator 'utf-8)
   :config
   (spaceline-emacs-theme)
   (spaceline-toggle-minor-modes-off)
@@ -444,20 +440,34 @@
 ;; Language Supports ;;
 ;;;;;;;;;;;;;;;;;;;;;;;
 
+;; elisp
+(use-package highlight-defined
+  :ensure t
+  :defer 2
+  :config
+  (add-hook 'emacs-lisp-mode-hook 'highlight-defined-mode)
+  (add-to-list 'auto-mode-alist '("\\.el\\'" . display-line-number-mode))
+  )
+
 ;; JavaScript
 (use-package js2-mode
   :ensure t
   :defer 2
   :init
-  (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode)))
-(use-package tern :ensure t)
+  (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+  (add-to-list 'auto-mode-alist '("\\.js\\'" . display-line-number-mode))
+  )
+
+(use-package tern
+  :ensure t
+  :defer 2)
 
  ;; Typescript
-(use-package typescript-mode
-  :ensure t
-  :defer 2
-  :init
-  (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode)))
+;; (use-package typescript-mode
+;;   :ensure t
+;;   :defer 2
+;;   :init
+;;   (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode)))
 
 (add-hook 'js2-mode-hook 'lsp)
 
