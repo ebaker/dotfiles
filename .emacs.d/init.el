@@ -37,6 +37,35 @@
       mac-option-modifier  'meta
       )
 
+;; exit emacs y-n
+(setq confirm-kill-emacs 'y-or-n-p)
+
+;; https://emacs.stackexchange.com/questions/13662/a-confirmation-after-c-x-c-c-before-exiting-emacs
+(defun my-save-buffers-kill-emacs (&optional arg)
+  "Offer to save each buffer(once only), then kill this Emacs process.
+With prefix ARG, silently save all file-visiting buffers, then kill."
+  (interactive "P")
+  (save-some-buffers arg t)
+  (and (or (not (fboundp 'process-list))
+       ;; process-list is not defined on MSDOS.
+       (let ((processes (process-list))
+	 active)
+	 (while processes
+	   (and (memq (process-status (car processes)) '(run stop open listen))
+	    (process-query-on-exit-flag (car processes))
+	    (setq active t))
+	   (setq processes (cdr processes)))
+	 (or (not active)
+	 (progn (list-processes t)
+	    (y-or-n-p "Active processes exist; kill them and exit anyway? ")))))
+       ;; Query the user for other things, perhaps.
+       (run-hook-with-args-until-failure 'kill-emacs-query-functions)
+       (or (null confirm-kill-emacs)
+       (funcall confirm-kill-emacs "Really exit Emacs? "))
+       (kill-emacs)))
+
+(global-set-key (kbd "C-x C-c") 'my-save-buffers-kill-emacs)
+
 (push "~/.emacs.d/elisp/" load-path)
 
 
@@ -446,7 +475,7 @@
   :defer 2
   :config
   (add-hook 'emacs-lisp-mode-hook 'highlight-defined-mode)
-  (add-to-list 'auto-mode-alist '("\\.el\\'" . display-line-number-mode))
+  (add-hook 'emacs-lisp-mode-hook 'display-line-numbers-mode)
   )
 
 ;; JavaScript
@@ -455,7 +484,8 @@
   :defer 2
   :init
   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-  (add-to-list 'auto-mode-alist '("\\.js\\'" . display-line-number-mode))
+  :config
+  (add-hook 'js2-mode 'display-line-numbers-mode)
   )
 
 (use-package tern
