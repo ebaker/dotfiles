@@ -580,6 +580,12 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (spaceline-toggle-buffer-size-off)
   (spaceline-toggle-evil-state-on))
 
+;; doom-modeline
+;; (use-package doom-modeline
+;;   :ensure t
+;;   :defer t
+;;   :hook (after-init . doom-modeline-init))
+
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language Supports ;;
 ;;;;;;;;;;;;;;;;;;;;;;;
