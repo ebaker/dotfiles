@@ -360,27 +360,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :init
   (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 
-;; Flycheck
-(use-package flycheck
-  :ensure t
-  ;; :defer 2
-  :init (global-flycheck-mode))
-
-;; flycheck - official flycheck-pos-tip
-;; (use-package flycheck-pos-tip
-;;   :ensure t
-;;   :init (with-eval-after-load 'flycheck
-;;	  (flycheck-pos-tip-mode)))
-
-;; flycheck-popup-tip - https://github.com/flycheck/flycheck-popup-tip
-(use-package flycheck-popup-tip
-  :ensure t
-   ;; :defer 2
-   :init
-   (with-eval-after-load 'flycheck '(add-hook 'flycheck-mode-hook 'flycheck-popup-tip-mode)))
-
-;; (with-eval-after-load 'flycheck (flycheck-popup-tip-mode))
-
 ;; https://alhassy.github.io/init/
 
 ;; Make it very easy to see the line with the cursor.
@@ -390,12 +369,35 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; upon save.
 (add-hook 'before-save-hook 'whitespace-cleanup)
 
-;; (use-package diminish)
 
-;; ;; Let's hide some markers.
-;; (diminish 'eldoc-mode)
-;; (diminish 'org-indent-mode)
-;; (diminish 'subword-mode)
+;; ;; Flycheck
+;; (use-package flycheck
+;;   :ensure t
+;;   ;; :defer 2
+;;   :init (global-flycheck-mode))
+
+;; ;; flycheck - official flycheck-pos-tip
+;; ;; (use-package flycheck-pos-tip
+;; ;;   :ensure t
+;; ;;   :init (with-eval-after-load 'flycheck
+;; ;;	  (flycheck-pos-tip-mode)))
+
+;; ;; flycheck-popup-tip - https://github.com/flycheck/flycheck-popup-tip
+;; (use-package flycheck-popup-tip
+;;   :ensure t
+;;    ;; :defer 2
+;;    :init
+;;    (with-eval-after-load 'flycheck '(add-hook 'flycheck-mode-hook 'flycheck-popup-tip-mode)))
+
+;; ;; (with-eval-after-load 'flycheck (flycheck-popup-tip-mode))
+
+
+;; ;; (use-package diminish)
+
+;; ;; ;; Let's hide some markers.
+;; ;; (diminish 'eldoc-mode)
+;; ;; (diminish 'org-indent-mode)
+;; ;; (diminish 'subword-mode)
 
 ;; https://emacs.stackexchange.com/questions/20946/generate-mouse-2-event-from-macbook-trackpad
 (defun my-flyspell-mode-hook ()
@@ -443,131 +445,131 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;;  '(org-done ((t (:foreground "#A2FF38" :weight bold))))
 ;;  '(org-todo ((t (:foreground "#ff39a3" :weight bold)))))
 
-;; LSP
-(use-package lsp-mode
-  :ensure t
-  :defer 2
-  :init
-  ;; (add-hook 'prog-major-mode #'lsp-prog-major-mode-enable)
-  )
+;; ;; LSP
+;; (use-package lsp-mode
+;;   :ensure t
+;;   :defer 2
+;;   :init
+;;   ;; (add-hook 'prog-major-mode #'lsp-prog-major-mode-enable)
+;;   )
 
-(use-package lsp-ui
-  :ensure t
-  :defer 2
-  :init
-  (add-hook 'lsp-mode-hook 'lsp-ui-mode)
-  :config
-  ;; (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
-  ;; (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
-  (setq lsp-ui-sideline-enable nil
-	lsp-ui-doc-enable nil
-	lsp-ui-flycheck-enable t
-	lsp-prefer-flymake nil
-	lsp-ui-imenu-enable t
-	lsp-ui-sideline-ignore-duplicate t))
+;; (use-package lsp-ui
+;;   :ensure t
+;;   :defer 2
+;;   :init
+;;   (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+;;   :config
+;;   ;; (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+;;   ;; (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
+;;   (setq lsp-ui-sideline-enable nil
+;;	lsp-ui-doc-enable nil
+;;	lsp-ui-flycheck-enable t
+;;	lsp-prefer-flymake nil
+;;	lsp-ui-imenu-enable t
+;;	lsp-ui-sideline-ignore-duplicate t))
 
-;; Company mode
+;; ;; Company mode
 
-(use-package company
-  :ensure t
-  :init
-  (setq company-minimum-prefix-length 3)
-  (setq company-auto-complete nil)
-  (setq company-idle-delay 0)
-  (setq company-require-match 'never)
-  (setq company-frontends
-	'(company-pseudo-tooltip-unless-just-one-frontend
-	  company-preview-frontend
-	  company-echo-metadata-frontend))
-  (setq tab-always-indent 'complete)
-  (defvar completion-at-point-functions-saved nil)
-  :config
-  (global-company-mode 1)
-  ;; (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
-  ;; (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
-  ;; (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
-  ;; (define-key company-active-map (kbd "<backtab>") 'company-select-previous)
-  (define-key company-active-map (kbd "<down>") 'company-complete-common-or-cycle)
-  (define-key company-active-map (kbd "<up>") 'company-select-previous)
-  (define-key company-active-map (kbd "<tab>") 'company-complete-selection)
-  (define-key company-active-map (kbd "C-n") 'company-complete-common-or-cycle)
-  (define-key company-active-map (kbd "C-p") 'company-select-previous)
-  (define-key company-active-map (kbd "<tab>") 'company-complete-selection)
-  (define-key company-active-map (kbd "<right>") 'company-complete-selection)
-  (define-key company-active-map (kbd "TAB") 'company-complete-selection)
-  (define-key company-active-map (kbd "S-TAB") 'company-abort)
-  (define-key company-active-map (kbd "<backtab>") 'company-abort)
-  (define-key company-active-map (kbd "ESC") 'company-abort)
+;; (use-package company
+;;   :ensure t
+;;   :init
+;;   (setq company-minimum-prefix-length 3)
+;;   (setq company-auto-complete nil)
+;;   (setq company-idle-delay 0)
+;;   (setq company-require-match 'never)
+;;   (setq company-frontends
+;;	'(company-pseudo-tooltip-unless-just-one-frontend
+;;	  company-preview-frontend
+;;	  company-echo-metadata-frontend))
+;;   (setq tab-always-indent 'complete)
+;;   (defvar completion-at-point-functions-saved nil)
+;;   :config
+;;   (global-company-mode 1)
+;;   ;; (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
+;;   ;; (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
+;;   ;; (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
+;;   ;; (define-key company-active-map (kbd "<backtab>") 'company-select-previous)
+;;   (define-key company-active-map (kbd "<down>") 'company-complete-common-or-cycle)
+;;   (define-key company-active-map (kbd "<up>") 'company-select-previous)
+;;   (define-key company-active-map (kbd "<tab>") 'company-complete-selection)
+;;   (define-key company-active-map (kbd "C-n") 'company-complete-common-or-cycle)
+;;   (define-key company-active-map (kbd "C-p") 'company-select-previous)
+;;   (define-key company-active-map (kbd "<tab>") 'company-complete-selection)
+;;   (define-key company-active-map (kbd "<right>") 'company-complete-selection)
+;;   (define-key company-active-map (kbd "TAB") 'company-complete-selection)
+;;   (define-key company-active-map (kbd "S-TAB") 'company-abort)
+;;   (define-key company-active-map (kbd "<backtab>") 'company-abort)
+;;   (define-key company-active-map (kbd "ESC") 'company-abort)
 
-  ;; prevent company from completing on its own when we type regular characters
-  ;; ("SPC" . company--my-insert-spc)
-  ;; ("."   . company--my-insert-dot)
+;;   ;; prevent company from completing on its own when we type regular characters
+;;   ;; ("SPC" . company--my-insert-spc)
+;;   ;; ("."   . company--my-insert-dot)
 
-  (define-key company-mode-map [remap indent-for-tab-command] 'company-indent-for-tab-command)
-  (defun company-indent-for-tab-command (&optional arg)
-    (interactive "P")
-    (let ((completion-at-point-functions-saved completion-at-point-functions)
-	  (completion-at-point-functions '(company-complete-common-wrapper)))
-      (indent-for-tab-command arg)))
+;;   (define-key company-mode-map [remap indent-for-tab-command] 'company-indent-for-tab-command)
+;;   (defun company-indent-for-tab-command (&optional arg)
+;;     (interactive "P")
+;;     (let ((completion-at-point-functions-saved completion-at-point-functions)
+;;	  (completion-at-point-functions '(company-complete-common-wrapper)))
+;;       (indent-for-tab-command arg)))
 
-(defun company-complete-common-wrapper ()
-  (let ((completion-at-point-functions completion-at-point-functions-saved))
-    (company-complete-common)))
-)
+;; (defun company-complete-common-wrapper ()
+;;   (let ((completion-at-point-functions completion-at-point-functions-saved))
+;;     (company-complete-common)))
+;; )
 
-(use-package company-lsp
-  :ensure t
-  :defer 2
-  :init
-  (push 'company-lsp company-backends))
+;; (use-package company-lsp
+;;   :ensure t
+;;   :defer 2
+;;   :init
+;;   (push 'company-lsp company-backends))
 
-;; Yet another snippet extension program
-(use-package yasnippet
-  :ensure t
-  :diminish yas-minor-mode
-  :config
-    (yas-global-mode 1)
-    ;; respect the spacing in my snippet declarations
-    (setq yas-indent-line 'fixed)
-)
+;; ;; Yet another snippet extension program
+;; (use-package yasnippet
+;;   :ensure t
+;;   :diminish yas-minor-mode
+;;   :config
+;;     (yas-global-mode 1)
+;;     ;; respect the spacing in my snippet declarations
+;;     (setq yas-indent-line 'fixed)
+;; )
 
-;; Nice “interface” to said program
-(use-package yankpad
-  ;; :if company-mode ;; load & initialise only if company-mode is defined
-  :demand t
-  :ensure t
-  :init
-    ;; Location of templates
-    (setq yankpad-file "~/.emacs.d/yankpad.org")
-    (setq yankpad-category "Category: Default")
-  :config
-    ;; If you want to complete snippets using company-mode
-    ;; (add-to-list 'company-backends #'company-yankpad)
-    ;; If you want to expand snippets with hippie-expand
-    (add-to-list 'hippie-expand-try-functions-list #'yankpad-expand)
-    ;; Load the snippet templates -- useful after yankpad is altered
-    ;; (add-hook 'after-init-hook 'yankpad-reload)
-)
+;; ;; Nice “interface” to said program
+;; (use-package yankpad
+;;   ;; :if company-mode ;; load & initialise only if company-mode is defined
+;;   :demand t
+;;   :ensure t
+;;   :init
+;;     ;; Location of templates
+;;     (setq yankpad-file "~/.emacs.d/yankpad.org")
+;;     (setq yankpad-category "Category: Default")
+;;   :config
+;;     ;; If you want to complete snippets using company-mode
+;;     ;; (add-to-list 'company-backends #'company-yankpad)
+;;     ;; If you want to expand snippets with hippie-expand
+;;     (add-to-list 'hippie-expand-try-functions-list #'yankpad-expand)
+;;     ;; Load the snippet templates -- useful after yankpad is altered
+;;     ;; (add-hook 'after-init-hook 'yankpad-reload)
+;; )
 
-;; Elementary textual completion backend.
-(setq company-backends
-   (add-to-list 'company-backends 'company-dabbrev))
-;;
-;; Add yasnippet support for all company backends
-;; https://emacs.stackexchange.com/a/10520/10352
-;;
-(defvar company-mode/enable-yas t
-  "There can only be one main completition backend, so let's
-   enable yasnippet/yankpad as a secondary for all completion backends.")
+;; ;; Elementary textual completion backend.
+;; (setq company-backends
+;;    (add-to-list 'company-backends 'company-dabbrev))
+;; ;;
+;; ;; Add yasnippet support for all company backends
+;; ;; https://emacs.stackexchange.com/a/10520/10352
+;; ;;
+;; (defvar company-mode/enable-yas t
+;;   "There can only be one main completition backend, so let's
+;;    enable yasnippet/yankpad as a secondary for all completion backends.")
 
-(defun company-mode/backend-with-yas (backend)
-  (if (or (not company-mode/enable-yas)
-	  (and (listp backend) (member 'company-yankpad backend)))
-      backend
-    (append (if (consp backend) backend (list backend))
-	    '(:with company-yankpad))))
+;; (defun company-mode/backend-with-yas (backend)
+;;   (if (or (not company-mode/enable-yas)
+;;	  (and (listp backend) (member 'company-yankpad backend)))
+;;       backend
+;;     (append (if (consp backend) backend (list backend))
+;;	    '(:with company-yankpad))))
 
-(setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
+;; (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
 
 ;; Powerline
 (use-package spaceline
@@ -622,11 +624,70 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
   :config
   (add-hook 'js2-mode 'display-line-numbers-mode)
+  (setq js2-mode-show-parse-errors nil)
+  (setq js2-mode-show-strict-warnings nil)
   )
 
 (use-package tern
   :ensure t
   :defer 2)
+
+;; flymake
+(define-fringe-bitmap 'flymake-fringe-bitmap-ball
+    (vector #b00000000
+	    #b00000000
+	    #b00000000
+	    #b00000000
+	    #b00000000
+	    #b00111000
+	    #b01111100
+	    #b11111110
+	    #b11111110
+	    #b01111100
+	    #b00111000
+	    #b00000000
+	    #b00000000
+	    #b00000000
+	    #b00000000
+	    #b00000000
+	    #b00000000))
+
+(define-fringe-bitmap 'flymake-fringe-bitmap-ball-medium
+    (vector #b00000000
+	    #b00000000
+	    #b00000000
+	    #b00000000
+	    #b00000000
+	    #b00000000
+	    #b00111000
+	    #b01111100
+	    #b01111100
+	    #b00111000
+	    #b00000000
+	    #b00000000
+	    #b00000000
+	    #b00000000
+	    #b00000000
+	    #b00000000
+	    #b00000000))
+
+(custom-set-variables '(flymake-error-bitmap '(flymake-fringe-bitmap-ball-medium compilation-error)))
+(custom-set-variables '(flymake-warning-bitmap '(flymake-fringe-bitmap-ball-medium compilation-warning)))
+
+(use-package flymake-diagnostic-at-point
+  :ensure t
+  :after flymake
+  :config
+  (add-hook 'flymake-mode-hook #'flymake-diagnostic-at-point-mode))
+
+(use-package flymake-eslint
+  :ensure t
+  :config
+  (setq flymake-diagnostic-at-point-timer-delay 0.3)
+  (add-hook 'js2-mode-hook ; or whatever the mode-hook is for your mode of choice
+	    (lambda ()
+	      (flymake-eslint-enable)))
+ )
 
  ;; Typescript
 ;; (use-package typescript-mode
@@ -695,7 +756,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
  '(custom-safe-themes
    '("7dc3fe8fadb914563790a3fbe587fd455626442f66da333ea4de2c455feefb98" "fa1fa0bc00fc80f5466cfd6b595e4a010d0c1953b7f135fd2658ca93ff8c8a17" "423435c7b0e6c0942f16519fa9e17793da940184a50201a4d932eafe4c94c92d" default))
  '(package-selected-packages
-   '(json-mode org-bullets org ivy undo-tree gnu-elpa-keyring-update esup flyspell-correct-popup page-break-lines counsel doom-themes evil use-package))
+   '(flymake-diagnostic-at-point json-mode org-bullets org ivy undo-tree gnu-elpa-keyring-update esup flyspell-correct-popup page-break-lines counsel doom-themes evil use-package))
  '(spacemacs-theme-custom-colors
    '((head1 . "#b48ead")
      (head2 . "#a7a6d4")
