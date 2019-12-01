@@ -1,3 +1,32 @@
+;; (debug-on-entry 'package-initialize)
+;; heavily insprired by https://blog.jft.rocks/emacs/emacs-from-scratch.html
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+
+;; Minimal UI
+(scroll-bar-mode -1)
+(tool-bar-mode   -1)
+(tooltip-mode    -1)
+(menu-bar-mode   -1)
+
+;; Package configs
+(require 'package)
+(setq package-enable-at-startup nil)
+(setq package-archives '(("org"   . "http://orgmode.org/elpa/")
+			 ("melpa" . "https://melpa.org/packages/")
+			 ("gnu"   . "https://elpa.gnu.org/packages/")
+			 ))
+;; (package-initialize)
+
+;; Bootstrap `use-package`
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+(require 'use-package)
+
+;; for exec path
+;;(when (memq window-system '(mac ns x))
+;;  (exec-path-from-shell-initialize))
+
 ;; Use a hook so the message doesn't get clobbered by other messages.
 (add-hook 'emacs-startup-hook
 	  (lambda ()
@@ -8,20 +37,22 @@
 		     gcs-done)))
 
 
-;; heavily insprired by https://blog.jft.rocks/emacs/emacs-from-scratch.html
-
-;; Minimal UI
-(scroll-bar-mode -1)
-(tool-bar-mode   -1)
-(tooltip-mode    -1)
-(menu-bar-mode   -1)
-
 ;; check this
 ;; (add-to-list 'default-frame-alist '(font . "Inconsolata-dz for Powerline"))
-;; (add-to-list 'default-frame-alist '(font . "Space Mono"))
+;; (add-to-list 'default-frame-alist '(font . ("Inconsolata for Powerline-14")))
+;; (set-face-attribute 'default nil :height 160)
+;; (set-face-bold 'bold nil)
+
+;; Set default font
+(set-face-attribute 'default nil
+		    :family "Inconsolata for Powerline"
+		    :height 180
+		    :weight 'normal
+		    :width 'normal)
+
 
 ;; https://emacs.stackexchange.com/questions/16818/cocoa-emacs-24-5-font-issues-inconsolata-dz
-(add-to-list 'default-frame-alist '(font . "InconsolataDZ for Powerline"))
+;; (add-to-list 'default-frame-alist '(font . "InconsolataDZ for Powerline"))
 (add-to-list 'default-frame-alist '(height . 44))
 (add-to-list 'default-frame-alist '(width . 100))
 
@@ -30,7 +61,7 @@
 ;; collection.  The default is 800 kilobytes.  Measured in bytes.
 (setq gc-cons-threshold (* 50 1000 1000))
 
-(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+
 
 ;; super
 (setq mac-command-modifier 'super
@@ -118,20 +149,11 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (setq show-paren-delay 0)
 (show-paren-mode 1)
 
-;; Package configs
-(require 'package)
-(setq package-enable-at-startup nil)
-(setq package-archives '(("org"   . "http://orgmode.org/elpa/")
-			 ("melpa" . "https://melpa.org/packages/")
-			 ("gnu"   . "https://elpa.gnu.org/packages/")
-			 ))
-(package-initialize)
-
-;; Bootstrap `use-package`
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-(require 'use-package)
+;; environment variables
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize))
 
 
 ;; Defer Packages you don’t need Immediately with Idle Timers
@@ -256,6 +278,22 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ;; "bb"  '(helm-buffers-list :which-key "buffers list")
   "b" '(:ignore t :which-key "buffer")
   "bb" '(ivy-switch-buffer)
+  ;; "h" '(:ignore t :which-key "help")
+
+  ;; describe-
+  "d" '(:ignore t: which-key "describe-(help)")
+  "dv" '(describe-variable :which-key "describe-variable")
+  "df" '(describe-function :which-key "describe-function")
+  "dk" '(describe-key :which-key "describe-key")
+
+  ;; eval-
+  "e" '(:ignore t :which-key "eval-")
+  "eb" '(eval-buffer :which-key "eval-buffer")
+  "ex" '(eval-expression :which-key "eval-expression")
+  "er" '(eval-region :which-key "eval-region")
+
+  "p" '(:ignore t :which-key "projectile")
+  "ps" '(projectile-switch-project :which-key "[s]witch project")
   ;; Window
   "w" '(:ignore t :which-key "windows")
   "wl"  '(windmove-right :which-key "move right")
@@ -304,7 +342,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :init
   (setq projectile-require-project-root nil)
   :config
-  (projectile-mode 1))
+  (projectile-mode 1)
+  (setq projectile-project-search-path '("~/r")))
 
     ;; Integration with `projectile'
     (with-eval-after-load 'projectile
@@ -324,7 +363,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; Flycheck
 (use-package flycheck
   :ensure t
-  :defer 2
+  ;; :defer 2
   :init (global-flycheck-mode))
 
 ;; flycheck - official flycheck-pos-tip
@@ -336,11 +375,11 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; flycheck-popup-tip - https://github.com/flycheck/flycheck-popup-tip
 (use-package flycheck-popup-tip
   :ensure t
-   :defer 2
+   ;; :defer 2
    :init
    (with-eval-after-load 'flycheck '(add-hook 'flycheck-mode-hook 'flycheck-popup-tip-mode)))
 
-(with-eval-after-load 'flycheck (flycheck-popup-tip-mode))
+;; (with-eval-after-load 'flycheck (flycheck-popup-tip-mode))
 
 ;; https://alhassy.github.io/init/
 
@@ -409,15 +448,26 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :ensure t
   :defer 2
   :init
-  (add-hook 'prog-major-mode #'lsp-prog-major-mode-enable))
+  ;; (add-hook 'prog-major-mode #'lsp-prog-major-mode-enable)
+  )
 
 (use-package lsp-ui
   :ensure t
   :defer 2
   :init
-  (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+  (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+  :config
+  ;; (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+  ;; (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
+  (setq lsp-ui-sideline-enable nil
+	lsp-ui-doc-enable nil
+	lsp-ui-flycheck-enable t
+	lsp-prefer-flymake nil
+	lsp-ui-imenu-enable t
+	lsp-ui-sideline-ignore-duplicate t))
 
 ;; Company mode
+
 (use-package company
   :ensure t
   :init
@@ -433,10 +483,26 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (defvar completion-at-point-functions-saved nil)
   :config
   (global-company-mode 1)
-  (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
-  (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
-  (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
-  (define-key company-active-map (kbd "<backtab>") 'company-select-previous)
+  ;; (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
+  ;; (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
+  ;; (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
+  ;; (define-key company-active-map (kbd "<backtab>") 'company-select-previous)
+  (define-key company-active-map (kbd "<down>") 'company-complete-common-or-cycle)
+  (define-key company-active-map (kbd "<up>") 'company-select-previous)
+  (define-key company-active-map (kbd "<tab>") 'company-complete-selection)
+  (define-key company-active-map (kbd "C-n") 'company-complete-common-or-cycle)
+  (define-key company-active-map (kbd "C-p") 'company-select-previous)
+  (define-key company-active-map (kbd "<tab>") 'company-complete-selection)
+  (define-key company-active-map (kbd "<right>") 'company-complete-selection)
+  (define-key company-active-map (kbd "TAB") 'company-complete-selection)
+  (define-key company-active-map (kbd "S-TAB") 'company-abort)
+  (define-key company-active-map (kbd "<backtab>") 'company-abort)
+  (define-key company-active-map (kbd "ESC") 'company-abort)
+
+  ;; prevent company from completing on its own when we type regular characters
+  ;; ("SPC" . company--my-insert-spc)
+  ;; ("."   . company--my-insert-dot)
+
   (define-key company-mode-map [remap indent-for-tab-command] 'company-indent-for-tab-command)
   (defun company-indent-for-tab-command (&optional arg)
     (interactive "P")
@@ -446,7 +512,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 (defun company-complete-common-wrapper ()
   (let ((completion-at-point-functions completion-at-point-functions-saved))
-    (company-complete-common))))
+    (company-complete-common)))
+)
 
 (use-package company-lsp
   :ensure t
@@ -521,7 +588,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;;   :ensure t
 ;;   :commands (nvm-use
 ;;	     nvm-use-for)))
-(setq exec-path (append exec-path '("~/.nvm/versions/node/v12.6.0/bin")))
+;; (setq exec-path (append exec-path '("~/.nvm/versions/node/v12.6.0/bin")))
 
 
 ;; (when (file-exists-p "~/.nvm")
@@ -541,6 +608,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   )
 
 ;; JavaScript
+;; npm i -g typescript typescrypt-language-server
 (use-package js2-mode
   :ensure t
   :defer 2
@@ -561,17 +629,30 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;;   :init
 ;;   (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode)))
 
-(add-hook 'js2-mode-hook 'lsp)
+;; (add-hook 'js2-mode-hook 'lsp)
+;; (add-hook 'css-mode-hook 'lsp)
+
+
+(use-package prettier-js
+  :ensure t
+  :config
+  (add-hook 'js2-mode-hook 'prettier-js-mode)
+  )
+
+(use-package json-mode
+  :ensure t
+  :mode ("\\.json\\'"))
 
 
 (use-package rjsx-mode
   :ensure t
-  :mode
-  (("/\\(containers\\)/[^/]*\\.js" . rjsx-mode)
-   ("/\\(components\\)/[^/]*\\.js" . rjsx-mode)
-   ("\\.jsx\\'" . rjsx-mode))
+  :mode ("/\\(components\\|containers\\|src\\)/.*\\.js[x]?\\'")
+  ;; (("/\\(containers\\)/[^/]*\\.js" . rjsx-mode)
+  ;;  ("/\\(components\\)/[^/]*\\.js" . rjsx-mode)
+  ;;  ("\\.jsx\\'" . rjsx-mode))
   :config
-  (add-to-list 'lsp-language-id-configuration '(rjsx-mode . "javascript")))
+  ;; (add-to-list 'lsp-language-id-configuration '(rjsx-mode . "javascript"))
+  )
 
 ;; ;; Dashboard
 ;; (use-package dashboard
@@ -606,17 +687,14 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   (quote
-    ("7dc3fe8fadb914563790a3fbe587fd455626442f66da333ea4de2c455feefb98" "fa1fa0bc00fc80f5466cfd6b595e4a010d0c1953b7f135fd2658ca93ff8c8a17" "423435c7b0e6c0942f16519fa9e17793da940184a50201a4d932eafe4c94c92d" default)))
+   '("7dc3fe8fadb914563790a3fbe587fd455626442f66da333ea4de2c455feefb98" "fa1fa0bc00fc80f5466cfd6b595e4a010d0c1953b7f135fd2658ca93ff8c8a17" "423435c7b0e6c0942f16519fa9e17793da940184a50201a4d932eafe4c94c92d" default))
  '(package-selected-packages
-   (quote
-    (org-bullets org ivy undo-tree gnu-elpa-keyring-update esup flyspell-correct-popup page-break-lines counsel doom-themes evil use-package)))
+   '(json-mode org-bullets org ivy undo-tree gnu-elpa-keyring-update esup flyspell-correct-popup page-break-lines counsel doom-themes evil use-package))
  '(spacemacs-theme-custom-colors
-   (quote
-    ((head1 . "#b48ead")
+   '((head1 . "#b48ead")
      (head2 . "#a7a6d4")
      (head3 . "#bfebbf")
-     (head4 . "#f0dfaf")))))
+     (head4 . "#f0dfaf"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
