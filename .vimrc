@@ -15,27 +15,31 @@ set incsearch
 set ignorecase
 set smartcase
 
-" obviously
-set ts=2 "tabstop
-set sw=2 "shiftwidth
-set bs=2
-set expandtab
-
+" tabstop shiftwidth expandtab for files
 autocmd FileType html
  \ setlocal shiftwidth=2 |
  \ setlocal tabstop=2
+ \ set expandtab
 autocmd FileType coffee
  \ setlocal shiftwidth=2 |
  \ setlocal tabstop=2
+ \ set expandtab
 autocmd FileType js
  \ setlocal shiftwidth=2 |
  \ setlocal tabstop=2
+ \ set expandtab
+autocmd FileType jsx
+ \ setlocal shiftwidth=2 |
+ \ setlocal tabstop=2
+ \ set expandtab
 autocmd FileType styl
  \ setlocal shiftwidth=2 |
  \ setlocal tabstop=2
+ \ set expandtab
 autocmd FileType py
  \ setlocal shiftwidth=2 |
  \ setlocal tabstop=2
+ \ set expandtab
 
 
 " desert is a pretty good color scheme
@@ -133,3 +137,6 @@ else
     let &t_SI = "\<Esc>]50;CursorShape=1\x7"
     let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 endif
+
+" disable netrwhist
+let g:netrw_dirhistmax=0
