@@ -1,42 +1,61 @@
-# Path to your oh-my-zsh configuration.
-ZSH=$HOME/.oh-my-zsh
+#
+# User configuration sourced by interactive shells
+#
 
-# Path additions
-export PATH=/usr/local/share/npm/bin:/usr/local/bin:/opt/local/bin:/opt/local/sbin:$HOME/bin:$HOME/Library/Haskell/bin:$PATH
-export PATH=/Library/TeX/Root/bin/x86_64-darwin:$PATH
+# Define zim location
+export ZIM_HOME=${ZDOTDIR:-${HOME}}/.zim
 
-# Set name of the theme to load.
-# Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that oh-my-zsh is loaded.
-#ZSH_THEME="robbyrussell"
-#ZSH_THEME="zanshin"
-ZSH_THEME="aussiegeek"
+# Start zim
+[[ -s ${ZIM_HOME}/init.zsh ]] && source ${ZIM_HOME}/init.zsh
 
-# Example aliases
-alias zshconfig="mate ~/.zshrc"
-alias ohmyzsh="mate ~/.oh-my-zsh"
-alias la="ls -al"
+# Zim Git alias prefix set to 'G'
+# https://github.com/zimfw/zimfw/blob/master/modules/git/README.md
+zstyle ':zim:git' aliases-prefix 'G'
 
-# aliases
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias df='df -h'
-alias la='ls -A'
-alias ll='ls -l'
-alias gmail='/Applications/Firefox.app/Contents/MacOS/firefox http://www.gmail.com'
-alias mail='/Applications/Firefox.app/Contents/MacOS/firefox http://mail.lessthan3.com'
+# Lines configured by zsh-newuser-install
+HISTFILE=~/.histfile
+HISTSIZE=1000
+SAVEHIST=1000
+# End of lines configured by zsh-newuser-install
+# The following lines were added by compinstall
+zstyle :compinstall filename '~/.zshrc'
 
-# Git related
+# better history searching w/ arrow keys
+# https://coderwall.com/p/jpj_6q/zsh-better-history-searching-with-arrow-keys
+autoload -U up-line-or-beginning-search
+autoload -U down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey "^[[A" up-line-or-beginning-search # Up
+bindkey "^[[B" down-line-or-beginning-search # Down
+
+# autoload -Uz compinit
+# compinit
+# End of lines added by compinstall
+
+# zsh speed up - https://medium.com/@dannysmith/little-thing-2-speeding-up-zsh-f1860390f92
+autoload -Uz compinit
+for dump in ~/.zcompdump(N.mh+24); do
+  compinit
+done
+compinit -C
+
+# zsh-autosuggestions
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# docker - aliases
+# source ~/.zsh/docker-alias/zshrc
+
+# eliot - git
 alias gs='git status'
 alias gc='git commit -m'
+alias gcam='git commit -am'
 alias ga='git add'
 alias gd='git diff'
 alias gb='git branch'
 alias gl='git log'
 alias gsb='git show-branch'
-alias gco='git checkout'
+alias go='git checkout'
 alias gg='git grep'
 alias gk='gitk --all'
 alias gr='git rebase'
@@ -44,127 +63,54 @@ alias gri='git rebase --interactive'
 alias gcp='git cherry-pick'
 alias grm='git rm'
 
-unalias run-help
-autoload run-help
-HELPDIR=/usr/local/share/zsh/help
+## eliot - docker
+alias d=docker
+alias dps='docker ps'
+alias dl='docker logs'
+alias di='docker images'
+alias dcst='docker container stop $(docker container ls -aq)' # docker stop (all containers)
+alias dcrm='docker container rm $(docker container ls -aq)'
 
-# Set to this to use case-sensitive completion
-# CASE_SENSITIVE="true"
+# eliot functions
 
-# Comment this out to disable weekly auto-update checks
-# DISABLE_AUTO_UPDATE="true"
-
-# Uncomment following line if you want to disable colors in ls
-# DISABLE_LS_COLORS="true"
-
-# Uncomment following line if you want to disable autosetting terminal title.
-# DISABLE_AUTO_TITLE="true"
-
-# Uncomment following line if you want red dots to be displayed while waiting for completion
-# COMPLETION_WAITING_DOTS="true"
-
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git rails ruby zshmarks)
-
-source $ZSH/oh-my-zsh.sh
-
-# Customize to your needs...
-
-### Added by the Heroku Toolbelt
-export PATH="/usr/local/heroku/bin:$PATH"
-
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
-
-function collapse_pwd {
-    echo $(pwd | sed -e "s,^$HOME,~,")
+# mkdir & cd - https://unix.stackexchange.com/questions/125385/combined-mkdir-and-cd
+cdd ()
+{
+    mkdir -p -- "$1" &&
+      cd -P -- "$1"
 }
 
-function prompt_char {
-    git branch >/dev/null 2>/dev/null && echo '±' && return
-    hg root >/dev/null 2>/dev/null && echo '☿' && return
-    echo '○'
-}
 
-function battery_charge {
-    echo `$BAT_CHARGE` 2>/dev/null
-}
+# docker autocomplete - https://medium.com/@MicoDer/docker-zsh-autocomplete-and-denter-on-macos-easy-tutorial-630c46836652
 
-function virtualenv_info {
-    [ $VIRTUAL_ENV ] && echo '('`basename $VIRTUAL_ENV`') '
-}
+ZSHRC_LOCAL=.zshrc.local
+if [ -f ${ZSHRC_LOCAL} ]; then
+   source ${ZSHRC_LOCAL}
+fi
 
-function hg_prompt_info {
-    hg prompt --angle-brackets "\
-< on %{$fg[magenta]%}<branch>%{$reset_color%}>\
-< at %{$fg[yellow]%}<tags|%{$reset_color%}, %{$fg[yellow]%}>%{$reset_color%}>\
-%{$fg[green]%}<status|modified|unknown><update>%{$reset_color%}<
-patches: <patches|join( → )|pre_applied(%{$fg[yellow]%})|post_applied(%{$reset_color%})|pre_unapplied(%{$fg_bold[black]%})|post_unapplied(%{$reset_color%})>>" 2>/dev/null
-}
+# nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-PROMPT='
-%{$fg[magenta]%}%n%{$reset_color%} at %{$fg[yellow]%}%m%{$reset_color%} in %{$fg_bold[green]%}$(collapse_pwd)%{$reset_color%}$(hg_prompt_info)$(git_prompt_info)
-$(virtualenv_info)$(prompt_char) '
+# place this after nvm initialization!
+autoload -U add-zsh-hook
+load-nvmrc() {
+  local node_version="$(nvm version)"
+  local nvmrc_path="$(nvm_find_nvmrc)"
 
-RPROMPT='$(battery_charge)'
+  if [ -n "$nvmrc_path" ]; then
+    local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
 
-ZSH_THEME_GIT_PROMPT_PREFIX=" on %{$fg[magenta]%}"
-ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[green]%}!"
-ZSH_THEME_GIT_PROMPT_UNTRACKED="%{$fg[green]%}?"
-ZSH_THEME_GIT_PROMPT_CLEAN=""
-
-setopt no_share_history
-
-# peak into global history
-function peek-history () {
-        zle set-local-history
-        zle up-history
-        zle set-local-history
-}
-zle -N peek-history
-bindkey "^[Oa" peak-history
-
-# git autocomplete speed up
-__git_files () { 
-    _wanted files expl 'local files' _files     
-}
-
-# cd bookmarks 
-# http://blog.angeloff.name/post/2010/08/29/cd-with-bookmarks-and-auto-completion-for-zsh/
-ZSH_BOOKMARKS="$HOME/.zshbookmarks"
- 
-function cdb_edit() {
-  $EDITOR "$ZSH_BOOKMARKS"
-}
- 
-function cdb() {
-  local index
-  local entry
-  index=0
-  for entry in $(echo "$1" | tr '/' '\n'); do
-    if [[ $index == "0" ]]; then
-      local CD
-      CD=$(egrep "^$entry\\s" "$ZSH_BOOKMARKS" | sed "s#^$entry\\s\+##")
-      if [ -z "$CD" ]; then
-        echo "$0: no such bookmark: $entry"
-        break
-      else
-        cd "$CD"
-      fi
-    else
-      cd "$entry"
-      if [ "$?" -ne "0" ]; then
-        break
-      fi
+    if [ "$nvmrc_node_version" = "N/A" ]; then
+      nvm install
+    elif [ "$nvmrc_node_version" != "$node_version" ]; then
+      nvm use
     fi
-    let "index++"
-  done
+  elif [ "$node_version" != "$(nvm version default)" ]; then
+    echo "Reverting to nvm default version"
+    nvm use default
+  fi
 }
- 
-function _cdb() {
-  reply=(`cat "$ZSH_BOOKMARKS" | sed -e 's#^\(.*\)\s.*$#\1#g'`)
-}
- 
-compctl -K _cdb cdb
+add-zsh-hook chpwd load-nvmrc
+load-nvmrc
