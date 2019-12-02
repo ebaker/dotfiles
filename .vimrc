@@ -15,27 +15,31 @@ set incsearch
 set ignorecase
 set smartcase
 
-" obviously
-set ts=2 "tabstop
-set sw=2 "shiftwidth
-set bs=2
-set expandtab
-
+" tabstop shiftwidth expandtab for files
 autocmd FileType html
  \ setlocal shiftwidth=2 |
  \ setlocal tabstop=2
+ \ set expandtab
 autocmd FileType coffee
  \ setlocal shiftwidth=2 |
  \ setlocal tabstop=2
+ \ set expandtab
 autocmd FileType js
  \ setlocal shiftwidth=2 |
  \ setlocal tabstop=2
+ \ set expandtab
+autocmd FileType jsx
+ \ setlocal shiftwidth=2 |
+ \ setlocal tabstop=2
+ \ set expandtab
 autocmd FileType styl
  \ setlocal shiftwidth=2 |
  \ setlocal tabstop=2
+ \ set expandtab
 autocmd FileType py
  \ setlocal shiftwidth=2 |
  \ setlocal tabstop=2
+ \ set expandtab
 
 
 " desert is a pretty good color scheme
