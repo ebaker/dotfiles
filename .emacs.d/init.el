@@ -1,6 +1,7 @@
 ;; (debug-on-entry 'package-initialize)
 ;; heavily insprired by https://blog.jft.rocks/emacs/emacs-from-scratch.html
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+(global-eldoc-mode -1)
 
 ;; Minimal UI
 (scroll-bar-mode -1)
@@ -392,10 +393,13 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; ;; (with-eval-after-load 'flycheck (flycheck-popup-tip-mode))
 
 
-;; ;; (use-package diminish)
+;; eldoc diminish working
+;; (use-package diminish :ensure t
+;;   :config
+;;   (eval-after-load "eldoc" '(diminish 'eldoc-mode)))
 
 ;; ;; ;; Let's hide some markers.
-;; ;; (diminish 'eldoc-mode)
+
 ;; ;; (diminish 'org-indent-mode)
 ;; ;; (diminish 'subword-mode)
 
@@ -445,65 +449,74 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;;  '(org-done ((t (:foreground "#A2FF38" :weight bold))))
 ;;  '(org-todo ((t (:foreground "#ff39a3" :weight bold)))))
 
-;; ;; LSP
-;; (use-package lsp-mode
-;;   :ensure t
-;;   :defer 2
-;;   :init
-;;   ;; (add-hook 'prog-major-mode #'lsp-prog-major-mode-enable)
-;;   )
+;; LSP
+(use-package lsp-mode
+  :ensure t
+  :init
+  (setq lsp-prefer-flymake t
+	lsp-ui-flycheck-enable nil
+	)
+  :config
+  (add-hook 'prog-major-mode #'lsp-prog-major-mode-enable)
+  (custom-set-variables '(lsp-eldoc-hook nil))
+  )
 
-;; (use-package lsp-ui
-;;   :ensure t
-;;   :defer 2
-;;   :init
-;;   (add-hook 'lsp-mode-hook 'lsp-ui-mode)
-;;   :config
-;;   ;; (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
-;;   ;; (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
-;;   (setq lsp-ui-sideline-enable nil
-;;	lsp-ui-doc-enable nil
-;;	lsp-ui-flycheck-enable t
-;;	lsp-prefer-flymake nil
-;;	lsp-ui-imenu-enable t
-;;	lsp-ui-sideline-ignore-duplicate t))
+(use-package lsp-ui
+  :ensure t
+  :init
+  (setq lsp-ui-sideline-enable nil
+	lsp-ui-doc-enable nil
+	lsp-ui-flycheck-enable nil
+	;; lsp-prefer-flymake nil
+	lsp-ui-imenu-enable nil
+	lsp-ui-sideline-ignore-duplicate t)
 
-;; ;; Company mode
 
-;; (use-package company
-;;   :ensure t
-;;   :init
-;;   (setq company-minimum-prefix-length 3)
-;;   (setq company-auto-complete nil)
-;;   (setq company-idle-delay 0)
-;;   (setq company-require-match 'never)
-;;   (setq company-frontends
-;;	'(company-pseudo-tooltip-unless-just-one-frontend
-;;	  company-preview-frontend
-;;	  company-echo-metadata-frontend))
-;;   (setq tab-always-indent 'complete)
-;;   (defvar completion-at-point-functions-saved nil)
-;;   :config
-;;   (global-company-mode 1)
-;;   ;; (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
-;;   ;; (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
-;;   ;; (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
-;;   ;; (define-key company-active-map (kbd "<backtab>") 'company-select-previous)
-;;   (define-key company-active-map (kbd "<down>") 'company-complete-common-or-cycle)
-;;   (define-key company-active-map (kbd "<up>") 'company-select-previous)
-;;   (define-key company-active-map (kbd "<tab>") 'company-complete-selection)
-;;   (define-key company-active-map (kbd "C-n") 'company-complete-common-or-cycle)
-;;   (define-key company-active-map (kbd "C-p") 'company-select-previous)
-;;   (define-key company-active-map (kbd "<tab>") 'company-complete-selection)
-;;   (define-key company-active-map (kbd "<right>") 'company-complete-selection)
-;;   (define-key company-active-map (kbd "TAB") 'company-complete-selection)
-;;   (define-key company-active-map (kbd "S-TAB") 'company-abort)
-;;   (define-key company-active-map (kbd "<backtab>") 'company-abort)
-;;   (define-key company-active-map (kbd "ESC") 'company-abort)
+  :config
+  (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+  ;; (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+  ;; (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
+  )
 
-;;   ;; prevent company from completing on its own when we type regular characters
-;;   ;; ("SPC" . company--my-insert-spc)
-;;   ;; ("."   . company--my-insert-dot)
+;; Company mode
+
+(use-package company
+  :ensure t
+  :init
+  (setq company-minimum-prefix-length 2)
+  ;; (setq company-auto-complete nil)
+  ;; (setq company-idle-delay 0)
+  ;; (setq company-require-match 'never)
+  ;; (setq company-frontends
+  ;;	'(
+  ;;	  ;; company-pseudo-tooltip-unless-just-one-frontend
+  ;;	  company-preview-frontend
+  ;;	  ;; company-echo-metadata-frontend
+  ;;	  )
+  ;;	)
+  ;; (setq tab-always-indent 'complete)
+  ;; (defvar completion-at-point-functions-saved nil)
+  :config
+  (global-company-mode 1)
+  ;; (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
+  ;; (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
+  ;; (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
+  ;; (define-key company-active-map (kbd "<backtab>") 'company-select-previous)
+  (define-key company-active-map (kbd "<down>") 'company-complete-common-or-cycle)
+  (define-key company-active-map (kbd "<up>") 'company-select-previous)
+  (define-key company-active-map (kbd "<tab>") 'company-complete-selection)
+  (define-key company-active-map (kbd "C-n") 'company-complete-common-or-cycle)
+  (define-key company-active-map (kbd "C-p") 'company-select-previous)
+  (define-key company-active-map (kbd "<tab>") 'company-complete-selection)
+  (define-key company-active-map (kbd "<right>") 'company-complete-selection)
+  (define-key company-active-map (kbd "TAB") 'company-complete-selection)
+  (define-key company-active-map (kbd "S-TAB") 'company-abort)
+  (define-key company-active-map (kbd "<backtab>") 'company-abort)
+  (define-key company-active-map (kbd "ESC") 'company-abort)
+
+  ;; prevent company from completing on its own when we type regular characters
+  ;; ("SPC" . company--my-insert-spc)
+  ;; ("."   . company--my-insert-dot)
 
 ;;   (define-key company-mode-map [remap indent-for-tab-command] 'company-indent-for-tab-command)
 ;;   (defun company-indent-for-tab-command (&optional arg)
@@ -515,13 +528,30 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; (defun company-complete-common-wrapper ()
 ;;   (let ((completion-at-point-functions completion-at-point-functions-saved))
 ;;     (company-complete-common)))
-;; )
+)
 
-;; (use-package company-lsp
+
+;; (use-package company-box
 ;;   :ensure t
-;;   :defer 2
-;;   :init
-;;   (push 'company-lsp company-backends))
+;;   :hook (company-mode . company-box-mode))
+;; (use-package company-posframe
+;;   :ensure t
+;;   :config (company-posframe-mode 1))
+
+
+(use-package delight
+  :ensure t
+  :config
+  (delight '((eldoc-mode nil "eldoc"))))
+
+;; (use-package eldoc-box
+  ;; :ensure t)
+
+(use-package company-lsp
+  :ensure t
+  ;; :defer 2
+  :init
+  (push 'company-lsp company-backends))
 
 ;; ;; Yet another snippet extension program
 ;; (use-package yasnippet
@@ -551,9 +581,9 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;;     ;; (add-hook 'after-init-hook 'yankpad-reload)
 ;; )
 
-;; ;; Elementary textual completion backend.
-;; (setq company-backends
-;;    (add-to-list 'company-backends 'company-dabbrev))
+;;; Elementary textual completion backend.
+(setq company-backends
+   (add-to-list 'company-backends 'company-dabbrev))
 ;; ;;
 ;; ;; Add yasnippet support for all company backends
 ;; ;; https://emacs.stackexchange.com/a/10520/10352
@@ -615,6 +645,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (add-hook 'emacs-lisp-mode-hook 'display-line-numbers-mode)
   )
 
+(add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
+
 ;; JavaScript
 ;; npm i -g typescript typescrypt-language-server
 (use-package js2-mode
@@ -626,13 +658,25 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (add-hook 'js2-mode 'display-line-numbers-mode)
   (setq js2-mode-show-parse-errors nil)
   (setq js2-mode-show-strict-warnings nil)
+
   )
+
+(add-hook 'js2-mode
+	  (lambda ()
+	    (setq-local eldoc-documentation-function #'ignore)))
 
 (use-package tern
   :ensure t
-  :defer 2)
+  )
+
+;; (use-package company-tern
+;;   :ensure t
+;;   :config
+
+;; (add-to-list 'company-backends 'company-tern))
 
 ;; flymake
+;; https://emacs.stackexchange.com/questions/36363/how-to-change-flycheck-symbol-like-spacemacs
 (define-fringe-bitmap 'flymake-fringe-bitmap-ball
     (vector #b00000000
 	    #b00000000
@@ -671,8 +715,24 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 	    #b00000000
 	    #b00000000))
 
-(custom-set-variables '(flymake-error-bitmap '(flymake-fringe-bitmap-ball-medium compilation-error)))
-(custom-set-variables '(flymake-warning-bitmap '(flymake-fringe-bitmap-ball-medium compilation-warning)))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("7dc3fe8fadb914563790a3fbe587fd455626442f66da333ea4de2c455feefb98" "fa1fa0bc00fc80f5466cfd6b595e4a010d0c1953b7f135fd2658ca93ff8c8a17" "423435c7b0e6c0942f16519fa9e17793da940184a50201a4d932eafe4c94c92d" default))
+ '(flymake-error-bitmap '(flymake-fringe-bitmap-ball-medium compilation-error))
+ '(flymake-warning-bitmap '(flymake-fringe-bitmap-ball-medium compilation-warning))
+ '(lsp-eldoc-hook nil)
+ '(package-selected-packages
+   '(company-quickhelp company-tern company-posframe company-posfram diminish delight eldoc-box company-box flymake-diagnostic-at-point json-mode org-bullets org ivy undo-tree gnu-elpa-keyring-update esup flyspell-correct-popup page-break-lines counsel doom-themes evil use-package))
+ '(spacemacs-theme-custom-colors
+   '((head1 . "#b48ead")
+     (head2 . "#a7a6d4")
+     (head3 . "#bfebbf")
+     (head4 . "#f0dfaf"))))
+
 
 (use-package flymake-diagnostic-at-point
   :ensure t
@@ -689,6 +749,10 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 	      (flymake-eslint-enable)))
  )
 
+;; (use-package eglot
+;;   :ensure t
+;;   )
+
  ;; Typescript
 ;; (use-package typescript-mode
 ;;   :ensure t
@@ -696,7 +760,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;;   :init
 ;;   (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode)))
 
-;; (add-hook 'js2-mode-hook 'lsp)
+(add-hook 'js2-mode-hook 'lsp)
 ;; (add-hook 'css-mode-hook 'lsp)
 
 
@@ -717,7 +781,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ;; (("/\\(containers\\)/[^/]*\\.js" . rjsx-mode)
   ;;  ("/\\(components\\)/[^/]*\\.js" . rjsx-mode)
   ;;  ("\\.jsx\\'" . rjsx-mode))
-  :config
+  ;; :config
   ;; (add-to-list 'lsp-language-id-configuration '(rjsx-mode . "javascript"))
   )
 
@@ -748,20 +812,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
 
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("7dc3fe8fadb914563790a3fbe587fd455626442f66da333ea4de2c455feefb98" "fa1fa0bc00fc80f5466cfd6b595e4a010d0c1953b7f135fd2658ca93ff8c8a17" "423435c7b0e6c0942f16519fa9e17793da940184a50201a4d932eafe4c94c92d" default))
- '(package-selected-packages
-   '(flymake-diagnostic-at-point json-mode org-bullets org ivy undo-tree gnu-elpa-keyring-update esup flyspell-correct-popup page-break-lines counsel doom-themes evil use-package))
- '(spacemacs-theme-custom-colors
-   '((head1 . "#b48ead")
-     (head2 . "#a7a6d4")
-     (head3 . "#bfebbf")
-     (head4 . "#f0dfaf"))))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -773,3 +824,4 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
+(global-eldoc-mode -1)
