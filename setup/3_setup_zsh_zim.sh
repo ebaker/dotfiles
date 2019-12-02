@@ -11,4 +11,9 @@ find $HOME -maxdepth 1 -name .zimrc -exec mv {} {}.bak \;
 find $HOME -maxdepth 1 -name .zim -exec mv {} {}.bak \;
 
 # setup zsh & zim symlinks
-find $DOTFILES_DIR/zsh-zim -name .z\* -exec ln -vs "{}" $HOME ';'
+ln -vs $DOTFILES_DIR/.zsh $HOME/.zsh
+ln -vs $DOTFILES_DIR/.zshrc $HOME/.zshrc
+ln -vs $DOTFILES_DIR/.zshrc.local $HOME/.zshrc.local
+ln -vs $DOTFILES_DIR/.zlogin $HOME/.zlogin
+ln -vs $DOTFILES_DIR/.zimrc $HOME/.zimrc
+ln -vs $DOTFILES_DIR/.zim $HOME/.zim
