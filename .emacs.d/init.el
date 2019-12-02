@@ -1,7 +1,7 @@
-;; (debug-on-entry 'package-initialize)
-;; heavily insprired by https://blog.jft.rocks/emacs/emacs-from-scratch.html
+;; bug fix gnutls
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
-(global-eldoc-mode -1)
+
+;; heavily insprired by https://blog.jft.rocks/emacs/emacs-from-scratch.html
 
 ;; Minimal UI
 (scroll-bar-mode -1)
@@ -24,10 +24,6 @@
   (package-install 'use-package))
 (require 'use-package)
 
-;; for exec path
-;;(when (memq window-system '(mac ns x))
-;;  (exec-path-from-shell-initialize))
-
 ;; Use a hook so the message doesn't get clobbered by other messages.
 (add-hook 'emacs-startup-hook
 	  (lambda ()
@@ -37,13 +33,6 @@
 			      (time-subtract after-init-time before-init-time)))
 		     gcs-done)))
 
-
-;; check this
-;; (add-to-list 'default-frame-alist '(font . "Inconsolata-dz for Powerline"))
-;; (add-to-list 'default-frame-alist '(font . ("Inconsolata for Powerline-14")))
-;; (set-face-attribute 'default nil :height 160)
-;; (set-face-bold 'bold nil)
-
 ;; Set default font
 (set-face-attribute 'default nil
 		    :family "Inconsolata for Powerline"
@@ -51,9 +40,7 @@
 		    :weight 'normal
 		    :width 'normal)
 
-
 ;; https://emacs.stackexchange.com/questions/16818/cocoa-emacs-24-5-font-issues-inconsolata-dz
-;; (add-to-list 'default-frame-alist '(font . "InconsolataDZ for Powerline"))
 (add-to-list 'default-frame-alist '(height . 44))
 (add-to-list 'default-frame-alist '(width . 100))
 
@@ -62,16 +49,33 @@
 ;; collection.  The default is 800 kilobytes.  Measured in bytes.
 (setq gc-cons-threshold (* 50 1000 1000))
 
+;;
+;; emacs setup
+;;
 
+;; Garbage-collect on focus-out, Emacs /should/ feel snappier.
+(add-hook 'focus-out-hook #'garbage-collect)
 
-;; super
+;; super & meta on mac
 (setq mac-command-modifier 'super
-      mac-option-modifier  'meta
-      )
+      mac-option-modifier  'meta)
 
-;; exit emacs y-n
-(setq confirm-kill-emacs 'y-or-n-p)
+;; emacs config hotkey
+(defun find-config ()
+  "Edit init.el"
+  (interactive)
+  (find-file "~/.emacs.d/init.el"))
 
+;; custom.el
+(setq custom-file (make-temp-file "emacs-custom"))
+(setq-default custom-file (expand-file-name ".custom.el" user-emacs-directory))
+(when (file-exists-p custom-file)
+  (load custom-file))
+
+;; make confirmation prompts shorter
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+;; save buffers only once on quit
 ;; https://emacs.stackexchange.com/questions/13662/a-confirmation-after-c-x-c-c-before-exiting-emacs
 (defun my-save-buffers-kill-emacs (&optional arg)
   "Offer to save each buffer(once only), then kill this Emacs process.
@@ -96,24 +100,26 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
        (funcall confirm-kill-emacs "Really exit Emacs? "))
        (kill-emacs)))
 
-(global-set-key (kbd "C-x C-c") 'my-save-buffers-kill-emacs)
-
+;; load-path
 (push "~/.emacs.d/elisp/" load-path)
 
 
 ;; @ebaker - comment-or-uncomment-region-or-line
 (require 'comment-or-uncomment-region-or-line)
 
-;; @ebaker - global custom hotkeys
+;; @ebaker - global super custom hotkeys
 (global-set-key (kbd "s-/") 'comment-or-uncomment-region-or-line)
+(global-set-key (kbd "s-'") 'indent-region)
 (global-set-key (kbd "s-o") 'other-window)
 (global-set-key (kbd "s-0") 'delete-window)
 (global-set-key (kbd "s-1") 'delete-other-windows)
 (global-set-key (kbd "s-2") 'split-window-below)
 (global-set-key (kbd "s-3") 'split-window-right)
-(global-set-key (kbd "s-b") 'helm-buffers-list)
+(global-set-key (kbd "s-b") 'ido-switch-buffer)
 (global-set-key (kbd "s-k") 'ido-kill-buffer)
 (global-set-key (kbd "s-a") 'org-agenda)
+(global-set-key (kbd "C-x i") 'find-config)
+(global-set-key (kbd "C-x C-c") 'my-save-buffers-kill-emacs)
 
 ;; @ebaker - remove keybinding eyebrowse
 (assq-delete-all 'eyebrowse-mode minor-mode-map-alist)
@@ -133,12 +139,17 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (setq sentence-end-double-space nil)	; sentence SHOULD end with only a point.
 ;; (setq default-fill-column 140)		; toggle wrapping text at the 80th character
 (setq initial-scratch-message "") ; print a default message in the empty scratch buffer opened at startup
-
-;; line numbers
-;; (global-display-line-numbers-mode)
+;; (setq custom-file (make-temp-file "emacs-custom")) ; custom.el - don't persist changes
 
 ;; https://emacs.stackexchange.com/questions/28736/emacs-pointcursor-movement-lag/28746
 (setq auto-window-vscroll nil)
+
+;; Make it very easy to see the line with the cursor.
+(global-hl-line-mode t)
+
+;; Clean up any accidental trailing whitespace and in other places,
+;; upon save.
+(add-hook 'before-save-hook 'whitespace-cleanup)
 
 ;; remembers minibuffer history between sessions
 (save-place-mode t)
@@ -161,10 +172,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (use-package recentf
   ;; Loads after 1 second of idle time.
   :defer 1)
-
-(use-package uniquify
-  ;; Less important than recentf.
-  :defer 2)
 
 (defun ebaker/emacsify-evil-mode ()
   "Remove Evil Normal state bindings and add some Emacs bindings in Evil Normal state."
@@ -227,9 +234,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :defer 1
   :config
   (add-hook 'org-agenda-mode-hook #'ebaker/evilify-org-agenda-mode)
-
-  (require 'eliot-org)
-  )
+  (require 'eliot-org))
 
 ;; ore pretty bullets
 (use-package org-bullets
@@ -237,6 +242,17 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :defer 2
   :after (org)
   :hook (org-mode . org-bullets-mode))
+
+
+;; (global-font-lock-mode t)
+;; (custom-set-faces
+;;  ;; custom-set-faces was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  '(org-done ((t (:foreground "#A2FF38" :weight bold))))
+;;  '(org-todo ((t (:foreground "#ff39a3" :weight bold)))))
+
 
 ;; Theme
 (use-package doom-themes
@@ -250,8 +266,13 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :defer 1
   :config
   (setq ivy-use-virtual-buffers t
-	ivy-count-format "%d/%d ")
+	ivy-count-format "%d/%d "
+	ivy-initial-inputs-alist nil)
   (ivy-mode 1))
+
+(use-package counsel
+  :ensure t
+  :bind (("M-x" . counsel-M-x)))
 
 ;; Which Key
 (use-package which-key
@@ -263,6 +284,18 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :config
   (which-key-mode 1))
 
+;; undo-tree
+(use-package undo-tree
+  :ensure t
+  :diminish undo-tree-mode:
+  ;; :config
+  ;; (global-undo-tree-mode 1)
+  )
+
+(use-package expand-region
+  :ensure t
+  :bind ("C-=" . er/expand-region))
+
 ;; Custom keybinding
 (use-package general
   :ensure t
@@ -271,18 +304,19 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :states '(normal visual insert emacs)
   :prefix "SPC"
   :non-normal-prefix "M-SPC"
-  ;; "/"   '(counsel-rg :which-key "ripgrep") ; You'll need counsel package for this
+  "/"   '(counsel-ag :which-key "ag") ; You'll need counsel package for this
   "TAB" '(switch-to-prev-buffer :which-key "previous buffer")
-  ;; "SPC" '(helm-M-x :which-key "M-x")
-  ;; "pf"  '(helm-find-files :which-key "find files")
+  "SPC" '(counsel-M-x :which-key "M-x")
+
   ;; Buffers
-  ;; "bb"  '(helm-buffers-list :which-key "buffers list")
   "b" '(:ignore t :which-key "buffer")
   "bb" '(ivy-switch-buffer)
-  ;; "h" '(:ignore t :which-key "help")
+
+  ;; undo tree
+  "u" '(undo-tree-visualize :which-key u)
 
   ;; describe-
-  "d" '(:ignore t: which-key "describe-(help)")
+  "d" '(:ignore t :which-key "describe-")
   "dv" '(describe-variable :which-key "describe-variable")
   "df" '(describe-function :which-key "describe-function")
   "dk" '(describe-key :which-key "describe-key")
@@ -295,6 +329,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
   "p" '(:ignore t :which-key "projectile")
   "ps" '(projectile-switch-project :which-key "[s]witch project")
+
   ;; Window
   "w" '(:ignore t :which-key "windows")
   "wl"  '(windmove-right :which-key "move right")
@@ -304,6 +339,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   "w3"  '(split-window-right :which-key "split right")
   "w2"  '(split-window-below :which-key "split bottom")
   "wx"  '(delete-window :which-key "delete window")
+
   ;; Others
   "a" '(:ignore t :which-key "applications")
   "at"  '(ansi-term :which-key "open terminal")
@@ -316,30 +352,9 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (setq ns-use-proxy-icon  nil)
 (setq frame-title-format nil)
 
-;; @ebaker - review - very slow
-;; (let ((path (shell-command-to-string ". ~/.zshrc; echo -n $PATH")))
-;;   (setenv "PATH" path)
-;;   (setq exec-path
-;;	(append
-;;	 (split-string-and-unquote path ":")
-;;	 exec-path)))
-
-;; @ebaker - org
-
-
-;; ranger
-;; (use-package ranger
-;;   :ensure t
-;;   :defer 2
-;;   :commands (ranger)
-;;   :bind (("C-x d" . deer))
-;;   :config
-;;   (setq ranger-cleanup-eagerly t))
-
 ;; Projectile
 (use-package projectile
   :ensure t
-  :defer 2
   :init
   (setq projectile-require-project-root nil)
   :config
@@ -357,51 +372,31 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; NeoTree
 (use-package neotree
   :ensure t
-  :defer 2
   :init
   (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 
+;;
+;; Diminish
+;;
 ;; https://alhassy.github.io/init/
-
-;; Make it very easy to see the line with the cursor.
-(global-hl-line-mode t)
-
-;; Clean up any accidental trailing whitespace and in other places,
-;; upon save.
-(add-hook 'before-save-hook 'whitespace-cleanup)
-
-
-;; ;; Flycheck
-;; (use-package flycheck
-;;   :ensure t
-;;   ;; :defer 2
-;;   :init (global-flycheck-mode))
-
-;; ;; flycheck - official flycheck-pos-tip
-;; ;; (use-package flycheck-pos-tip
-;; ;;   :ensure t
-;; ;;   :init (with-eval-after-load 'flycheck
-;; ;;	  (flycheck-pos-tip-mode)))
-
-;; ;; flycheck-popup-tip - https://github.com/flycheck/flycheck-popup-tip
-;; (use-package flycheck-popup-tip
-;;   :ensure t
-;;    ;; :defer 2
-;;    :init
-;;    (with-eval-after-load 'flycheck '(add-hook 'flycheck-mode-hook 'flycheck-popup-tip-mode)))
-
-;; ;; (with-eval-after-load 'flycheck (flycheck-popup-tip-mode))
-
 
 ;; eldoc diminish working
 ;; (use-package diminish :ensure t
 ;;   :config
 ;;   (eval-after-load "eldoc" '(diminish 'eldoc-mode)))
 
-;; ;; ;; Let's hide some markers.
+;; (use-package delight
+;;   :ensure t
+;;   :config
+;;   (delight '((eldoc-mode nil "eldoc"))))
 
+;; ;; ;; Let's hide some markers.
 ;; ;; (diminish 'org-indent-mode)
 ;; ;; (diminish 'subword-mode)
+
+;;
+;; Flyspell
+;;
 
 ;; https://emacs.stackexchange.com/questions/20946/generate-mouse-2-event-from-macbook-trackpad
 (defun my-flyspell-mode-hook ()
@@ -417,7 +412,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   )
 
 (use-package flyspell
-  :defer 2
   :init
   (add-hook 'flyspell-mode-hook 'my-flyspell-mode-hook)
   :hook
@@ -438,64 +432,65 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;;   :init
 ;;   (setq flyspell-correct-interface #'flyspell-correct-popup))
 
-
-
-;; (global-font-lock-mode t)
-;; (custom-set-faces
-;;  ;; custom-set-faces was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  '(org-done ((t (:foreground "#A2FF38" :weight bold))))
-;;  '(org-todo ((t (:foreground "#ff39a3" :weight bold)))))
-
+;;
 ;; LSP
+;;
+;; lsp-mode
 (use-package lsp-mode
   :ensure t
   :init
-  (setq lsp-prefer-flymake t
-	lsp-ui-flycheck-enable nil
-	)
+  (setq lsp-prefer-flymake t)
+  ;; (setq lsp-session-file (concat doom-etc-dir "lsp-session"))
+
+  ;; Don't prompt the user for the project root every time we open a new
+  ;; lsp-worthy file, instead, try to guess it with projectile.
+  (setq lsp-auto-guess-root t)
+  ;; Auto-kill LSP server once you've killed the last buffer associated with its
+  ;; project.
+  (setq lsp-keep-workspace-alive nil)
   :config
   (add-hook 'prog-major-mode #'lsp-prog-major-mode-enable)
   (custom-set-variables '(lsp-eldoc-hook nil))
   )
 
+;; lsp-ui
 (use-package lsp-ui
   :ensure t
   :init
-  (setq lsp-ui-sideline-enable nil
-	lsp-ui-doc-enable nil
-	lsp-ui-flycheck-enable nil
-	;; lsp-prefer-flymake nil
-	lsp-ui-imenu-enable nil
-	lsp-ui-sideline-ignore-duplicate t)
-
-
+  (setq	lsp-ui-flycheck-enable nil
+	;; lsp-ui-sideline-enable nil
+	;; lsp-ui-doc-enable nil
+	;; lsp-ui-imenu-enable nil
+	;; ;; lsp-ui-sideline-ignore-duplicate t
+	;; ;;	lsp-ui-doc-max-height 8
+	;; ;;	lsp-ui-doc-max-width 35
+		)
   :config
   (add-hook 'lsp-mode-hook 'lsp-ui-mode)
   ;; (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
   ;; (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
   )
 
+;;
 ;; Company mode
+;;
 
 (use-package company
   :ensure t
   :init
   (setq company-minimum-prefix-length 2)
-  ;; (setq company-auto-complete nil)
-  ;; (setq company-idle-delay 0)
-  ;; (setq company-require-match 'never)
-  ;; (setq company-frontends
-  ;;	'(
-  ;;	  ;; company-pseudo-tooltip-unless-just-one-frontend
-  ;;	  company-preview-frontend
-  ;;	  ;; company-echo-metadata-frontend
-  ;;	  )
-  ;;	)
-  ;; (setq tab-always-indent 'complete)
-  ;; (defvar completion-at-point-functions-saved nil)
+  (setq company-auto-complete nil)
+  (setq company-idle-delay 0)
+  (setq company-require-match 'never)
+  (setq company-frontends
+	'(
+	  company-pseudo-tooltip-unless-just-one-frontend
+	  company-preview-frontend
+	  company-echo-metadata-frontend
+	  )
+	)
+  (setq tab-always-indent 'complete)
+  (defvar completion-at-point-functions-saved nil)
   :config
   (global-company-mode 1)
   ;; (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
@@ -518,42 +513,52 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ;; ("SPC" . company--my-insert-spc)
   ;; ("."   . company--my-insert-dot)
 
-;;   (define-key company-mode-map [remap indent-for-tab-command] 'company-indent-for-tab-command)
-;;   (defun company-indent-for-tab-command (&optional arg)
-;;     (interactive "P")
-;;     (let ((completion-at-point-functions-saved completion-at-point-functions)
-;;	  (completion-at-point-functions '(company-complete-common-wrapper)))
-;;       (indent-for-tab-command arg)))
+  ;;   (define-key company-mode-map [remap indent-for-tab-command] 'company-indent-for-tab-command)
+  ;;   (defun company-indent-for-tab-command (&optional arg)
+  ;;     (interactive "P")
+  ;;     (let ((completion-at-point-functions-saved completion-at-point-functions)
+  ;;	  (completion-at-point-functions '(company-complete-common-wrapper)))
+  ;;       (indent-for-tab-command arg)))
 
-;; (defun company-complete-common-wrapper ()
-;;   (let ((completion-at-point-functions completion-at-point-functions-saved))
-;;     (company-complete-common)))
-)
+  ;; (defun company-complete-common-wrapper ()
+  ;;   (let ((completion-at-point-functions completion-at-point-functions-saved))
+  ;;     (company-complete-common)))
+  )
 
+;;; Elementary textual completion backend.
+(setq company-backends
+   (add-to-list 'company-backends 'company-dabbrev))
 
+;; Company UI
 ;; (use-package company-box
 ;;   :ensure t
 ;;   :hook (company-mode . company-box-mode))
 ;; (use-package company-posframe
 ;;   :ensure t
 ;;   :config (company-posframe-mode 1))
-
-
-(use-package delight
-  :ensure t
-  :config
-  (delight '((eldoc-mode nil "eldoc"))))
+;; (use-package posframe
+;;   :ensure t)
+;; (use-package company-quickhelp
+;;   :ensure t)
 
 ;; (use-package eldoc-box
-  ;; :ensure t)
+;; :ensure t)
+;; (use-package company-quickhelp
+;;   :ensure t)
 
 (use-package company-lsp
   :ensure t
   ;; :defer 2
   :init
-  (push 'company-lsp company-backends))
+  (push 'company-lsp company-backends)
+  :config
+  (setq company-lsp-cache-candidates 'auto))
 
-;; ;; Yet another snippet extension program
+;;
+;; Snippets
+;;
+
+;; ;; yasnippet - Yet another snippet extension program
 ;; (use-package yasnippet
 ;;   :ensure t
 ;;   :diminish yas-minor-mode
@@ -581,9 +586,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;;     ;; (add-hook 'after-init-hook 'yankpad-reload)
 ;; )
 
-;;; Elementary textual completion backend.
-(setq company-backends
-   (add-to-list 'company-backends 'company-dabbrev))
 ;; ;;
 ;; ;; Add yasnippet support for all company backends
 ;; ;; https://emacs.stackexchange.com/a/10520/10352
@@ -601,7 +603,11 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 ;; (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
 
+;;
 ;; Powerline
+;;
+
+;; spaceline
 (use-package spaceline
   :ensure t
   :init
@@ -621,20 +627,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language Supports ;;
 ;;;;;;;;;;;;;;;;;;;;;;;
-;; (when (file-exists-p "~/.nvm")
-;; (use-package nvm
-;;   :ensure t
-;;   :commands (nvm-use
-;;	     nvm-use-for)))
-;; (setq exec-path (append exec-path '("~/.nvm/versions/node/v12.6.0/bin")))
-
-
-;; (when (file-exists-p "~/.nvm")
-;;   (use-package nvm
-;;     :ensure t
-;;     :defer 5
-;;     :config
-;;     (nvm-use (caar (last (nvm--installed-versions))))))
 
 ;; elisp
 (use-package highlight-defined
@@ -642,8 +634,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :defer 2
   :config
   (add-hook 'emacs-lisp-mode-hook 'highlight-defined-mode)
-  (add-hook 'emacs-lisp-mode-hook 'display-line-numbers-mode)
-  )
+  (add-hook 'emacs-lisp-mode-hook 'display-line-numbers-mode))
 
 (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
 
@@ -657,9 +648,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :config
   (add-hook 'js2-mode 'display-line-numbers-mode)
   (setq js2-mode-show-parse-errors nil)
-  (setq js2-mode-show-strict-warnings nil)
-
-  )
+  (setq js2-mode-show-strict-warnings nil))
 
 (add-hook 'js2-mode
 	  (lambda ()
@@ -672,7 +661,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; (use-package company-tern
 ;;   :ensure t
 ;;   :config
-
 ;; (add-to-list 'company-backends 'company-tern))
 
 ;; flymake
@@ -726,7 +714,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
  '(flymake-warning-bitmap '(flymake-fringe-bitmap-ball-medium compilation-warning))
  '(lsp-eldoc-hook nil)
  '(package-selected-packages
-   '(company-quickhelp company-tern company-posframe company-posfram diminish delight eldoc-box company-box flymake-diagnostic-at-point json-mode org-bullets org ivy undo-tree gnu-elpa-keyring-update esup flyspell-correct-popup page-break-lines counsel doom-themes evil use-package))
+   '(expand-region agressive-indent agressive-indet company-quickhelp company-tern company-posframe company-posfram diminish delight eldoc-box company-box flymake-diagnostic-at-point json-mode org-bullets org ivy undo-tree gnu-elpa-keyring-update esup flyspell-correct-popup page-break-lines counsel doom-themes evil use-package))
  '(spacemacs-theme-custom-colors
    '((head1 . "#b48ead")
      (head2 . "#a7a6d4")
