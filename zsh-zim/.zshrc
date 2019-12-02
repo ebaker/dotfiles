@@ -71,6 +71,15 @@ alias di='docker images'
 alias dcst='docker container stop $(docker container ls -aq)' # docker stop (all containers)
 alias dcrm='docker container rm $(docker container ls -aq)'
 
+# eliot functions
+
+# mkdir & cd - https://unix.stackexchange.com/questions/125385/combined-mkdir-and-cd
+cdd ()
+{
+    mkdir -p -- "$1" &&
+      cd -P -- "$1"
+}
+
 
 # docker autocomplete - https://medium.com/@MicoDer/docker-zsh-autocomplete-and-denter-on-macos-easy-tutorial-630c46836652
 
