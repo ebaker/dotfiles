@@ -407,7 +407,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;;
 
 ;; https://emacs.stackexchange.com/questions/20946/generate-mouse-2-event-from-macbook-trackpad
-(defun my-flyspell-mode-hook ()
+(defun flyspell-mouse-2-macbook ()
   ;; Do things when flyspell enters of leaves flyspell mode.
   ;; Added manually
   ;;
@@ -421,16 +421,14 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 (use-package flyspell
   :init
-  (add-hook 'flyspell-mode-hook 'my-flyspell-mode-hook)
+  (setq ispell-program-name "/usr/local/bin/aspell")
+  (setq ispell-dictionary "en_US") ;; set the default dictionary
+  :config
+  (diminish 'flyspell-mode) ;; Don't show it in the modeline.
   :hook
-  ((text-mode . flyspell-mode))
+  ((text-mode . flyspell-mode)
+   (flyspell-mode . flyspell-mouse-2-macbook)))
 
-  )
-
-(setq ispell-program-name "/usr/local/bin/aspell")
-(setq ispell-dictionary "en_US") ;; set the default dictionary
-
-;; (diminish 'flyspell-mode) ;; Don't show it in the modeline.
 ;; https://github.com/d12frosted/flyspell-correct/issues/30
 ;; (use-package flyspell-correct-popup
 ;;   :bind (("C-M-;" . flyspell-correct-wrapper)
@@ -453,6 +451,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ;; Don't prompt the user for the project root every time we open a new
   ;; lsp-worthy file, instead, try to guess it with projectile.
   (setq lsp-auto-guess-root t)
+
   ;; Auto-kill LSP server once you've killed the last buffer associated with its
   ;; project.
   (setq lsp-keep-workspace-alive nil)
