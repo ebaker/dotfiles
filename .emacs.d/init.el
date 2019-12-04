@@ -236,6 +236,14 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (add-hook 'org-agenda-mode-hook #'ebaker/evilify-org-agenda-mode)
   (require 'eliot-org))
 
+;; https://emacs.stackexchange.com/questions/22405/after-executing-org-narrow-to-subtree-how-do-i-move-between-subtrees-of-the-sam
+(defun my/org-narrow-forward ()
+  "Move to the next subtree at same level, and narrow to it."
+  (interactive)
+  (widen)
+  (org-forward-heading-same-level 1)
+  (org-narrow-to-subtree))
+
 ;; ore pretty bullets
 (use-package org-bullets
   :ensure t
