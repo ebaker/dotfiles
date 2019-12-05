@@ -66,12 +66,6 @@
   (interactive)
   (find-file "~/.emacs.d/init.el"))
 
-;; custom.el
-(setq custom-file (make-temp-file "emacs-custom"))
-(setq-default custom-file (expand-file-name ".custom.el" user-emacs-directory))
-(when (file-exists-p custom-file)
-  (load custom-file))
-
 ;; make confirmation prompts shorter
 (defalias 'yes-or-no-p 'y-or-n-p)
 
@@ -138,11 +132,17 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (setq coding-system-for-write 'utf-8 )
 (setq sentence-end-double-space nil)	; sentence SHOULD end with only a point.
 ;; (setq default-fill-column 140)		; toggle wrapping text at the 80th character
-(setq initial-scratch-message "") ; print a default message in the empty scratch buffer opened at startup
-;; (setq custom-file (make-temp-file "emacs-custom")) ; custom.el - don't persist changes
+(setq initial-scratch-message ";; *scratch*\n\n") ; print a default message in the empty scratch buffer opened at startup
 
 ;; https://emacs.stackexchange.com/questions/28736/emacs-pointcursor-movement-lag/28746
 (setq auto-window-vscroll nil)
+
+;; custom.el
+(setq custom-file (make-temp-file "emacs-custom"))
+(setq-default custom-file (expand-file-name ".custom.el" user-emacs-directory))
+(when (file-exists-p custom-file)
+  (load custom-file))
+;; (setq custom-file (make-temp-file "emacs-custom")) ; custom.el - don't persist changes
 
 ;; Make it very easy to see the line with the cursor.
 (global-hl-line-mode t)
@@ -161,12 +161,13 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (setq show-paren-delay 0)
 (show-paren-mode 1)
 
+;; (global-font-lock-mode t)
+
 ;; environment variables
 (use-package exec-path-from-shell
   :ensure t
   :config
   (exec-path-from-shell-initialize))
-
 
 ;; Defer Packages you don’t need Immediately with Idle Timers
 (use-package recentf
@@ -250,9 +251,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :defer 2
   :after (org)
   :hook (org-mode . org-bullets-mode))
-
-
-;; (global-font-lock-mode t)
 
 ;; Theme
 (use-package doom-themes
@@ -508,6 +506,11 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; (use-package company-quickhelp
 ;;   :ensure t)
 
+;; eglot
+;; (use-package eglot
+;;   :ensure t
+;;   )
+
 
 ;; Yasnippet
 ;; (require 'eliot-yasnippet)
@@ -627,20 +630,12 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 	      (flymake-eslint-enable)))
  )
 
-;; (use-package eglot
-;;   :ensure t
-;;   )
-
  ;; Typescript
 ;; (use-package typescript-mode
 ;;   :ensure t
 ;;   :defer 2
 ;;   :init
 ;;   (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode)))
-
-(add-hook 'js2-mode-hook 'lsp)
-;; (add-hook 'css-mode-hook 'lsp)
-
 
 (use-package prettier-js
   :ensure t
@@ -651,7 +646,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (use-package json-mode
   :ensure t
   :mode ("\\.json\\'"))
-
 
 (use-package rjsx-mode
   :ensure t
