@@ -38,6 +38,12 @@
   ;; (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
   )
 
+;; lsp languages
+
+(add-hook 'js2-mode-hook 'lsp)
+;; (add-hook 'css-mode-hook 'lsp)
+
+
 ;; Company LSP
 
 (use-package company-lsp
