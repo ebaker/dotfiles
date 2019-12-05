@@ -38,4 +38,14 @@
   ;; (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
   )
 
+;; Company LSP
+
+(use-package company-lsp
+  :ensure t
+  ;; :defer 2
+  :init
+  (push 'company-lsp company-backends)
+  :config
+  (setq company-lsp-cache-candidates 'auto))
+
 (provide 'eliot-lsp)

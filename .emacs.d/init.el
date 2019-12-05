@@ -253,14 +253,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 
 ;; (global-font-lock-mode t)
-;; (custom-set-faces
-;;  ;; custom-set-faces was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  '(org-done ((t (:foreground "#A2FF38" :weight bold))))
-;;  '(org-todo ((t (:foreground "#ff39a3" :weight bold)))))
-
 
 ;; Theme
 (use-package doom-themes
@@ -516,13 +508,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; (use-package company-quickhelp
 ;;   :ensure t)
 
-(use-package company-lsp
-  :ensure t
-  ;; :defer 2
-  :init
-  (push 'company-lsp company-backends)
-  :config
-  (setq company-lsp-cache-candidates 'auto))
 
 ;; Yasnippet
 ;; (require 'eliot-yasnippet)
@@ -627,25 +612,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 	    #b00000000
 	    #b00000000))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("7dc3fe8fadb914563790a3fbe587fd455626442f66da333ea4de2c455feefb98" "fa1fa0bc00fc80f5466cfd6b595e4a010d0c1953b7f135fd2658ca93ff8c8a17" "423435c7b0e6c0942f16519fa9e17793da940184a50201a4d932eafe4c94c92d" default))
- '(flymake-error-bitmap '(flymake-fringe-bitmap-ball-medium compilation-error))
- '(flymake-warning-bitmap '(flymake-fringe-bitmap-ball-medium compilation-warning))
- '(lsp-eldoc-hook nil)
- '(package-selected-packages
-   '(expand-region agressive-indent agressive-indet company-quickhelp company-tern company-posframe company-posfram diminish delight eldoc-box company-box flymake-diagnostic-at-point json-mode org-bullets org ivy undo-tree gnu-elpa-keyring-update esup flyspell-correct-popup page-break-lines counsel doom-themes evil use-package))
- '(spacemacs-theme-custom-colors
-   '((head1 . "#b48ead")
-     (head2 . "#a7a6d4")
-     (head3 . "#bfebbf")
-     (head4 . "#f0dfaf"))))
-
-
 (use-package flymake-diagnostic-at-point
   :ensure t
   :after flymake
@@ -699,16 +665,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 ;; Dashboard
 ;; (require 'eliot-dashboard)
-
-
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(org-done ((t (:foreground "#A2FF38" :weight bold))))
- '(org-todo ((t (:foreground "#ff39a3" :weight bold)))))
-
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
