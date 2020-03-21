@@ -649,7 +649,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 (use-package rjsx-mode
   :ensure t
-  :mode ("/\\(components\\|containers\\|src\\)/.*\\.js[x]?\\'")
+  :mode ("/\\(components\\|containers\\|src\\|pages\\)/.*\\.js[x]?\\'")
   ;; (("/\\(containers\\)/[^/]*\\.js" . rjsx-mode)
   ;;  ("/\\(components\\)/[^/]*\\.js" . rjsx-mode)
   ;;  ("\\.jsx\\'" . rjsx-mode))
