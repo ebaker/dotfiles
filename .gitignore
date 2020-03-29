@@ -12,3 +12,6 @@
 
 # osx
 .DS_Store
+
+# LSP
+.lsp-*

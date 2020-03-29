@@ -143,6 +143,17 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ;; Less important than recentf.
   :defer 2)
 
+;; https://sriramkswamy.github.io/dotemacs/
+(use-package exec-path-from-shell
+  :ensure t
+  :demand t
+  :init
+  (setq exec-path-from-shell-check-startup-files nil)
+  :config
+  ;; (exec-path-from-shell-copy-env "PYTHONPATH")
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
+
 (defun ebaker/emacsify-evil-mode ()
   "Remove Evil Normal state bindings and add some Emacs bindings in Evil Normal state."
 
@@ -307,8 +318,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (projectile-mode 1))
 
     ;; Integration with `projectile'
-    (with-eval-after-load 'projectile
-      (setq projectile-completion-system 'ivy))
+(with-eval-after-load 'projectile
+  (setq projectile-completion-system 'ivy))
 
 
 ;; All The Icons
@@ -407,13 +418,15 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; LSP
 (use-package lsp-mode
   :ensure t
-  :defer 2
+  ;; :defer 2
+  :commands lsp
   :init
   (add-hook 'prog-major-mode #'lsp-prog-major-mode-enable))
 
 (use-package lsp-ui
   :ensure t
-  :defer 2
+  ;; :defer 2
+  :commands lsp-ui-mode
   :init
   (add-hook 'lsp-mode-hook 'lsp-ui-mode))
 
@@ -450,7 +463,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 (use-package company-lsp
   :ensure t
-  :defer 2
+  ;; :defer 2
+  :commands company-lsp
   :init
   (push 'company-lsp company-backends))
 
@@ -489,18 +503,18 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; Add yasnippet support for all company backends
 ;; https://emacs.stackexchange.com/a/10520/10352
 ;;
-(defvar company-mode/enable-yas t
-  "There can only be one main completition backend, so let's
-   enable yasnippet/yankpad as a secondary for all completion backends.")
+;; (defvar company-mode/enable-yas t
+;;   "There can only be one main completition backend, so let's
+;;    enable yasnippet/yankpad as a secondary for all completion backends.")
 
-(defun company-mode/backend-with-yas (backend)
-  (if (or (not company-mode/enable-yas)
-	  (and (listp backend) (member 'company-yankpad backend)))
-      backend
-    (append (if (consp backend) backend (list backend))
-	    '(:with company-yankpad))))
+;; (defun company-mode/backend-with-yas (backend)
+;;   (if (or (not company-mode/enable-yas)
+;;	  (and (listp backend) (member 'company-yankpad backend)))
+;;       backend
+;;     (append (if (consp backend) backend (list backend))
+;;	    '(:with company-yankpad))))
 
-(setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
+;; (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
 
 ;; Powerline
 (use-package spaceline
@@ -520,9 +534,25 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; (use-package nvm
 ;;   :ensure t
 ;;   :commands (nvm-use
-;;	     nvm-use-for)))
-(setq exec-path (append exec-path '("~/.nvm/versions/node/v12.6.0/bin")))
+;;	     nvm-use-for))
+;; )
+;; (setq exec-path (append exec-path '("~/.nvm/versions/node/v12.6.0/bin")))
 
+(when (file-exists-p "~/.nvm")
+  (use-package nvm
+    :ensure t
+    :defer 5
+    :config
+    (nvm-use (caar (last (nvm--installed-versions))))))
+
+(defun setup-local-eslint ()
+  "If ESLint found in node_modules directory, use that for flycheck."
+  (interactive)
+  (let ((local-eslint (expand-file-name "./node_modules/.bin/eslint")))
+    (setq flycheck-javascript-eslint-executable
+	  (and (file-exists-p local-eslint) local-eslint))))
+
+(add-hook 'projectile-after-switch-project-hook 'setup-local-eslint)
 
 ;; (when (file-exists-p "~/.nvm")
 ;;   (use-package nvm
@@ -541,14 +571,50 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   )
 
 ;; JavaScript
+
+;; use local eslint from node_modules before global
+;; http://emacs.stackexchange.com/questions/21205/flycheck-with-file-relative-eslint-executable
+;; (defun my/use-eslint-from-node-modules ()
+;;   (let* ((root (locate-dominating-file
+;;		(or (buffer-file-name) default-directory)
+;;		"node_modules"))
+;;	 (eslint (and root
+;;		      (expand-file-name "node_modules/eslint/bin/eslint.js"
+;;					root))))
+;;     (when (and eslint (file-executable-p eslint))
+;;       (setq-local flycheck-javascript-eslint-executable eslint))))
+
+;; (add-hook 'projectile-after-switch-project-hook 'mjs/setup-local-eslint)
+
+;; (defun mjs/setup-local-eslint ()
+;;     "If ESLint found in node_modules directory - use that for flycheck.
+;; Intended for use in PROJECTILE-AFTER-SWITCH-PROJECT-HOOK."
+;;     (interactive)
+;;     (let ((local-eslint (expand-file-name "./node_modules/.bin/eslint")))
+;;       (setq flycheck-javascript-eslint-executable
+;;	    (and (file-exists-p local-eslint) local-eslint))))
+
+
 (use-package js2-mode
   :ensure t
   :defer 2
   :init
   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+  (setq-default flycheck-disabled-checkers
+		(append flycheck-disabled-checkers
+			'(javascript-jshint)))
+  ;; (setq flycheck-eslintrc "~/.eslintrc")
+
+  ;; (add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules)
+
   :config
+  ;; use eslint with web-mode for jsx files
+  (flycheck-add-mode 'javascript-eslint 'js2-mode)
   (add-hook 'js2-mode 'display-line-numbers-mode)
-  )
+
+  (with-eval-after-load 'flycheck
+    (push 'js2-mode (flycheck-checker-get 'javascript-eslint 'modes))))
+
 
 (use-package tern
   :ensure t
