@@ -413,8 +413,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :init
   (setq ispell-program-name "/usr/local/bin/aspell")
   (setq ispell-dictionary "en_US") ;; set the default dictionary
-  :config
-  (diminish 'flyspell-mode) ;; Don't show it in the modeline.
+  :diminish flyspell-mode: ;; Don't show it in the modeline.
   :hook
   ((text-mode . flyspell-mode)
    (flyspell-mode . flyspell-mouse-2-macbook)))
