@@ -1,0 +1,6 @@
+bat
+fd
+fzf
+exa
+jq
+ripgrep
