@@ -30,7 +30,7 @@ bindkey "^[[A" up-line-or-beginning-search # Up
 bindkey "^[[B" down-line-or-beginning-search # Down
 
 # autoload -Uz compinit
-# compinit
+compinit
 # End of lines added by compinstall
 
 # zsh speed up - https://medium.com/@dannysmith/little-thing-2-speeding-up-zsh-f1860390f92
@@ -47,6 +47,7 @@ source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 # source ~/.zsh/docker-alias/zshrc
 
 # eliot - git
+# unalias gs
 alias gs='git status'
 alias gc='git commit -m'
 alias gcam='git commit -am'
@@ -70,6 +71,18 @@ alias dl='docker logs'
 alias di='docker images'
 alias dcst='docker container stop $(docker container ls -aq)' # docker stop (all containers)
 alias dcrm='docker container rm $(docker container ls -aq)'
+
+# exa
+alias l='exa'
+alias la='exa -a'
+alias ll='exa -lah'
+alias ls='exa --color=auto'
+
+# override system binaries
+alias cat='bat'
+alias find='fd'
+alias grep='rg'
+
 
 # eliot functions
 
@@ -114,3 +127,5 @@ load-nvmrc() {
 }
 add-zsh-hook chpwd load-nvmrc
 load-nvmrc
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
