@@ -4,3 +4,4 @@ fzf
 exa
 jq
 ripgrep
+diff-so-fancy
