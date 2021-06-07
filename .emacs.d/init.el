@@ -256,7 +256,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (use-package doom-themes
   :ensure t
   :config
-  (load-theme 'doom-one t))
+  (load-theme 'doom-tomorrow-day t))
+  ;; (load-theme 'doom-one t))
 
 ;; ivy
 (use-package ivy :demand
