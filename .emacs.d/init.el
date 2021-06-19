@@ -98,6 +98,9 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; load-path
 (push "~/.emacs.d/elisp/" load-path)
 
+(defun ebaker/other-window-reverse ()
+    (interactive)
+    (other-window -1))
 
 ;; @ebaker - comment-or-uncomment-region-or-line
 (require 'comment-or-uncomment-region-or-line)
@@ -106,6 +109,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (global-set-key (kbd "s-/") 'comment-or-uncomment-region-or-line)
 (global-set-key (kbd "s-'") 'indent-region)
 (global-set-key (kbd "s-o") 'other-window)
+(global-set-key (kbd "s-O") 'ebaker/other-window-reverse)
 (global-set-key (kbd "s-0") 'delete-window)
 (global-set-key (kbd "s-1") 'delete-other-windows)
 (global-set-key (kbd "s-2") 'split-window-below)
