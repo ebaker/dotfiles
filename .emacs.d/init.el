@@ -122,6 +122,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (global-set-key (kbd "s-a") 'org-agenda)
 (global-set-key (kbd "C-x i") 'find-config)
 (global-set-key (kbd "C-x C-c") 'my-save-buffers-kill-emacs)
+(global-set-key (kbd "C-x C-r") 'counsel-recentf)
 
 ;; @ebaker - remove keybinding eyebrowse
 (assq-delete-all 'eyebrowse-mode minor-mode-map-alist)
@@ -286,8 +287,11 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (ivy-mode 1))
 
 (use-package counsel
-  :ensure t
-  :bind (("M-x" . counsel-M-x)))
+  :bind (("M-x" . counsel-M-x)
+          ;; ("C-x b" . counsel-ibuffer)
+          ;; ("C-x C-f" . counsel-find-file)
+          :map minibuffer-local-map
+          ("C-r" . 'counsel-minibuffer-history)))
 
 ;; Which Key
 (use-package which-key
