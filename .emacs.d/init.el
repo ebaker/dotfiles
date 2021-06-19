@@ -251,6 +251,12 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ;; (define-key org-agenda-mode-map (kbd "M") 'org-agenda-bulk-remove-all-marks)
   )
 
+(use-package evil-collection
+  :config
+  (evil-collection-init 'magit)
+  (evil-collection-init 'dired))
+
+;; Orgmode
 
 (use-package org
   :ensure t
