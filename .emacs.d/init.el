@@ -534,21 +534,21 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;;
 
 ;; spaceline
-(use-package spaceline
-  :ensure t
-  :init
-  (setq powerline-default-separator 'utf-8)
-  :config
-  (spaceline-emacs-theme)
-  (spaceline-toggle-minor-modes-off)
-  (spaceline-toggle-buffer-size-off)
-  (spaceline-toggle-evil-state-on))
+;; (use-package spaceline
+;;   :ensure t
+;;   :init
+;;   (setq powerline-default-separator 'utf-8)
+;;   :config
+;;   (spaceline-emacs-theme)
+;;   (spaceline-toggle-minor-modes-off)
+;;   (spaceline-toggle-buffer-size-off)
+;;   (spaceline-toggle-evil-state-on))
 
 ;; doom-modeline
-;; (use-package doom-modeline
-;;   :ensure t
-;;   :defer t
-;;   :hook (after-init . doom-modeline-init))
+(use-package doom-modeline
+  :defer t
+  :custom((doom-modeline-height 15))
+  :hook (after-init . doom-modeline-init))
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language Supports ;;
