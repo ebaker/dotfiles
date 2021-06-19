@@ -337,52 +337,61 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 ;; Custom keybinding
 (use-package general
-  :ensure t
   :defer 1
-  :config (general-define-key
-  :states '(normal visual insert emacs)
-  :prefix "SPC"
-  :non-normal-prefix "M-SPC"
-  "/"   '(counsel-ag :which-key "ag") ; You'll need counsel package for this
-  "TAB" '(switch-to-prev-buffer :which-key "previous buffer")
-  "SPC" '(counsel-M-x :which-key "M-x")
+  :init
+  (setq general-override-states '(insert
+                                  emacs
+                                  hybrid
+                                  normal
+                                  visual
+                                  motion
+                                  operator
+                                  replace))
+  :config
+  (general-create-definer ebaker/leader-keys
+    :keymaps '(normal visual insert emacs)
+    :prefix "SPC"
+    :global-prefix "M-SPC")
+  (ebaker/leader-keys
+    "/"   '(counsel-rg :which-key "ripgrep") ; You'll need counsel package for this
+    "TAB" '(switch-to-prev-buffer :which-key "previous buffer")
+    "SPC" '(counsel-M-x :which-key "M-x")
 
-  ;; Buffers
-  "b" '(:ignore t :which-key "buffer")
-  "bb" '(ivy-switch-buffer)
+    ;; Buffers
+    "b" '(:ignore t :which-key "buffer")
+    "bb" '(ivy-switch-buffer)
 
-  ;; undo tree
-  "u" '(undo-tree-visualize :which-key u)
+    ;; undo tree
+    "u" '(undo-tree-visualize :which-key u)
 
-  ;; describe-
-  "d" '(:ignore t :which-key "describe-")
-  "dv" '(describe-variable :which-key "describe-variable")
-  "df" '(describe-function :which-key "describe-function")
-  "dk" '(describe-key :which-key "describe-key")
+    ;; describe-
+    "d" '(:ignore t :which-key "describe-")
+    "dv" '(describe-variable :which-key "describe-variable")
+    "df" '(describe-function :which-key "describe-function")
+    "dk" '(describe-key :which-key "describe-key")
 
-  ;; eval-
-  "e" '(:ignore t :which-key "eval-")
-  "eb" '(eval-buffer :which-key "eval-buffer")
-  "ex" '(eval-expression :which-key "eval-expression")
-  "er" '(eval-region :which-key "eval-region")
+    ;; eval-
+    "e" '(:ignore t :which-key "eval-")
+    "eb" '(eval-buffer :which-key "eval-buffer")
+    "ex" '(eval-expression :which-key "eval-expression")
+    "er" '(eval-region :which-key "eval-region")
 
-  "p" '(:ignore t :which-key "projectile")
-  "ps" '(projectile-switch-project :which-key "[s]witch project")
+    ;; Window
+    "w" '(:ignore t :which-key "windows")
+    "wl"  '(windmove-right :which-key "move right")
+    "wh"  '(windmove-left :which-key "move left")
+    "wk"  '(windmove-up :which-key "move up")
+    "wj"  '(windmove-down :which-key "move bottom")
+    "w3"  '(split-window-right :which-key "split right")
+    "w2"  '(split-window-below :which-key "split bottom")
+    "wx"  '(delete-window :which-key "delete window")
 
-  ;; Window
-  "w" '(:ignore t :which-key "windows")
-  "wl"  '(windmove-right :which-key "move right")
-  "wh"  '(windmove-left :which-key "move left")
-  "wk"  '(windmove-up :which-key "move up")
-  "wj"  '(windmove-down :which-key "move bottom")
-  "w3"  '(split-window-right :which-key "split right")
-  "w2"  '(split-window-below :which-key "split bottom")
-  "wx"  '(delete-window :which-key "delete window")
+    ;; Toggles
+    "t"  '(:ignore t :which-key "toggles")
 
-  ;; Others
-  "a" '(:ignore t :which-key "applications")
-  "at"  '(ansi-term :which-key "open terminal")
-))
+    ;; Others
+    "a" '(:ignore t :which-key "applications")
+    "at"  '(ansi-term :which-key "open terminal")))
 
 
 ;; Fancy titlebar for MacOS
