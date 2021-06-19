@@ -671,6 +671,16 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ;; (add-to-list 'lsp-language-id-configuration '(rjsx-mode . "javascript"))
   )
 
+
+(setq delete-by-moving-to-trash t)
+(when (string= system-type "darwin")
+  (setq dired-use-ls-dired nil)
+  (defun system-move-file-to-trash (file)
+  "Use \"trash\" to move FILE to the system trash.
+When using Homebrew, install it using \"brew install trash\"."
+  (call-process (executable-find "trash")
+    nil 0 nil
+    file)))
 ;; Dashboard
 ;; (require 'eliot-dashboard)
 
