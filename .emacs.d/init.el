@@ -559,6 +559,10 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :config
   (editorconfig-mode 1))
 
+;; smartparens
+(use-package smartparens
+  :hook (prog-mode . smartparens-mode))
+
 ;; elisp
 (use-package highlight-defined
   :ensure t
