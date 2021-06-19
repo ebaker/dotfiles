@@ -573,6 +573,10 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
 
+;; YAML
+(use-package yaml-mode
+  :mode "\\.ya?ml\\'")
+
 ;; JavaScript
 ;; npm i -g typescript typescrypt-language-server
 (use-package js2-mode
