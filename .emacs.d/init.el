@@ -403,6 +403,9 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; ;; (diminish 'org-indent-mode)
 ;; ;; (diminish 'subword-mode)
 
+  ;; rainbow delimiters
+  (use-package rainbow-delimiters
+    :hook (prog-mode . rainbow-delimiters-mode))
 ;;
 ;; Flyspell
 ;;
