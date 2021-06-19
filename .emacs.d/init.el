@@ -214,6 +214,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :init
   (setq evil-disable-insert-state-bindings t)
   (setq evil-want-C-u-scroll t)
+  (setq evil-undo-system 'undo-tree)
   :config
   (evil-mode 1)
   (ebaker/emacsify-evil-mode)
@@ -298,13 +299,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :config
   (which-key-mode 1))
 
-;; undo-tree
-(use-package undo-tree
-  :ensure t
-  :diminish undo-tree-mode:
-  ;; :config
-  ;; (global-undo-tree-mode 1)
-  )
 
 (use-package expand-region
   :ensure t
