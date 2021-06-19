@@ -377,12 +377,18 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; All The Icons
 (use-package all-the-icons :ensure t)
 
-;; NeoTree
-(use-package neotree
-  :ensure t
-  :init
-  (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
-(global-set-key [f8] 'neotree-toggle)
+;; treemacs
+(use-package treemacs
+    :config
+    (setq treemacs-show-cursor t)
+    (global-set-key [f8] 'treemacs))
+
+(use-package treemacs-all-the-icons
+    :config
+    (treemacs-load-theme "all-the-icons"))
+
+(use-package treemacs-evil)
+
 
 ;;
 ;; Diminish
