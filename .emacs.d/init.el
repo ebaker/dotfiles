@@ -61,6 +61,21 @@
 (setq mac-command-modifier 'super
       mac-option-modifier  'meta)
 
+;; spaces for tabs
+(setq-default indent-tabs-mode nil)
+
+;; line numbers
+(column-number-mode)
+(global-display-line-numbers-mode t)
+
+;; Disable line numbers for some modes
+(dolist (mode '(org-mode-hook
+                term-mode-hook
+                shell-mode-hook
+                eshell-mode-hook
+                treemacs-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
 ;; emacs config hotkey
 (defun find-config ()
   "Edit init.el"
