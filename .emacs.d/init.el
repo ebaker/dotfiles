@@ -277,14 +277,31 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ;; (load-theme 'doom-one t))
 
 ;; ivy
-(use-package ivy :demand
-  :ensure t
+(use-package ivy
   :defer 1
+    :diminish
+  :bind (("C-s" . swiper)
+         :map ivy-minibuffer-map
+         ("TAB" . ivy-alt-done)
+         ("C-l" . ivy-alt-done)
+         ("C-j" . ivy-next-line)
+         ("C-k" . ivy-previous-line)
+         :map ivy-switch-buffer-map
+         ("C-k" . ivy-previous-line)
+         ("C-l" . ivy-done)
+         ("C-d" . ivy-switch-buffer-kill)
+         :map ivy-reverse-i-search-map
+         ("C-k" . ivy-previous-line)
+         ("C-d" . ivy-reverse-i-search-kill))
   :config
   (setq ivy-use-virtual-buffers t
-	ivy-count-format "%d/%d "
-	ivy-initial-inputs-alist nil)
+        ivy-count-format "%d/%d "
+        ivy-initial-inputs-alist nil)
   (ivy-mode 1))
+
+(use-package ivy-rich
+  :init
+  (ivy-rich-mode 1))
 
 (use-package counsel
   :bind (("M-x" . counsel-M-x)
