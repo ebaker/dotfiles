@@ -554,6 +554,11 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; Language Supports ;;
 ;;;;;;;;;;;;;;;;;;;;;;;
 
+;; editorconfig
+(use-package editorconfig
+  :config
+  (editorconfig-mode 1))
+
 ;; elisp
 (use-package highlight-defined
   :ensure t
