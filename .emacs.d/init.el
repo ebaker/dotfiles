@@ -105,6 +105,9 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; @ebaker - comment-or-uncomment-region-or-line
 (require 'comment-or-uncomment-region-or-line)
 
+;; Make escape quit prompts
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
 ;; @ebaker - global super custom hotkeys
 (global-set-key (kbd "s-/") 'comment-or-uncomment-region-or-line)
 (global-set-key (kbd "s-'") 'indent-region)
