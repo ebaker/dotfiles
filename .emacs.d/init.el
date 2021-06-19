@@ -426,19 +426,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (setq ns-use-proxy-icon  nil)
 (setq frame-title-format nil)
 
-;; Projectile
-(use-package projectile
-  :ensure t
-  :init
-  (setq projectile-require-project-root nil)
-  :config
-  (projectile-mode 1)
-  (setq projectile-project-search-path '("~/r")))
-
-    ;; Integration with `projectile'
-    (with-eval-after-load 'projectile
-      (setq projectile-completion-system 'ivy))
-
 
 ;; All The Icons
 (use-package all-the-icons :ensure t)
@@ -789,6 +776,43 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ;; :config
   ;; (add-to-list 'lsp-language-id-configuration '(rjsx-mode . "javascript"))
   )
+
+;; Projectile
+(use-package projectile
+  :defer 2
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom ((projectile-completion-system 'ivy))
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  ("C-M-p" . projectile-command-map)
+  :init
+  ;; NOTE: Set this to the folder where you keep your Git repos!
+  (setq projectile-require-project-root nil)
+  (when (file-directory-p "~/r/tawkify")
+    (setq projectile-project-search-path '("~/r/tawkify")))
+  (setq projectile-switch-project-action #'projectile-dired))
+
+(use-package counsel-projectile
+  :after projectile
+  :bind (("s-p" . counsel-projectile-find-file))
+  :config
+  (counsel-projectile-mode))
+
+(ebaker/leader-keys
+  "p" '(:ignore t :which-key "projectile")
+  "pf"  'counsel-projectile-find-file
+  "ps"  '(counsel-projectile-switch-project :which-key "[s]witch project")
+  "pF"  'counsel-projectile-rg
+  ;; "pF"  'consult-ripgrep
+  "pp"  'counsel-projectile
+  "pc"  'projectile-compile-project
+  "pd"  'projectile-dired)
+
+(use-package counsel-projectile
+  :ensure t
+  :defer 2
+  :config (counsel-projectile-mode))
 
 
 (setq delete-by-moving-to-trash t)
