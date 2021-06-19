@@ -23,6 +23,7 @@
   (package-refresh-contents)
   (package-install 'use-package))
 (require 'use-package)
+(setq use-package-always-ensure t)
 
 ;; Use a hook so the message doesn't get clobbered by other messages.
 (add-hook 'emacs-startup-hook
@@ -171,8 +172,15 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 ;; Defer Packages you don’t need Immediately with Idle Timers
 (use-package recentf
+  :ensure nil
   ;; Loads after 1 second of idle time.
   :defer 1)
+
+;; undo-tree
+(use-package undo-tree
+  ;; :diminish undo-tree-mode:
+  :init
+  (global-undo-tree-mode 1))
 
 (defun ebaker/emacsify-evil-mode ()
   "Remove Evil Normal state bindings and add some Emacs bindings in Evil Normal state."
@@ -412,6 +420,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   )
 
 (use-package flyspell
+  :ensure nil
   :init
   (setq ispell-program-name "/usr/local/bin/aspell")
   (setq ispell-dictionary "en_US") ;; set the default dictionary
