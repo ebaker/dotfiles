@@ -206,15 +206,20 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (define-key evil-normal-state-map (kbd "C-p") 'evil-previous-visual-line)
   (define-key evil-normal-state-map (kbd "C-n") 'evil-next-visual-line)
   (define-key evil-normal-state-map (kbd "C-f") 'evil-forward-char)
-  (define-key evil-normal-state-map (kbd "C-n") 'evil-backward-char))
+  (define-key evil-normal-state-map (kbd "C-n") 'evil-backward-char)
+  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+  (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join))
 
 ;; Vim mode
 (use-package evil
   :ensure t
   :defer 1
   :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
   (setq evil-disable-insert-state-bindings t)
   (setq evil-want-C-u-scroll t)
+  (setq evil-want-C-i-jump nil)
   (setq evil-undo-system 'undo-tree)
   :config
   (evil-mode 1)
