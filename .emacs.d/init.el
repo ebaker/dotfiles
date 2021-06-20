@@ -779,6 +779,10 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ;; (add-to-list 'lsp-language-id-configuration '(rjsx-mode . "javascript"))
   )
 
+(use-package add-node-modules-path
+  :hook ((js2-mode . add-node-modules-path)
+         (rjsx-mode . add-node-modules-path)))
+
 ;; Projectile
 (use-package projectile
   :defer 2
