@@ -658,8 +658,9 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :hook (prog-mode . smartparens-mode))
 
 ;; elisp
+(setq lisp-indent-offset 2)
+
 (use-package highlight-defined
-  :ensure t
   :defer 2
   :config
   (add-hook 'emacs-lisp-mode-hook 'highlight-defined-mode)
