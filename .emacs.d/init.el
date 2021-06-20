@@ -593,9 +593,40 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ;;     (company-complete-common)))
   )
 
+;; lsp
+(use-package lsp-mode
+  ;; :config
+  ;; (lsp-headerline-breadcrumb-enable t)
+  :hook (((js2-mode rjsx-mode) . lsp)
+          (lsp-mode . lsp-enable-which-key-integration))
+  :bind (:map lsp-mode-map
+          ("TAB" . completion-at-point))
+  :commands lsp)
+
+;; lsp general
+(ebaker/leader-keys
+  "l"  '(:ignore t :which-key "lsp")
+  "ld" 'xref-find-definitions
+  "lr" 'xref-find-references
+  "ln" 'lsp-ui-find-next-reference
+  "lp" 'lsp-ui-find-prev-reference
+  "ls" 'counsel-imenu
+  "le" 'lsp-ui-flycheck-list
+  "lS" 'lsp-ui-sideline-mode
+  "lX" 'lsp-execute-code-action)
+
+(use-package lsp-ui
+  :hook (lsp-mode . lsp-ui-mode)
+  :config
+  ;; (setq lsp-ui-sideline-enable t)
+  ;; (setq lsp-ui-sideline-show-hover nil)
+  ;; (setq lsp-ui-doc-position 'bottom)
+  (lsp-ui-doc-show))
+
 ;;; Elementary textual completion backend.
 (setq company-backends
-   (add-to-list 'company-backends 'company-dabbrev))
+  ;; (add-to-list 'company-backends 'company-dabbrev)
+  (add-to-list 'company-backends 'company-lsp))
 
 ;; Company UI
 ;; (use-package company-box
