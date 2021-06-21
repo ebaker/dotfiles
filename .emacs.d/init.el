@@ -360,13 +360,13 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 ;; Which Key
 (use-package which-key
-  :defer 1
   :init
   (setq which-key-separator " ")
   (setq which-key-prefix-prefix "+")
+  :diminish which-key-mode
   :config
-    (which-key-mode 0.2))
-
+    (which-key-mode)
+    (setq which-key-idle-delay 0.05))
 
 (use-package expand-region
   :ensure t
