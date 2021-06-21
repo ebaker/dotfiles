@@ -18,10 +18,16 @@
 			 ))
 ;; (package-initialize)
 
+(package-initialize)
+
 ;; Bootstrap `use-package`
+(unless package-archive-contents
+  (package-refresh-contents))
+
+;; Initialize use-package on non-linux platforms
 (unless (package-installed-p 'use-package)
-  (package-refresh-contents)
   (package-install 'use-package))
+
 (require 'use-package)
 (setq use-package-always-ensure t)
 
