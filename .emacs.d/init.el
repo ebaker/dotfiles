@@ -13,10 +13,8 @@
 (require 'package)
 (setq package-enable-at-startup nil)
 (setq package-archives '(("org"   . "http://orgmode.org/elpa/")
-			 ("melpa" . "https://melpa.org/packages/")
-			 ("gnu"   . "https://elpa.gnu.org/packages/")
-			 ))
-;; (package-initialize)
+                          ("melpa" . "https://melpa.org/packages/")
+                          ("gnu"   . "https://elpa.gnu.org/packages/")))
 
 (package-initialize)
 
@@ -37,19 +35,19 @@
 
 ;; Use a hook so the message doesn't get clobbered by other messages.
 (add-hook 'emacs-startup-hook
-	  (lambda ()
-	    (message "Emacs ready in %s with %d garbage collections."
-		     (format "%.2f seconds"
-			     (float-time
-			      (time-subtract after-init-time before-init-time)))
-		     gcs-done)))
+  (lambda ()
+    (message "Emacs ready in %s with %d garbage collections."
+      (format "%.2f seconds"
+        (float-time
+          (time-subtract after-init-time before-init-time)))
+      gcs-done)))
 
 ;; Set default font
 (set-face-attribute 'default nil
-		    :family "Inconsolata for Powerline"
-		    :height 180
-		    :weight 'normal
-		    :width 'normal)
+  :family "Inconsolata for Powerline"
+  :height 180
+  :weight 'normal
+  :width 'normal)
 
 ;; https://emacs.stackexchange.com/questions/16818/cocoa-emacs-24-5-font-issues-inconsolata-dz
 (add-to-list 'default-frame-alist '(height . 44))
@@ -69,7 +67,7 @@
 
 ;; super & meta on mac
 (setq mac-command-modifier 'super
-      mac-option-modifier  'meta)
+  mac-option-modifier  'meta)
 
 ;; spaces for tabs
 (setq-default indent-tabs-mode nil)
@@ -80,10 +78,10 @@
 
 ;; Disable line numbers for some modes
 (dolist (mode '(org-mode-hook
-                term-mode-hook
-                shell-mode-hook
-                eshell-mode-hook
-                treemacs-mode-hook))
+                 term-mode-hook
+                 shell-mode-hook
+                 eshell-mode-hook
+                 treemacs-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 ;; emacs config hotkey
@@ -103,29 +101,29 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (interactive "P")
   (save-some-buffers arg t)
   (and (or (not (fboundp 'process-list))
-       ;; process-list is not defined on MSDOS.
-       (let ((processes (process-list))
-	 active)
-	 (while processes
-	   (and (memq (process-status (car processes)) '(run stop open listen))
-	    (process-query-on-exit-flag (car processes))
-	    (setq active t))
-	   (setq processes (cdr processes)))
-	 (or (not active)
-	 (progn (list-processes t)
-	    (y-or-n-p "Active processes exist; kill them and exit anyway? ")))))
-       ;; Query the user for other things, perhaps.
-       (run-hook-with-args-until-failure 'kill-emacs-query-functions)
-       (or (null confirm-kill-emacs)
-       (funcall confirm-kill-emacs "Really exit Emacs? "))
-       (kill-emacs)))
+         ;; process-list is not defined on MSDOS.
+         (let ((processes (process-list))
+                active)
+           (while processes
+             (and (memq (process-status (car processes)) '(run stop open listen))
+               (process-query-on-exit-flag (car processes))
+               (setq active t))
+             (setq processes (cdr processes)))
+           (or (not active)
+             (progn (list-processes t)
+               (y-or-n-p "Active processes exist; kill them and exit anyway? ")))))
+    ;; Query the user for other things, perhaps.
+    (run-hook-with-args-until-failure 'kill-emacs-query-functions)
+    (or (null confirm-kill-emacs)
+      (funcall confirm-kill-emacs "Really exit Emacs? "))
+    (kill-emacs)))
 
 ;; load-path
 (push "~/.emacs.d/elisp/" load-path)
 
 (defun ebaker/other-window-reverse ()
-    (interactive)
-    (other-window -1))
+  (interactive)
+  (other-window -1))
 
 ;; @ebaker - comment-or-uncomment-region-or-line
 (require 'comment-or-uncomment-region-or-line)
@@ -159,7 +157,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (setq version-control t )		; use version control
 (setq vc-make-backup-files t )		; make backups file even when in version controlled dir
 (setq backup-directory-alist `(("." . "~/.emacs.d/backups")) ) ; which directory to put backups file
-(setq vc-follow-symlinks t )				       ; don't ask for confirmation when opening symlinked file
+(setq vc-follow-symlinks t )                       ; don't ask for confirmation when opening symlinked file
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)) ) ;transform backups file name
 (setq inhibit-startup-screen t )	; inhibit useless and old-school startup screen
 (setq ring-bell-function 'ignore )	; silent bell when you make a mistake
@@ -311,29 +309,29 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :ensure t
   :config
   (load-theme 'doom-tomorrow-day t))
-  ;; (load-theme 'doom-one t))
+;; (load-theme 'doom-one t))
 
 ;; ivy
 (use-package ivy
   :defer 1
-    :diminish
+  :diminish
   :bind (("C-s" . swiper)
-         :map ivy-minibuffer-map
-         ("TAB" . ivy-alt-done)
-         ("C-l" . ivy-alt-done)
-         ("C-j" . ivy-next-line)
-         ("C-k" . ivy-previous-line)
-         :map ivy-switch-buffer-map
-         ("C-k" . ivy-previous-line)
-         ("C-l" . ivy-done)
-         ("C-d" . ivy-switch-buffer-kill)
-         :map ivy-reverse-i-search-map
-         ("C-k" . ivy-previous-line)
-         ("C-d" . ivy-reverse-i-search-kill))
+          :map ivy-minibuffer-map
+          ("TAB" . ivy-alt-done)
+          ("C-l" . ivy-alt-done)
+          ("C-j" . ivy-next-line)
+          ("C-k" . ivy-previous-line)
+          :map ivy-switch-buffer-map
+          ("C-k" . ivy-previous-line)
+          ("C-l" . ivy-done)
+          ("C-d" . ivy-switch-buffer-kill)
+          :map ivy-reverse-i-search-map
+          ("C-k" . ivy-previous-line)
+          ("C-d" . ivy-reverse-i-search-kill))
   :config
   (setq ivy-use-virtual-buffers t
-        ivy-count-format "%d/%d "
-        ivy-initial-inputs-alist nil)
+    ivy-count-format "%d/%d "
+    ivy-initial-inputs-alist nil)
   (ivy-mode 1))
 
 (use-package ivy-rich
@@ -365,8 +363,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (setq which-key-prefix-prefix "+")
   :diminish which-key-mode
   :config
-    (which-key-mode)
-    (setq which-key-idle-delay 0.05))
+  (which-key-mode)
+  (setq which-key-idle-delay 0.05))
 
 (use-package expand-region
   :ensure t
@@ -377,13 +375,13 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :defer 1
   :init
   (setq general-override-states '(insert
-                                  emacs
-                                  hybrid
-                                  normal
-                                  visual
-                                  motion
-                                  operator
-                                  replace))
+                                   emacs
+                                   hybrid
+                                   normal
+                                   visual
+                                   motion
+                                   operator
+                                   replace))
   :config
   (general-create-definer ebaker/leader-keys
     :keymaps '(normal visual insert emacs)
@@ -443,13 +441,13 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 ;; treemacs
 (use-package treemacs
-    :config
-    (setq treemacs-show-cursor t)
-    (global-set-key [f8] 'treemacs))
+  :config
+  (setq treemacs-show-cursor t)
+  (global-set-key [f8] 'treemacs))
 
 (use-package treemacs-all-the-icons
-    :config
-    (treemacs-load-theme "all-the-icons"))
+  :config
+  (treemacs-load-theme "all-the-icons"))
 
 (use-package treemacs-evil)
 
@@ -477,9 +475,9 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; ;; (diminish 'org-indent-mode)
 ;; ;; (diminish 'subword-mode)
 
-  ;; rainbow delimiters
-  (use-package rainbow-delimiters
-    :hook (prog-mode . rainbow-delimiters-mode))
+;; rainbow delimiters
+(use-package rainbow-delimiters
+  :hook (prog-mode . rainbow-delimiters-mode))
 
 (use-package hydra)
 
@@ -525,8 +523,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ;;
   ;; Magic Mouse Fixes
   (if flyspell-mode (progn
-       (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
-       (define-key flyspell-mouse-map [mouse-3] #'undefined))
+                      (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
+                      (define-key flyspell-mouse-map [mouse-3] #'undefined))
     nil)
   ;; End my-flyspell-mode-hook
   )
@@ -539,14 +537,14 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :diminish flyspell-mode: ;; Don't show it in the modeline.
   :hook
   ((text-mode . flyspell-mode)
-   (flyspell-mode . flyspell-mouse-2-macbook)))
+    (flyspell-mode . flyspell-mouse-2-macbook)))
 
 ;; https://github.com/d12frosted/flyspell-correct/issues/30
 ;; (use-package flyspell-correct-popup
 ;;   :bind (("C-M-;" . flyspell-correct-wrapper)
 ;;	 (:map popup-menu-keymap
-;;	      ("TAB" . popup-next)
-;;	      ("S-TAB" . popup-previous)))
+;;        ("TAB" . popup-next)
+;;        ("S-TAB" . popup-previous)))
 ;;   :init
 ;;   (setq flyspell-correct-interface #'flyspell-correct-popup))
 
@@ -562,15 +560,15 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :init
   (setq company-minimum-prefix-length 2)
   (setq company-auto-complete nil)
-  (setq company-idle-delay 0)
+  (setq company-idle-delay 0.0)
   (setq company-require-match 'never)
   (setq company-frontends
-	'(
-	  company-pseudo-tooltip-unless-just-one-frontend
-	  company-preview-frontend
-	  company-echo-metadata-frontend
-	  )
-	)
+    '(
+       company-pseudo-tooltip-unless-just-one-frontend
+       company-preview-frontend
+       company-echo-metadata-frontend
+       )
+    )
   (setq tab-always-indent 'complete)
   (defvar completion-at-point-functions-saved nil)
   :config
@@ -599,7 +597,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ;;   (defun company-indent-for-tab-command (&optional arg)
   ;;     (interactive "P")
   ;;     (let ((completion-at-point-functions-saved completion-at-point-functions)
-  ;;	  (completion-at-point-functions '(company-complete-common-wrapper)))
+  ;;    (completion-at-point-functions '(company-complete-common-wrapper)))
   ;;       (indent-for-tab-command arg)))
 
   ;; (defun company-complete-common-wrapper ()
@@ -730,8 +728,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (setq js2-mode-show-strict-warnings nil))
 
 (add-hook 'js2-mode
-	  (lambda ()
-	    (setq-local eldoc-documentation-function #'ignore)))
+  (lambda ()
+    (setq-local eldoc-documentation-function #'ignore)))
 
 (use-package tern
   :ensure t
@@ -745,42 +743,42 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; flymake
 ;; https://emacs.stackexchange.com/questions/36363/how-to-change-flycheck-symbol-like-spacemacs
 (define-fringe-bitmap 'flymake-fringe-bitmap-ball
-    (vector #b00000000
-	    #b00000000
-	    #b00000000
-	    #b00000000
-	    #b00000000
-	    #b00111000
-	    #b01111100
-	    #b11111110
-	    #b11111110
-	    #b01111100
-	    #b00111000
-	    #b00000000
-	    #b00000000
-	    #b00000000
-	    #b00000000
-	    #b00000000
-	    #b00000000))
+  (vector #b00000000
+    #b00000000
+    #b00000000
+    #b00000000
+    #b00000000
+    #b00111000
+    #b01111100
+    #b11111110
+    #b11111110
+    #b01111100
+    #b00111000
+    #b00000000
+    #b00000000
+    #b00000000
+    #b00000000
+    #b00000000
+    #b00000000))
 
 (define-fringe-bitmap 'flymake-fringe-bitmap-ball-medium
-    (vector #b00000000
-	    #b00000000
-	    #b00000000
-	    #b00000000
-	    #b00000000
-	    #b00000000
-	    #b00111000
-	    #b01111100
-	    #b01111100
-	    #b00111000
-	    #b00000000
-	    #b00000000
-	    #b00000000
-	    #b00000000
-	    #b00000000
-	    #b00000000
-	    #b00000000))
+  (vector #b00000000
+    #b00000000
+    #b00000000
+    #b00000000
+    #b00000000
+    #b00000000
+    #b00111000
+    #b01111100
+    #b01111100
+    #b00111000
+    #b00000000
+    #b00000000
+    #b00000000
+    #b00000000
+    #b00000000
+    #b00000000
+    #b00000000))
 
 (use-package flymake-diagnostic-at-point
   :ensure t
@@ -793,11 +791,11 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :config
   (setq flymake-diagnostic-at-point-timer-delay 0.3)
   (add-hook 'js2-mode-hook ; or whatever the mode-hook is for your mode of choice
-	    (lambda ()
-	      (flymake-eslint-enable)))
- )
+    (lambda ()
+      (flymake-eslint-enable)))
+  )
 
- ;; Typescript
+;; Typescript
 ;; (use-package typescript-mode
 ;;   :ensure t
 ;;   :defer 2
@@ -805,10 +803,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;;   (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode)))
 
 (use-package prettier-js
-  :ensure t
   :config
-  (add-hook 'js2-mode-hook 'prettier-js-mode)
-  )
+  (add-hook 'js2-mode-hook 'prettier-js-mode))
 
 (use-package json-mode
   :ensure t
@@ -826,7 +822,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 (use-package add-node-modules-path
   :hook ((js2-mode . add-node-modules-path)
-         (rjsx-mode . add-node-modules-path)))
+          (rjsx-mode . add-node-modules-path)))
 
 ;; Projectile
 (use-package projectile
@@ -870,11 +866,11 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (when (string= system-type "darwin")
   (setq dired-use-ls-dired nil)
   (defun system-move-file-to-trash (file)
-  "Use \"trash\" to move FILE to the system trash.
+    "Use \"trash\" to move FILE to the system trash.
 When using Homebrew, install it using \"brew install trash\"."
-  (call-process (executable-find "trash")
-    nil 0 nil
-    file)))
+    (call-process (executable-find "trash")
+      nil 0 nil
+      file)))
 
 (use-package dired
   :ensure nil
