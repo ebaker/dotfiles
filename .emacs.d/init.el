@@ -198,7 +198,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 ;; environment variables
 (use-package exec-path-from-shell
-  :ensure t
   :config
   (exec-path-from-shell-initialize))
 
@@ -236,7 +235,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 ;; Vim mode
 (use-package evil
-  :ensure t
   :defer 1
   :init
   (setq evil-want-integration t)
@@ -283,7 +281,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; Orgmode
 
 (use-package org
-  :ensure t
   :defer 1
   :config
   (add-hook 'org-agenda-mode-hook #'ebaker/evilify-org-agenda-mode)
@@ -299,14 +296,12 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 ;; ore pretty bullets
 (use-package org-bullets
-  :ensure t
   :defer 2
   :after (org)
   :hook (org-mode . org-bullets-mode))
 
 ;; Theme
 (use-package doom-themes
-  :ensure t
   :config
   (load-theme 'doom-tomorrow-day t))
 ;; (load-theme 'doom-one t))
@@ -367,7 +362,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (setq which-key-idle-delay 0.05))
 
 (use-package expand-region
-  :ensure t
   :bind ("C-=" . er/expand-region))
 
 ;; Custom keybinding
@@ -437,7 +431,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 
 ;; All The Icons
-(use-package all-the-icons :ensure t)
+(use-package all-the-icons)
 
 ;; treemacs
 (use-package treemacs
@@ -556,7 +550,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;;
 
 (use-package company
-  :ensure t
   :init
   (setq company-minimum-prefix-length 2)
   (setq company-auto-complete nil)
@@ -718,7 +711,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; JavaScript
 ;; npm i -g typescript typescrypt-language-server
 (use-package js2-mode
-  :ensure t
   :defer 2
   :init
   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
@@ -731,9 +723,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (lambda ()
     (setq-local eldoc-documentation-function #'ignore)))
 
-(use-package tern
-  :ensure t
-  )
+(use-package tern)
 
 ;; (use-package company-tern
 ;;   :ensure t
@@ -781,13 +771,11 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
     #b00000000))
 
 (use-package flymake-diagnostic-at-point
-  :ensure t
   :after flymake
   :config
   (add-hook 'flymake-mode-hook #'flymake-diagnostic-at-point-mode))
 
 (use-package flymake-eslint
-  :ensure t
   :config
   (setq flymake-diagnostic-at-point-timer-delay 0.3)
   (add-hook 'js2-mode-hook ; or whatever the mode-hook is for your mode of choice
@@ -807,11 +795,9 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (add-hook 'js2-mode-hook 'prettier-js-mode))
 
 (use-package json-mode
-  :ensure t
   :mode ("\\.json\\'"))
 
 (use-package rjsx-mode
-  :ensure t
   :mode ("/\\(components\\|containers\\|src\\|pages\\)/.*\\.js[x]?\\'")
   ;; (("/\\(containers\\)/[^/]*\\.js" . rjsx-mode)
   ;;  ("/\\(components\\)/[^/]*\\.js" . rjsx-mode)
@@ -857,7 +843,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   "pd"  'projectile-dired)
 
 (use-package counsel-projectile
-  :ensure t
   :defer 2
   :config (counsel-projectile-mode))
 
