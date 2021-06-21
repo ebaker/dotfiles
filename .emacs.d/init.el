@@ -810,6 +810,11 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :hook ((js2-mode . add-node-modules-path)
           (rjsx-mode . add-node-modules-path)))
 
+;; Docker
+(use-package dockerfile-mode
+  :mode
+  ("Dockerfile\\(-.*\\)?\\'" . dockerfile-mode))
+
 ;; Projectile
 (use-package projectile
   :defer 2
