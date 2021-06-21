@@ -31,6 +31,10 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+;; command-log-mode shows hotkeys used in realtime
+(use-package command-log-mode
+  :defer 2)
+
 ;; Use a hook so the message doesn't get clobbered by other messages.
 (add-hook 'emacs-startup-hook
 	  (lambda ()
