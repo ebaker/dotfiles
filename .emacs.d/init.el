@@ -453,6 +453,10 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 (use-package treemacs-evil)
 
+;; vertical-center-mode
+(require 'vertical-center-mode)
+(ebaker/leader-keys
+  "tc" 'vertical-center-mode)
 
 ;;
 ;; Diminish
