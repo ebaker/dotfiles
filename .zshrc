@@ -182,7 +182,7 @@ alias ll='exa -lah'
 alias ls='exa --color=auto'
 
 # override system binaries
-alias cat='bat'
+alias cat='bat -p'
 alias find='fd'
 alias grep='rg'
 
