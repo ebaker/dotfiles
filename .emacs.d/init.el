@@ -861,6 +861,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   "pF"  'projectile-ripgrep
   "pp"  'counsel-projectile
   "pc"  'projectile-compile-project
+  "pP"  'projectile-test-project
   "pd"  'projectile-dired)
 
 (use-package counsel-projectile
