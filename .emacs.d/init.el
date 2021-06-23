@@ -605,8 +605,9 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ;; (lsp-headerline-breadcrumb-enable t)
   :hook (((js2-mode rjsx-mode) . lsp)
           (lsp-mode . lsp-enable-which-key-integration))
-  :bind (:map lsp-mode-map
-          ("TAB" . completion-at-point))
+  :bind (([s-mouse-1] . xref-find-definitions)
+          (:map lsp-mode-map
+          ("TAB" . completion-at-point)))
   :commands lsp)
 
 ;; lsp general
@@ -614,6 +615,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   "l"  '(:ignore t :which-key "lsp")
   "ld" 'xref-find-definitions
   "lr" 'xref-find-references
+  "lb" 'xref-pop-marker-stack
   "ln" 'lsp-ui-find-next-reference
   "lp" 'lsp-ui-find-prev-reference
   "ls" 'counsel-imenu
