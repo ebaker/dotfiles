@@ -383,7 +383,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
                                    replace))
   :config
   (general-create-definer ebaker/leader-keys
-    :keymaps '(normal visual insert emacs)
+    :states '(normal visual motion)
+    :keymaps 'override
     :prefix "SPC"
     :global-prefix "M-SPC")
   (ebaker/leader-keys
