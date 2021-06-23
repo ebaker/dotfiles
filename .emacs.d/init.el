@@ -837,6 +837,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :bind-keymap
   ("C-c p" . projectile-command-map)
   ("C-M-p" . projectile-command-map)
+  :bind(("s-F" . projectile-ripgrep))
   :init
   ;; NOTE: Set this to the folder where you keep your Git repos!
   (setq projectile-require-project-root nil)
@@ -849,13 +850,15 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :bind (("s-p" . counsel-projectile-find-file))
   :config
   (counsel-projectile-mode))
+  (counsel-projectile-mode)
+  (define-key projectile-mode-map [remap projectile-ripgrep] nil))
 
 (ebaker/leader-keys
   "p" '(:ignore t :which-key "projectile")
   "pf"  'counsel-projectile-find-file
   "ps"  '(counsel-projectile-switch-project :which-key "[s]witch project")
-  "pF"  'counsel-projectile-rg
-  ;; "pF"  'consult-ripgrep
+  "pr"  'counsel-projectile-rg
+  "pF"  'projectile-ripgrep
   "pp"  'counsel-projectile
   "pc"  'projectile-compile-project
   "pd"  'projectile-dired)
