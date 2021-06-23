@@ -681,6 +681,14 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :custom((doom-modeline-height 15))
   :hook (after-init . doom-modeline-init))
 
+;; xterm-colors
+(use-package xterm-color
+  :config
+  (setq compilation-environment '("TERM=xterm-256color"))
+(defun my/advice-compilation-filter (f proc string)
+  (funcall f proc (xterm-color-filter string)))
+(advice-add 'compilation-filter :around #'my/advice-compilation-filter))
+
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language Supports ;;
 ;;;;;;;;;;;;;;;;;;;;;;;
