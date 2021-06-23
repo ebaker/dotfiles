@@ -143,6 +143,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (global-set-key (kbd "s-b") 'ido-switch-buffer)
 (global-set-key (kbd "s-k") 'ido-kill-buffer)
 (global-set-key (kbd "s-a") 'org-agenda)
+(global-set-key (kbd "s-r") 'revert-buffer)
 (global-set-key (kbd "C-x i") 'find-config)
 (global-set-key (kbd "C-x C-c") 'my-save-buffers-kill-emacs)
 (global-set-key (kbd "C-x C-r") 'counsel-recentf)
