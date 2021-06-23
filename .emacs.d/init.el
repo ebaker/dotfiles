@@ -279,6 +279,10 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (evil-collection-init 'magit)
   (evil-collection-init 'dired))
 
+(use-package evil-surround
+  :config
+  (global-evil-surround-mode 1))
+
 ;; Orgmode
 
 (use-package org
