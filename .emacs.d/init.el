@@ -232,7 +232,12 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (define-key evil-normal-state-map (kbd "C-f") 'evil-forward-char)
   (define-key evil-normal-state-map (kbd "C-n") 'evil-backward-char)
   (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-  (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join))
+  (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
+  (define-key evil-normal-state-map "gd" 'xref-find-definitions)
+  (define-key evil-normal-state-map "gD" 'xref-find-references)
+  (define-key evil-normal-state-map "gb" 'xref-pop-marker-stack)
+  (define-key evil-normal-state-map (kbd "M-.") 'xref-find-definitions)
+  (define-key evil-insert-state-map (kbd "M-.") 'xref-find-definitions))
 
 ;; Vim mode
 (use-package evil
