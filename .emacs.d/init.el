@@ -653,9 +653,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (lsp-ui-doc-show))
 
 ;;; Elementary textual completion backend.
-(setq company-backends
-  ;; (add-to-list 'company-backends 'company-dabbrev)
-  (add-to-list 'company-backends 'company-lsp))
+;; (setq company-backends
+  ;; (add-to-list 'company-backends 'company-dabbrev))
 
 ;; Company UI
 ;; (use-package company-box
