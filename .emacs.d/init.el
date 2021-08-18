@@ -753,9 +753,9 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (setq js2-mode-show-parse-errors nil)
   (setq js2-mode-show-strict-warnings nil))
 
-(add-hook 'js2-mode
-  (lambda ()
-    (setq-local eldoc-documentation-function #'ignore)))
+;; (add-hook 'js2-mode
+;;   (lambda ()
+;;     (setq-local eldoc-documentation-function #'ignore)))
 
 (use-package tern)
 
@@ -937,4 +937,4 @@ When using Homebrew, install it using \"brew install trash\"."
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
-(global-eldoc-mode -1)
+;; (global-eldoc-mode -1)
