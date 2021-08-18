@@ -882,7 +882,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :after projectile
   :bind (("s-p" . counsel-projectile-find-file))
   :config
-  (counsel-projectile-mode))
   (counsel-projectile-mode)
   (define-key projectile-mode-map [remap projectile-ripgrep] nil))
 
@@ -896,10 +895,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   "pc"  'projectile-compile-project
   "pP"  'projectile-test-project
   "pd"  'projectile-dired)
-
-(use-package counsel-projectile
-  :defer 2
-  :config (counsel-projectile-mode))
 
 
 (setq delete-by-moving-to-trash t)
