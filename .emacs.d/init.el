@@ -842,6 +842,9 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :hook ((js2-mode . add-node-modules-path)
           (rjsx-mode . add-node-modules-path)))
 
+;; graphql
+(use-package graphql-mode)
+
 ;; PHP
 (use-package php-mode
   :mode ("\\.php\\'" . php-mode))
