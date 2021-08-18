@@ -856,6 +856,11 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :mode
   ("Dockerfile\\(-.*\\)?\\'" . dockerfile-mode))
 
+;; ;; ripgrep
+;; (use-package ripgrep)
+;; (use-package rg)
+;; (setq ripgrep--base-arguments '("--line-number" "--with-filename"))
+
 ;; Projectile
 (use-package projectile
   :defer 2
