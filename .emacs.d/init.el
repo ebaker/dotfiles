@@ -310,6 +310,17 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :after (org)
   :hook (org-mode . org-bullets-mode))
 
+;; org-mode prettify
+(setq-default prettify-symbols-alist '(("#+BEGIN_SRC" . "↦") ;; "†"
+                                       ("#+END_SRC" . "⇤")
+                                       ("#+begin_src" . "↦")
+                                       ("#+end_src" .  "⇤")
+                                       ;; (">=" . "≥")
+                                        ;; ("=>" . "⇨")
+                                        ))
+(setq prettify-symbols-unprettify-at-point 'right-edge)
+(add-hook 'org-mode-hook 'prettify-symbols-mode)
+
 ;; Theme
 (use-package doom-themes
   :config
