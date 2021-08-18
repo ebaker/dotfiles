@@ -649,7 +649,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :config
   ;; (setq lsp-ui-sideline-enable t)
   ;; (setq lsp-ui-sideline-show-hover nil)
-  ;; (setq lsp-ui-doc-position 'bottom)
+  (setq lsp-ui-doc-position 'bottom)
   (lsp-ui-doc-show))
 
 ;;; Elementary textual completion backend.
