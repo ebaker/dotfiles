@@ -387,7 +387,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 ;; Custom keybinding
 (use-package general
-  :defer 1
   :init
   (setq general-override-states '(insert
                                    emacs
