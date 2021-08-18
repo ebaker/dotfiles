@@ -657,9 +657,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ;; (add-to-list 'company-backends 'company-dabbrev))
 
 ;; Company UI
-;; (use-package company-box
-;;   :ensure t
-;;   :hook (company-mode . company-box-mode))
+(use-package company-box
+  :hook (company-mode . company-box-mode))
 ;; (use-package company-posframe
 ;;   :ensure t
 ;;   :config (company-posframe-mode 1))
