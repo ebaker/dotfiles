@@ -528,6 +528,10 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   "gF"  'magit-fetch-all
   "gr"  'magit-rebase)
 
+;; forge
+;; (use-package forge
+;;   :after magit)
+
 ;;
 ;; Flyspell
 ;;
