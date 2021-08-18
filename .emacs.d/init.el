@@ -835,6 +835,10 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (use-package php-mode
   :mode ("\\.php\\'" . php-mode))
 
+;; dotenv
+(use-package dotenv-mode
+  :mode ("\\.env\\..*\\'" . dotenv-mode))
+
 ;; Docker
 (use-package dockerfile-mode
   :mode
