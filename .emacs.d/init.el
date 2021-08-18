@@ -900,6 +900,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   "pP"  'projectile-test-project
   "pd"  'projectile-dired)
 
+(use-package treemacs-projectile
+  :after (treemacs projectile))
 
 (setq delete-by-moving-to-trash t)
 (when (string= system-type "darwin")
