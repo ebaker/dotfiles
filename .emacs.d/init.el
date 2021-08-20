@@ -714,6 +714,29 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 ;; Yasnippet
 ;; (require 'eliot-yasnippet)
+(use-package yasnippet
+  :hook (prog-mode . yas-minor-mode)
+  :config
+  (yas-reload-all))
+;; Add yasnippet support for all company backends
+;; https://github.com/syl20bnr/spacemacs/pull/179
+(defvar company-mode/enable-yas t
+  "Enable yasnippet for all backends.")
+
+(defun company-mode/backend-with-yas (backend)
+  (if (or (not company-mode/enable-yas) (and (listp backend) (member 'company-yasnippet backend)))
+      backend
+    (append (if (consp backend) backend (list backend))
+            '(:with company-yasnippet))))
+
+(setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
+
+(use-package js-react-redux-yasnippets)
+(ebaker/leader-keys
+  "y"  '(:ignore t :which-key "yasnippet")
+  "ya" 'yas-insert-snippet)
+(setq lsp-completion-provider :none)
+(setq lsp-completion-provider :capf)
 
 ;;
 ;; Powerline
