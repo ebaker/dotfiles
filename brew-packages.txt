@@ -1,3 +1,4 @@
+aspell
 bat
 fd
 fzf
@@ -7,3 +8,6 @@ ripgrep
 diff-so-fancy
 trash
 git
+nvm
+libvterm
+cmake
