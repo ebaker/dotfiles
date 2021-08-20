@@ -362,16 +362,16 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
     ivy-initial-inputs-alist nil)
   (ivy-mode 1))
 
-(use-package ivy-rich
-  :init
-  (ivy-rich-mode 1))
-
 (use-package counsel
   :bind (("M-x" . counsel-M-x)
           ;; ("C-x b" . counsel-ibuffer)
           ;; ("C-x C-f" . counsel-find-file)
           :map minibuffer-local-map
           ("C-r" . 'counsel-minibuffer-history)))
+
+(use-package ivy-rich
+  :init
+  (ivy-rich-mode 1))
 
 (use-package helpful
   :custom
