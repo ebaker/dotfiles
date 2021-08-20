@@ -761,7 +761,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; doom-modeline
 (use-package doom-modeline
   :defer t
-  :custom((doom-modeline-height 15))
+  :custom(doom-modeline-height 15)
   :hook (after-init . doom-modeline-init))
 
 ;; xterm-colors
