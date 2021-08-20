@@ -627,7 +627,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (use-package lsp-mode
   ;; :config
   ;; (lsp-headerline-breadcrumb-enable t)
-  :hook (((js2-mode rjsx-mode) . lsp)
+  :hook (((typescript-mode) . lsp) ;; ((js2-mode rjsx-mode). lsp)
           (lsp-mode . lsp-enable-which-key-integration))
   :bind (([s-mouse-1] . xref-find-definitions)
           (:map lsp-mode-map
@@ -720,7 +720,17 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; editorconfig
 (use-package editorconfig
   :config
-  (editorconfig-mode 1))
+  (editorconfig-mode 1)
+  (setq  web-mode-markup-indent-offset 2
+       web-mode-css-indent-offset 2
+       web-mode-code-indent-offset 2
+       web-mode-indent-style 2
+       web-mode-block-padding 2
+       web-mode-style-padding 2
+       web-mode-script-padding 2
+       js2-basic-offset 2
+       js-indent-level 2
+       css-indent-offset 2))
 
 ;; smartparens
 (use-package smartparens
@@ -743,14 +753,14 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 ;; JavaScript
 ;; npm i -g typescript typescrypt-language-server
-(use-package js2-mode
-  :defer 2
-  :init
-  (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-  :config
-  (add-hook 'js2-mode 'display-line-numbers-mode)
-  (setq js2-mode-show-parse-errors nil)
-  (setq js2-mode-show-strict-warnings nil))
+;; (use-package js2-mode
+;;   :defer 2
+;;   :init
+;;   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+;;   :config
+;;   (add-hook 'js2-mode 'display-line-numbers-mode)
+;;   (setq js2-mode-show-parse-errors nil)
+;;   (setq js2-mode-show-strict-warnings nil))
 
 ;; (add-hook 'js2-mode
 ;;   (lambda ()
@@ -817,34 +827,99 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   )
 
 ;; Typescript
-;; (use-package typescript-mode
-;;   :ensure t
-;;   :defer 2
-;;   :init
-;;   (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode)))
+(use-package typescript-mode
+  :config
+  (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . typescript-mode))
+  (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescript-mode)))
+
+;; https://github.com/felipeochoa/rjsx-mode/issues/71
+;; https://gist.github.com/rangeoshun/67cb17392c523579bc6cbd758b2315c1
+(use-package mmm-mode
+  :config
+  (setq mmm-global-mode t)
+  (setq mmm-submode-decoration-level 0)) ;; Turn off background highlight
+
+;; Add css mode for CSS in JS blocks
+(mmm-add-classes
+  '((mmm-styled-mode
+    :submode css-mode
+    :front "\\(styled\\|css\\)[.()<>[:alnum:]]?+`"
+    :back "`;?")))
+
+(mmm-add-mode-ext-class 'typescript-mode nil 'mmm-styled-mode)
+
+;; Add submodule for graphql blocks
+(mmm-add-classes
+  '((mmm-graphql-mode
+    :submode graphql-mode
+    :front "gr?a?p?h?ql`"
+    :back "`;?")))
+
+(mmm-add-mode-ext-class 'typescript-mode nil 'mmm-graphql-mode)
+
+(use-package web-mode)
+(add-hook 'editorconfig-custom-hooks
+          (lambda (hash) (setq web-mode-block-padding 0)))
+(setq web-mode-auto-close-style 1)
+(setq web-mode-enable-auto-closing t)
+(setq web-mode-enable-auto-pairing t)
+
+(use-package emmet-mode
+  :commands emmet-mode
+  :hook
+  (web-mode html-mode)
+  :bind("C-;" . emmet-expand-line)
+  :config
+  (setq emmet-indent-after-insert nil)
+  ;; (setq emmet-indentation 2)
+  (setq emmet-self-closing-tag-style " /")
+  (setq emmet-expand-jsx-className? t))
+
+;; Add JSX submodule, because typescript-mode is not that great at it
+(mmm-add-classes
+  '((mmm-jsx-mode
+     :front "\\(return\s\\|n\s\\|(\n\s*\\)<"
+     :front-offset -1
+     :back ">\n?\s*)"
+     :back-offset 1
+     :submode web-mode)))
+
+(mmm-add-mode-ext-class 'typescript-mode nil 'mmm-jsx-mode)
+
+(defun mmm-reapply ()
+  (mmm-mode)
+  (mmm-mode))
+
+(add-hook 'after-save-hook
+          (lambda ()
+            (when (string-match-p "\\.jsx?" buffer-file-name)
+              (mmm-reapply))))
+
 
 (use-package prettier-js
   :config
-  (add-hook 'js2-mode-hook 'prettier-js-mode))
+  (add-hook 'typescript-mode-hook 'prettier-js-mode))
 
 (use-package json-mode
   :mode ("\\.json\\'"))
 
-(use-package rjsx-mode
-  :mode ("/\\(components\\|containers\\|src\\|pages\\)/.*\\.js[x]?\\'")
-  ;; (("/\\(containers\\)/[^/]*\\.js" . rjsx-mode)
-  ;;  ("/\\(components\\)/[^/]*\\.js" . rjsx-mode)
-  ;;  ("\\.jsx\\'" . rjsx-mode))
-  ;; :config
-  ;; (add-to-list 'lsp-language-id-configuration '(rjsx-mode . "javascript"))
-  )
+;; (use-package rjsx-mode
+;;   :mode ("/\\(components\\|containers\\|src\\|pages\\)/.*\\.js[x]?\\'")
+;;   ;; (("/\\(containers\\)/[^/]*\\.js" . rjsx-mode)
+;;   ;;  ("/\\(components\\)/[^/]*\\.js" . rjsx-mode)
+;;   ;;  ("\\.jsx\\'" . rjsx-mode))
+;;   ;; :config
+;;   ;; (add-to-list 'lsp-language-id-configuration '(rjsx-mode . "javascript"))
+;;   )
 
 (use-package add-node-modules-path
-  :hook ((js2-mode . add-node-modules-path)
-          (rjsx-mode . add-node-modules-path)))
+  :hook (;; (js2-mode . add-node-modules-path)
+          ;; (rjsx-mode . add-node-modules-path)
+          (typescript-mode . add-node-modules-path)))
 
 ;; graphql
 (use-package graphql-mode)
+
 
 ;; PHP
 (use-package php-mode
