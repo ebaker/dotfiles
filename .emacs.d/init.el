@@ -81,6 +81,7 @@
                  term-mode-hook
                  shell-mode-hook
                  eshell-mode-hook
+                 vterm-mode-hook
                  treemacs-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
@@ -151,6 +152,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (global-set-key (kbd "C-M-u") 'universal-argument)
 (global-set-key (kbd "C-M-n") 'persp-next)
 (global-set-key (kbd "C-M-p") 'persp-prev)
+(global-set-key (kbd "<f2>") 'vterm-toggle)
+(global-set-key (kbd "C-<f2>") 'vterm-toggle-cd)
 
 ;; @ebaker - remove keybinding eyebrowse
 (assq-delete-all 'eyebrowse-mode minor-mode-map-alist)
@@ -285,7 +288,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (use-package evil-collection
   :config
   (evil-collection-init 'magit)
-  (evil-collection-init 'dired))
+  (evil-collection-init 'dired)
+  (evil-collection-init 'vterm))
 
 (use-package evil-surround
   :config
@@ -661,6 +665,20 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;;; Elementary textual completion backend.
 ;; (setq company-backends
   ;; (add-to-list 'company-backends 'company-dabbrev))
+
+(use-package vterm)
+
+(use-package vterm-toggle
+  :init (setenv "TERM" "xterm")
+  :bind (:map vterm-mode-map
+          ("C-<return>" . vterm-toggle-insert-cd)
+          ("<f2>" . vterm-toggle)))
+
+(ebaker/leader-keys
+  "tv"  '(:ignore t :which-key "vterm")
+  "tvv" 'vterm-toggle
+  "tvn" 'vterm-toggle-forward
+  "tvp" 'vterm-toggle-backward)
 
 ;; Company UI
 (use-package company-box
