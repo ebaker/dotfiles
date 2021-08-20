@@ -693,6 +693,29 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   "tvn" 'vterm-toggle-forward
   "tvp" 'vterm-toggle-backward)
 
+;; UTF-8 support
+;; (prefer-coding-system       'utf-8)
+;; (set-default-coding-systems 'utf-8)
+;; (set-terminal-coding-system 'utf-8)
+;; (set-keyboard-coding-system 'utf-8)
+;; (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+
+;; (require 'xterm-color)
+
+;; (setq comint-output-filter-functions
+;;       (remove 'ansi-color-process-output comint-output-filter-functions))
+
+;; (add-hook 'shell-mode-hook
+;;           (lambda ()
+;;             ;; Disable font-locking in this buffer to improve performance
+;;             (font-lock-mode -1)
+;;             ;; Prevent font-locking from being re-enabled in this buffer
+;;             (make-local-variable 'font-lock-function)
+;;             (setq font-lock-function (lambda (_) nil))
+;;             (add-hook 'comint-preoutput-filter-functions 'xterm-color-filter nil t)))
+
+;; (setenv "TERM" "xterm-256color")
+
 ;; Company UI
 (use-package company-box
   :hook (company-mode . company-box-mode))
@@ -762,13 +785,13 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :custom(doom-modeline-height 15)
   :hook (after-init . doom-modeline-init))
 
-;; xterm-colors
-(use-package xterm-color
-  :config
-  (setq compilation-environment '("TERM=xterm-256color"))
-(defun my/advice-compilation-filter (f proc string)
-  (funcall f proc (xterm-color-filter string)))
-(advice-add 'compilation-filter :around #'my/advice-compilation-filter))
+;; ;; xterm-colors
+;; (use-package xterm-color
+;;   :config
+;;   (setq compilation-environment '("TERM=xterm-256color"))
+;; (defun my/advice-compilation-filter (f proc string)
+;;   (funcall f proc (xterm-color-filter string)))
+;; (advice-add 'compilation-filter :around #'my/advice-compilation-filter))
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language Supports ;;
@@ -961,10 +984,10 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :mode ("\\.json\\'"))
 
 ;; (use-package rjsx-mode
-;;   :mode ("/\\(components\\|containers\\|src\\|pages\\)/.*\\.js[x]?\\'")
+;;   :mode ("/\\(components\\|containers\\|src\\|pages\\)/.*\\.[j|t]s[x]?\\'" . rjsx-mode)
 ;;   ;; (("/\\(containers\\)/[^/]*\\.js" . rjsx-mode)
 ;;   ;;  ("/\\(components\\)/[^/]*\\.js" . rjsx-mode)
-;;   ;;  ("\\.jsx\\'" . rjsx-mode))
+;;    ("\\.ts[x]?\\'" . rjsx-mode)
 ;;   ;; :config
 ;;   ;; (add-to-list 'lsp-language-id-configuration '(rjsx-mode . "javascript"))
 ;;   )
