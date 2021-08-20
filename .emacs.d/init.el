@@ -44,7 +44,8 @@
 
 ;; Set default font
 (set-face-attribute 'default nil
-  :family "Inconsolata for Powerline"
+  ;; :family "Inconsolata for Powerline"
+  :family "Fira Mono for Powerline"
   :height 180
   :weight 'normal
   :width 'normal)
@@ -320,8 +321,10 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; Theme
 (use-package doom-themes
   :config
-  (load-theme 'doom-tomorrow-day t))
-;; (load-theme 'doom-one t))
+  ;; (load-theme 'doom-tomorrow-day t))
+  (load-theme 'doom-spacegrey))
+  ;; (load-theme 'doom-tomorrow-night))
+  ;; (load-theme 'doom-one t))
 
 ;; ivy
 (use-package ivy
