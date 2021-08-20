@@ -49,6 +49,13 @@
   :weight 'normal
   :width 'normal)
 
+;; emojis emacs 27+
+;; https://github.crookster.org/emacs27-from-homebrew-on-macos-with-emoji/
+(set-fontset-font
+  "fontset-default" 'unicode "Apple Color Emoji" nil 'prepend)
+(set-fontset-font
+  t 'symbol (font-spec :family "Apple Color Emoji") nil 'prepend)
+
 ;; https://emacs.stackexchange.com/questions/16818/cocoa-emacs-24-5-font-issues-inconsolata-dz
 (add-to-list 'default-frame-alist '(height . 44))
 (add-to-list 'default-frame-alist '(width . 100))
