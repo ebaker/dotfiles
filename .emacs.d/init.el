@@ -140,7 +140,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (global-set-key (kbd "s-1") 'delete-other-windows)
 (global-set-key (kbd "s-2") 'split-window-below)
 (global-set-key (kbd "s-3") 'split-window-right)
-(global-set-key (kbd "s-b") 'ido-switch-buffer)
+;; (global-set-key (kbd "s-b") 'ido-switch-buffer)
+(global-set-key (kbd "s-b") 'persp-ivy-switch-buffer)
 (global-set-key (kbd "s-k") 'ido-kill-buffer)
 (global-set-key (kbd "s-a") 'org-agenda)
 (global-set-key (kbd "s-r") 'revert-buffer)
@@ -148,6 +149,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (global-set-key (kbd "C-x C-c") 'my-save-buffers-kill-emacs)
 (global-set-key (kbd "C-x C-r") 'counsel-recentf)
 (global-set-key (kbd "C-M-u") 'universal-argument)
+(global-set-key (kbd "C-M-n") 'persp-next)
+(global-set-key (kbd "C-M-p") 'persp-prev)
 
 ;; @ebaker - remove keybinding eyebrowse
 (assq-delete-all 'eyebrowse-mode minor-mode-map-alist)
@@ -932,6 +935,18 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; (use-package rg)
 ;; (setq ripgrep--base-arguments '("--line-number" "--with-filename"))
 
+(use-package perspective
+  :bind (("C-M-k" . persp-switch)
+         ("C-M-n" . persp-next)
+         ("C-M-p" . persp-prev)
+         ("C-x k" . persp-kill-buffer*))
+  ;; :custom
+  ;; (persp-initial-frame-name "Main")
+  :config
+  ;; Running `persp-mode' multiple times resets the perspective list...
+  (unless (equal persp-mode t)
+    (persp-mode)))
+
 ;; Projectile
 (use-package projectile
   :defer 2
@@ -939,8 +954,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :config (projectile-mode)
   :custom ((projectile-completion-system 'ivy))
   :bind-keymap
-  ("C-c p" . projectile-command-map)
-  ("C-M-p" . projectile-command-map)
+  ("C-c C-p" . projectile-command-map)
+  ;; ("C-M-p" . projectile-command-map)
   :bind(("s-F" . projectile-ripgrep))
   :init
   ;; NOTE: Set this to the folder where you keep your Git repos!
@@ -969,6 +984,11 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 (use-package treemacs-projectile
   :after (treemacs projectile))
+
+(use-package treemacs-perspective
+  :after (treemacs perspective) ;;or perspective vs. persp-mode
+  :ensure t
+  :config (treemacs-set-scope-type 'Perspectives))
 
 (setq delete-by-moving-to-trash t)
 (when (string= system-type "darwin")
