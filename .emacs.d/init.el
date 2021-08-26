@@ -734,7 +734,19 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 ;; smartparens
 (use-package smartparens
-  :hook (prog-mode . smartparens-mode))
+  :hook (prog-mode . smartparens-mode)
+  :config
+  (sp-local-pair 'prog-mode "{" nil :post-handlers '((indent-between-pair "RET")))
+(sp-local-pair 'prog-mode "[" nil :post-handlers '((indent-between-pair "RET")))
+(sp-local-pair 'prog-mode "(" nil :post-handlers '((indent-between-pair "RET"))))
+
+(defun indent-between-pair (&rest _ignored)
+  (newline)
+  (indent-according-to-mode)
+  (forward-line -1)
+  (indent-according-to-mode))
+
+
 
 ;; elisp
 (setq lisp-indent-offset 2)
@@ -826,75 +838,56 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
       (flymake-eslint-enable)))
   )
 
-;; Typescript
 (use-package typescript-mode
+  :ensure t
+  :init
+  (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
   :config
-  (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . typescript-mode))
-  (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescript-mode)))
+  (setq typescript-indent-level 2)
+  (add-hook 'typescript-mode #'subword-mode)
+  (add-to-list 'auto-mode-alist '("\\.[j|t]sx\\'" . typescript-tsx-mode))
+  (add-to-list 'auto-mode-alist '("\\.[j|t]s\\'" . typescript-mode))
+  )
+
+(use-package tree-sitter
+  :ensure t
+  :hook ((typescript-mode . tree-sitter-hl-mode)
+   (typescript-tsx-mode . tree-sitter-hl-mode)))
+
+(use-package tree-sitter-langs
+  :ensure t
+  :after tree-sitter
+  :config
+  (tree-sitter-require 'tsx)
+  (add-to-list 'tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx)))
 
 ;; https://github.com/felipeochoa/rjsx-mode/issues/71
 ;; https://gist.github.com/rangeoshun/67cb17392c523579bc6cbd758b2315c1
-(use-package mmm-mode
-  :config
-  (setq mmm-global-mode t)
-  (setq mmm-submode-decoration-level 0)) ;; Turn off background highlight
-
-;; Add css mode for CSS in JS blocks
-(mmm-add-classes
-  '((mmm-styled-mode
-    :submode css-mode
-    :front "\\(styled\\|css\\)[.()<>[:alnum:]]?+`"
-    :back "`;?")))
-
-(mmm-add-mode-ext-class 'typescript-mode nil 'mmm-styled-mode)
-
-;; Add submodule for graphql blocks
-(mmm-add-classes
-  '((mmm-graphql-mode
-    :submode graphql-mode
-    :front "gr?a?p?h?ql`"
-    :back "`;?")))
-
-(mmm-add-mode-ext-class 'typescript-mode nil 'mmm-graphql-mode)
-
-(use-package web-mode)
-(add-hook 'editorconfig-custom-hooks
-          (lambda (hash) (setq web-mode-block-padding 0)))
-(setq web-mode-auto-close-style 1)
-(setq web-mode-enable-auto-closing t)
-(setq web-mode-enable-auto-pairing t)
 
 (use-package emmet-mode
   :commands emmet-mode
   :hook
-  (web-mode html-mode)
+  (typescript-mode)
   :bind("C-;" . emmet-expand-line)
   :config
   (setq emmet-indent-after-insert nil)
   ;; (setq emmet-indentation 2)
   (setq emmet-self-closing-tag-style " /")
-  (setq emmet-expand-jsx-className? t))
+  (setq emmet-expand-jsx-className? t)
+  (add-to-list 'emmet-jsx-major-modes 'typescript-mode))
 
-;; Add JSX submodule, because typescript-mode is not that great at it
-(mmm-add-classes
-  '((mmm-jsx-mode
-     :front "\\(return\s\\|n\s\\|(\n\s*\\)<"
-     :front-offset -1
-     :back ">\n?\s*)"
-     :back-offset 1
-     :submode web-mode)))
 
-(mmm-add-mode-ext-class 'typescript-mode nil 'mmm-jsx-mode)
+;; (defun my-web-mode-hook ()
+;;   (setq web-mode-enable-auto-pairing nil))
 
-(defun mmm-reapply ()
-  (mmm-mode)
-  (mmm-mode))
+;; (add-hook 'web-mode-hook  'my-web-mode-hook)
 
-(add-hook 'after-save-hook
-          (lambda ()
-            (when (string-match-p "\\.jsx?" buffer-file-name)
-              (mmm-reapply))))
+;; (defun sp-web-mode-is-code-context (id action context)
+;;   (and (eq action 'insert)
+;;        (not (or (get-text-property (point) 'part-side)
+;;                 (get-text-property (point) 'block-side)))))
 
+;; (sp-local-pair 'web-mode "<" nil :when '(sp-web-mode-is-code-context))
 
 (use-package prettier-js
   :config
