@@ -6,4 +6,5 @@ jq
 ripgrep
 diff-so-fancy
 trash
+pandoc
 git
