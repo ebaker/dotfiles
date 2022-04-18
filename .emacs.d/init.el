@@ -72,6 +72,8 @@
 ;; spaces for tabs
 (setq-default indent-tabs-mode nil)
 
+(delete-selection-mode t)
+
 ;; line numbers
 (column-number-mode)
 (global-display-line-numbers-mode t)
