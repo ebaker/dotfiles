@@ -667,6 +667,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ;; (setq lsp-ui-sideline-enable t)
   ;; (setq lsp-ui-sideline-show-hover nil)
   (setq lsp-ui-doc-position 'bottom)
+  (setq lsp-headerline-breadcrumb-enable-diagnostics nil)
   (lsp-ui-doc-show))
 
 ;;; Elementary textual completion backend.
