@@ -133,6 +133,15 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; Make escape quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
+;; cut, copy, paste, save, save as, undo, redo
+(global-set-key (kbd "s-x") 'kill-region)
+(global-set-key (kbd "s-c") 'kill-ring-save)
+(global-set-key (kbd "s-v") 'yank)
+(global-set-key (kbd "s-s") 'save-buffer)
+(global-set-key (kbd "s-S") 'write-file)
+(global-set-key (kbd "s-z") 'evil-undo)
+(global-set-key (kbd "s-Z") 'evil-redo)
+
 ;; @ebaker - global super custom hotkeys
 (global-set-key (kbd "s-/") 'comment-or-uncomment-region-or-line)
 (global-set-key (kbd "s-'") 'indent-region)
