@@ -239,3 +239,5 @@ load-nvmrc
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 source ~/.zshrc.local
+
+eval "$(starship init zsh)"
