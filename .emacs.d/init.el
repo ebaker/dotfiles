@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 ;; bug fix gnutls
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
@@ -244,7 +246,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (define-key evil-normal-state-map (kbd "C-p") 'evil-previous-visual-line)
   (define-key evil-normal-state-map (kbd "C-n") 'evil-next-visual-line)
   (define-key evil-normal-state-map (kbd "C-f") 'evil-forward-char)
-  (define-key evil-normal-state-map (kbd "C-n") 'evil-backward-char)
+  (define-key evil-normal-state-map (kbd "C-b") 'evil-backward-char)
   (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
   (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
   (define-key evil-normal-state-map "gd" 'xref-find-definitions)
@@ -306,10 +308,18 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; Orgmode
 
 (use-package org
-  :defer 1
+  :demand t
   :config
   (add-hook 'org-agenda-mode-hook #'ebaker/evilify-org-agenda-mode)
-  (require 'eliot-org))
+  ;; (require 'eliot-org)
+  (setq org-refile-targets '((nil :maxlevel . 1)
+                             (org-agenda-files :maxlevel . 1)))
+
+  (setq org-outline-path-complete-in-steps nil)
+  (setq org-refile-use-outline-path t)
+  (require 'eliot-roam))
+
+
 
 ;; https://emacs.stackexchange.com/questions/22405/after-executing-org-narrow-to-subtree-how-do-i-move-between-subtrees-of-the-sam
 (defun my/org-narrow-forward ()
@@ -336,13 +346,24 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (setq prettify-symbols-unprettify-at-point 'right-edge)
 (add-hook 'org-mode-hook 'prettify-symbols-mode)
 
+;; org-clip
+(use-package org-cliplink
+  :after (org))
+
 ;; Theme
 (use-package doom-themes
   :config
   ;; (load-theme 'doom-tomorrow-day t))
-  (load-theme 'doom-spacegrey))
+  ;; (load-theme 'doom-spacegrey))
+  ;; (load-theme 'doom-mono-light t))
+  ;; (load-theme 'doom-opera-light t))
+  ;; (load-theme 'doom-1337))
   ;; (load-theme 'doom-tomorrow-night))
-  ;; (load-theme 'doom-one t))
+  (load-theme 'doom-one t))
+  ;; (load-theme 'doom-solarized-light t))
+  ;; (load-theme 'doom-molokai t))
+  ;; (load-theme 'doom-Iosvkem t))
+
 
 ;; ivy
 (use-package ivy
@@ -458,7 +479,22 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
     ;; Others
     "a" '(:ignore t :which-key "applications")
-    "at"  '(ansi-term :which-key "open terminal")))
+    "at"  '(ansi-term :which-key "open terminal")
+
+    ;; org-mode
+    "o"   '(:ignore t :which-key "org mode")
+
+    "oi"  '(:ignore t :which-key "insert")
+    "oil" '(org-insert-link :which-key "insert link")
+
+    "on"  '(org-toggle-narrow-to-subtree :which-key "toggle narrow")
+
+    "os"  '(dw/counsel-rg-org-files :which-key "search notes")
+
+    "oa"  '(org-agenda :which-key "status")
+    "ot"  '(org-todo-list :which-key "todos")
+    "oc"  '(org-capture t :which-key "capture")
+    "ox"  '(org-export-dispatch t :which-key "export")))
 
 
 ;; Fancy titlebar for MacOS
@@ -1041,7 +1077,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ("Dockerfile\\(-.*\\)?\\'" . dockerfile-mode))
 
 ;; ;; ripgrep
-;; (use-package ripgrep)
+(use-package ripgrep)
 ;; (use-package rg)
 ;; (setq ripgrep--base-arguments '("--line-number" "--with-filename"))
 

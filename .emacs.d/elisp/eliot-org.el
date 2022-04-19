@@ -4,6 +4,7 @@
 ;; @ebaker org-mode setyp
 
 (setq org-startup-indented nil) ; Enable `org-indent-mode' by default
+;; (setq org-adapt-indentation nil) ; Enable `org-indent-mode' by default
 ;; #+STARTUP: indent
 (add-hook 'org-mode-hook #'visual-line-mode)
 
