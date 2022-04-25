@@ -6,7 +6,7 @@
   :init
   (setq org-roam-v2-ack t)
   :custom
-  (org-roam-directory "~/roam")
+  (org-roam-directory "~/Dropbox/roam")
   (org-roam-completion-everywhere t)
   :bind (("s-d l" . org-roam-buffer-toggle)
          ("s-d f" . org-roam-node-find)
