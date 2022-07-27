@@ -17,3 +17,5 @@ openshot-video-editor
 adobe-acrobat-reader
 veracrypt
 tradingview
+karabiner-elements
+logseq

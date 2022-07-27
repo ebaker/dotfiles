@@ -13,3 +13,6 @@ nvm
 libvterm
 cmake
 gifski
+watchman
+rclone
+rustup
