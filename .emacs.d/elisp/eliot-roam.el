@@ -7,6 +7,7 @@
   (setq org-roam-v2-ack t)
   :custom
   (org-roam-directory "~/Dropbox/roam")
+  (org-roam-dailies-directory "journals/")
   (org-roam-completion-everywhere t)
   :bind (("s-d l" . org-roam-buffer-toggle)
          ("s-d f" . org-roam-node-find)
@@ -74,26 +75,26 @@ capture was not aborted."
    (my/org-roam-filter-by-tag "Project")
    :templates
    '(("p" "project" plain "* Goals\n\n%?\n\n* Tasks\n\n** TODO Add initial tasks\n\n* Dates\n\n"
-      :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project")
+      :if-new (file+head "pages/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project")
       :unnarrowed t))))
 
 (defun my/org-roam-capture-inbox ()
   (interactive)
   (org-roam-capture- :node (org-roam-node-create)
                      :templates '(("i" "inbox" plain "* %?"
-                                    :if-new (file+head "inbox.org" "#+title: Inbox\n")))))
+                                    :if-new (file+head "pages/inbox.org" "#+title: Inbox\n")))))
 
 (defun my/org-roam-capture-index ()
   (interactive)
   (org-roam-capture- :node (org-roam-node-create)
                      :templates '(("I" "index" plain "* %?"
-                                    :if-new (file+head "index.org" "#+title: Index\n")))))
+                                    :if-new (file+head "pages/index.org" "#+title: Index\n")))))
 
 (defun my/org-roam-capture-daily ()
   (interactive)
   (org-roam-capture- :node (org-roam-node-create)
                      :templates '(("d" "daily" plain "* %?"
-                                  :if-new (file+head "daily.org" "#+title: Index\n")))))
+                                  :if-new (file+head "pages/daily.org" "#+title: Index\n")))))
 
 
 (defun my/org-roam-capture-task ()
@@ -106,7 +107,7 @@ capture was not aborted."
                             nil
                             (my/org-roam-filter-by-tag "Project"))
                      :templates '(("p" "project" plain "** TODO %?"
-                                   :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
+                                   :if-new (file+head+olp "pages/%<%Y%m%d%H%M%S>-${slug}.org"
                                                           "#+title: ${title}\n#+category: ${title}\n#+filetags: Project"
                                                           ("Tasks"))))))
 
@@ -115,7 +116,7 @@ capture was not aborted."
   (let ((org-refile-keep t) ;; Set this to nil to delete the original!
         (org-roam-dailies-capture-templates
           '(("t" "tasks" entry "%?"
-             :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n" ("Tasks")))))
+             :if-new (file+head+olp "pages/%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n" ("Tasks")))))
         (org-after-refile-insert-hook #'save-buffer)
         today-file
         pos)
@@ -129,10 +130,10 @@ capture was not aborted."
                    (file-truename (buffer-file-name)))
       (org-refile nil nil (list "Tasks" today-file nil pos)))))
 
-(add-to-list 'org-after-todo-state-change-hook
-             (lambda ()
-               (when (equal org-state "DONE")
-                 (my/org-roam-copy-todo-to-today))))
+;; (add-to-list 'org-after-todo-state-change-hook
+;;              (lambda ()
+;;                (when (equal org-state "DONE")
+;;                  (my/org-roam-copy-todo-to-today))))
 
 (use-package websocket)
 (use-package simple-httpd)

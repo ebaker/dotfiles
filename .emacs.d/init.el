@@ -3,6 +3,7 @@
 ;; bug fix gnutls
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
+
 ;; heavily insprired by https://blog.jft.rocks/emacs/emacs-from-scratch.html
 
 ;; Minimal UI
@@ -10,6 +11,9 @@
 (tool-bar-mode   -1)
 (tooltip-mode    -1)
 (menu-bar-mode   -1)
+
+;; mac
+(setq mac-pass-command-to-system nil)
 
 ;; Package configs
 (require 'package)
@@ -67,6 +71,10 @@
 ;; Make startup faster by reducing the frequency of garbage
 ;; collection.  The default is 800 kilobytes.  Measured in bytes.
 (setq gc-cons-threshold (* 50 1000 1000))
+
+;; lsp-mode performance
+(setq read-process-output-max (* 1024 1024))
+(setq gc-cons-threshold 100000000)
 
 ;;
 ;; emacs setup
@@ -239,7 +247,9 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (use-package undo-tree
   ;; :diminish undo-tree-mode:
   :init
-  (global-undo-tree-mode 1))
+  (global-undo-tree-mode 1)
+  :config
+  (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo"))))
 
 (defun ebaker/emacsify-evil-mode ()
   "Remove Evil Normal state bindings and add some Emacs bindings in Evil Normal state."
@@ -328,6 +338,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
   (setq org-outline-path-complete-in-steps nil)
   (setq org-refile-use-outline-path t)
+  (setq org-agenda-span 'day)
   (require 'eliot-roam))
 
 
@@ -370,8 +381,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ;; (load-theme 'doom-opera-light t))
   ;; (load-theme 'doom-1337))
   ;; (load-theme 'doom-tomorrow-night))
-  (load-theme 'doom-one t))
-  ;; (load-theme 'doom-solarized-light t))
+  ;; (load-theme 'doom-one t))
+  (load-theme 'doom-solarized-light t))
   ;; (load-theme 'doom-molokai t))
   ;; (load-theme 'doom-Iosvkem t))
 
@@ -701,7 +712,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :custom
   (lsp-rust-analyzer-cargo-watch-command "clippy")
   (lsp-eldoc-render-all t)
-  (lsp-rust-analyzer-server-display-inlay-hints t))
+  (lsp-rust-analyzer-server-display-inlay-hints t)
+  (setq lsp-idle-delay 0.100))
 
 ;; lsp general
 (ebaker/leader-keys
@@ -1019,9 +1031,18 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 ;; (sp-local-pair 'web-mode "<" nil :when '(sp-web-mode-is-code-context))
 
-(use-package prettier-js
-  :config
-  (add-hook 'typescript-mode-hook 'prettier-js-mode))
+;; (use-package prettier-js
+;;   :config
+;;   (add-hook 'typescript-mode-hook 'prettier-js-mode))
+
+;; (use-package eslint-fix
+;;   :config
+;;   (add-hook 'typescript-mode-hook 'eslint-fix-auto-mode))
+
+(use-package eslintd-fix
+  :config (setq eslintd-fix-executable "/Users/eliot/.volta/bin/eslint_d")
+  :hook ((typescript-mode . eslintd-fix-mode)
+         (json-mode . eslintd-fix-mode)))
 
 (use-package json-mode
   :mode ("\\.json\\'"))
@@ -1043,6 +1064,10 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; graphql
 (use-package graphql-mode)
 
+;; import-js
+;; (use-package import-js
+  ;; :config
+  ;; (global-set-key (kbd "s-i") 'import-js-import))
 
 ;; rust
 (use-package rustic
@@ -1102,6 +1127,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ;; (persp-initial-frame-name "Main")
   :config
   ;; Running `persp-mode' multiple times resets the perspective list...
+  ;; (setq persp-state-default-file "~/.emacs-persp-default"')
+  (customize-set-variable persp-sort 'created)
   (unless (equal persp-mode t)
     (persp-mode)))
 
