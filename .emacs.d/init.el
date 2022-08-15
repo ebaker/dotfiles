@@ -50,9 +50,10 @@
 
 ;; Set default font
 (set-face-attribute 'default nil
-  ;; :family "Inconsolata for Powerline"
-  :family "Fira Mono for Powerline"
-  :height 180
+  :family "Inconsolata Nerd Font"
+  ;; :family "FiraCode Nerd Font"
+  ;; :family "SauceCodePro Nerd Font"
+  :height 170
   :weight 'normal
   :width 'normal)
 
@@ -64,8 +65,8 @@
   t 'symbol (font-spec :family "Apple Color Emoji") nil 'prepend)
 
 ;; https://emacs.stackexchange.com/questions/16818/cocoa-emacs-24-5-font-issues-inconsolata-dz
-(add-to-list 'default-frame-alist '(height . 44))
-(add-to-list 'default-frame-alist '(width . 100))
+;; (add-to-list 'default-frame-alist '(height . 44))
+;; (add-to-list 'default-frame-alist '(width . 100))
 
 
 ;; Make startup faster by reducing the frequency of garbage
@@ -181,8 +182,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (global-set-key (kbd "C-M-u") 'universal-argument)
 (global-set-key (kbd "C-M-n") 'persp-next)
 (global-set-key (kbd "C-M-p") 'persp-prev)
-(global-set-key (kbd "<f2>") 'vterm-toggle)
-(global-set-key (kbd "C-<f2>") 'vterm-toggle-cd)
+;; (global-set-key (kbd "<f2>") 'vterm-toggle)
+;; (global-set-key (kbd "C-<f2>") 'vterm-toggle-cd)
 
 ;; @ebaker - remove keybinding eyebrowse
 (assq-delete-all 'eyebrowse-mode minor-mode-map-alist)
@@ -291,7 +292,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (ebaker/emacsify-evil-mode)
 
   ;; @ebaker - enter normal state after saving
-  (add-hook 'after-save-hook #'evil-normal-state))
+  (add-hook 'after-save-hook #'evil-normal-state)
+  (evil-set-initial-state 'exwm-mode 'emacs))
 
 ;;
 (defun ebaker/evilify-org-agenda-mode ()
@@ -320,6 +322,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :config
   (evil-collection-init 'magit)
   (evil-collection-init 'dired)
+  (evil-collection-init 'xref)
   (evil-collection-init 'vterm))
 
 (use-package evil-surround
@@ -479,6 +482,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
     "dv" '(describe-variable :which-key "describe-variable")
     "df" '(describe-function :which-key "describe-function")
     "dk" '(describe-key :which-key "describe-key")
+    "dm" '(describe-key :which-key "describe-mode")
 
     ;; eval-
     "e" '(:ignore t :which-key "eval-")
@@ -626,7 +630,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (use-package flyspell
   :ensure nil
   :init
-  (setq ispell-program-name "/usr/local/bin/aspell")
+  (setq ispell-program-name "/home/eliot/.nix-profile/aspell")
   (setq ispell-dictionary "en_US") ;; set the default dictionary
   :diminish flyspell-mode: ;; Don't show it in the modeline.
   :hook
@@ -720,6 +724,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   "l"  '(:ignore t :which-key "lsp")
   "ld" 'xref-find-definitions
   "lr" 'xref-find-references
+  "lR" 'lsp-rename
   "lb" 'xref-pop-marker-stack
   "ln" 'lsp-ui-find-next-reference
   "lp" 'lsp-ui-find-prev-reference
@@ -743,17 +748,54 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 (use-package vterm)
 
-(use-package vterm-toggle
-  :init (setenv "TERM" "xterm")
-  :bind (:map vterm-mode-map
-          ("C-<return>" . vterm-toggle-insert-cd)
-          ("<f2>" . vterm-toggle)))
+;; (use-package vterm-toggle
+;;   :init (setenv "TERM" "xterm")
+;;   :bind (:map vterm-mode-map
+;;           ("C-<return>" . vterm-toggle-insert-cd)
+;;           ("<f2>" . vterm-toggle)))
+
+(use-package multi-vterm
+  :config
+  (add-hook 'vterm-mode-hook
+      (lambda ()
+      (setq-local evil-insert-state-cursor 'bar)
+      (evil-insert-state)))
+  (define-key vterm-mode-map [return]                      #'vterm-send-return)
+
+  (setq vterm-keymap-exceptions nil)
+  (evil-define-key 'insert vterm-mode-map (kbd "C-e")      #'vterm--self-insert)
+  (evil-define-key 'insert vterm-mode-map (kbd "C-f")      #'vterm--self-insert)
+  (evil-define-key 'insert vterm-mode-map (kbd "C-a")      #'vterm--self-insert)
+  (evil-define-key 'insert vterm-mode-map (kbd "C-v")      #'vterm--self-insert)
+  (evil-define-key 'insert vterm-mode-map (kbd "C-b")      #'vterm--self-insert)
+  (evil-define-key 'insert vterm-mode-map (kbd "C-w")      #'vterm--self-insert)
+  (evil-define-key 'insert vterm-mode-map (kbd "C-u")      #'vterm--self-insert)
+  (evil-define-key 'insert vterm-mode-map (kbd "C-d")      #'vterm--self-insert)
+  (evil-define-key 'insert vterm-mode-map (kbd "C-n")      #'vterm--self-insert)
+  (evil-define-key 'insert vterm-mode-map (kbd "C-m")      #'vterm--self-insert)
+  (evil-define-key 'insert vterm-mode-map (kbd "C-p")      #'vterm--self-insert)
+  (evil-define-key 'insert vterm-mode-map (kbd "C-j")      #'vterm--self-insert)
+  (evil-define-key 'insert vterm-mode-map (kbd "C-k")      #'vterm--self-insert)
+  (evil-define-key 'insert vterm-mode-map (kbd "C-r")      #'vterm--self-insert)
+  (evil-define-key 'insert vterm-mode-map (kbd "C-t")      #'vterm--self-insert)
+  (evil-define-key 'insert vterm-mode-map (kbd "C-g")      #'vterm--self-insert)
+  (evil-define-key 'insert vterm-mode-map (kbd "C-c")      #'vterm--self-insert)
+  (evil-define-key 'insert vterm-mode-map (kbd "C-SPC")    #'vterm--self-insert)
+  (evil-define-key 'normal vterm-mode-map (kbd "C-d")      #'vterm--self-insert)
+  (evil-define-key 'normal vterm-mode-map (kbd ",c")       #'multi-vterm)
+  (evil-define-key 'normal vterm-mode-map (kbd ",n")       #'multi-vterm-next)
+  (evil-define-key 'normal vterm-mode-map (kbd ",p")       #'multi-vterm-prev)
+  (evil-define-key 'normal vterm-mode-map (kbd "i")        #'evil-insert-resume)
+  (evil-define-key 'normal vterm-mode-map (kbd "o")        #'evil-insert-resume)
+  (evil-define-key 'normal vterm-mode-map (kbd "<return>") #'evil-insert-resume))
 
 (ebaker/leader-keys
   "tv"  '(:ignore t :which-key "vterm")
-  "tvv" 'vterm-toggle
-  "tvn" 'vterm-toggle-forward
-  "tvp" 'vterm-toggle-backward)
+  "tvv" 'multi-vterm
+  "tvn" 'multi-vterm-next
+  "tvp" 'multi-vterm-prev
+  "tvd" 'multi-vterm-dedicated-toggle
+  "tvp" 'multi-vterm-project)
 
 ;; UTF-8 support
 ;; (prefer-coding-system       'utf-8)
@@ -841,11 +883,11 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;;   (spaceline-toggle-buffer-size-off)
 ;;   (spaceline-toggle-evil-state-on))
 
-;; doom-modeline
+;; using telephone-line for now
+;; ;; doom-modeline
 (use-package doom-modeline
-  :defer t
   :custom(doom-modeline-height 15)
-  :hook (after-init . doom-modeline-init))
+  :init (doom-modeline-mode 1))
 
 ;; ;; xterm-colors
 ;; (use-package xterm-color
@@ -1040,7 +1082,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;;   (add-hook 'typescript-mode-hook 'eslint-fix-auto-mode))
 
 (use-package eslintd-fix
-  :config (setq eslintd-fix-executable "/Users/eliot/.volta/bin/eslint_d")
+  :config (setq eslintd-fix-executable "/home/eliot/.nvm/versions/node/v16.16.0/bin/eslint_d")
   :hook ((typescript-mode . eslintd-fix-mode)
          (json-mode . eslintd-fix-mode)))
 
@@ -1060,6 +1102,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :hook (;; (js2-mode . add-node-modules-path)
           ;; (rjsx-mode . add-node-modules-path)
           (typescript-mode . add-node-modules-path)))
+
+(setq exec-path (append exec-path '("~/.nvm/versions/node/v16.16.0/bin")))
 
 ;; graphql
 (use-package graphql-mode)
@@ -1113,12 +1157,18 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :mode
   ("Dockerfile\\(-.*\\)?\\'" . dockerfile-mode))
 
+;; Nix
+(use-package nix-mode
+  :mode ("\\.nix\\'" . nix-mode))
+
 ;; ;; ripgrep
 (use-package ripgrep)
 ;; (use-package rg)
 ;; (setq ripgrep--base-arguments '("--line-number" "--with-filename"))
 
 (use-package perspective
+  :custom
+  (persp-mode-prefix-key (kbd "C-c M-p"))  ; pick your own prefix key here
   :bind (("C-M-k" . persp-switch)
          ("C-M-n" . persp-next)
          ("C-M-p" . persp-prev)
@@ -1206,9 +1256,182 @@ When using Homebrew, install it using \"brew install trash\"."
   (evil-collection-define-key 'normal 'dired-mode-map
     "H" 'dired-hide-dotfiles-mode))
 
+;; exwm
+(server-start)
+
+;;(require 'exwm)
+(require 'exwm-randr)
+
+(defvar efs/polybar-process nil
+  "Holds the process of the running Polybar instance, if any")
+
+(defun efs/kill-panel ()
+  (interactive)
+  (when efs/polybar-process
+    (ignore-errors
+      (kill-process efs/polybar-process)))
+  (setq efs/polybar-process nil))
+
+(defun efs/start-panel ()
+  (interactive)
+  (efs/kill-panel)
+  (setq efs/polybar-process (start-process-shell-command "polybar" nil "polybar panel")))
+
+  ;; Make class name the buffer name
+  (add-hook 'exwm-update-class-hook
+            (lambda ()
+              (exwm-workspace-rename-buffer exwm-class-name)))
+
+(use-package winum
+  :config (winum-mode))
+
+(setq exwm-input-prefix-keys
+  '(?\C-x ?\C-u ?\C-h ?\M-x ?\M-& ?\M-: ?\s-d ?\s-m ?\s-r ?\s-s ?\s-q ?\H-l))
+
+(defun previous-other-frame ()
+    (interactive)
+    (other-frame -1))
+(global-set-key (kbd "M-s-n") 'other-frame)
+(global-set-key (kbd "M-s-p") 'previous-other-frame)
+
+
+(setq exwm-input-global-keys
+  `(
+     ([?\s-q] . (lambda () (interactive) (kill-buffer)))
+     ([?\s-k] . (lambda () (interactive) (kill-buffer)))
+     ([?\s-b] . ivy-switch-buffer)
+     ([?\s-o] . other-window)
+     ([?\s-O] . ebaker/other-window-reverse)
+     ([?\s-0] . delete-window)
+     ([?\s-1] . delete-other-windows)
+     ([?\s-2] . split-window-below)
+     ([?\s-3] . split-window-right)
+     ;; ([?\s-b] . ido-switch-buffer)
+     ([?\s-b] . persp-ivy-switch-buffer)
+     ([?\s-k] . ido-kill-buffer)
+     ([?\s-a] . org-agenda)
+     ([?\s-r] . revert-buffer)
+     ([f7] . other-frame)
+     ;;([?\M-s-n]. other-frame)
+     ([f6] . previous-other-frame)
+     ;;([?\M-s-p] . previous-other-frame)
+     ([s-left] . winum-select-window-2)
+     ([s-down] . winum-select-window-1)
+     ([s-right] . winum-select-window-3)
+     ([s-up] . winum-select-window-4)
+
+        ;; Bind "s-r" to exit char-mode and fullscreen mode.
+        ([?\s-f] . exwm-reset)
+        ;; Bind "s-w" to switch workspace interactively.
+        ;; ([?\s-w] . exwm-workspace-switch)
+        ;; ;; Bind "s-0" to "s-9" to switch to a workspace by its index.
+        ;; ,@(mapcar (lambda (i)
+        ;;             `(,(kbd (format "s-%d" i)) .
+        ;;               (lambda ()
+        ;;                 (interactive)
+        ;;                 (exwm-workspace-switch-create ,i))))
+        ;;           (number-sequence 0 9))
+        ;; Bind "s-&" to launch applications ('M-&' also works if the output
+        ;; buffer does not bother you).
+        ([?\s-&] . (lambda (command)
+         (interactive (list (read-shell-command "$ ")))
+         (start-process-shell-command command nil command)))
+        ;; Bind "s-<f2>" to "slock", a simple X display locker.
+        ([s-f2] . (lambda ()
+        (interactive)
+                    (start-process "" nil "/usr/bin/slock")))))
+
+(setq exwm-input-simulation-keys
+      '(
+        ([?\C-b] . [left])
+        ([?\M-b] . [C-left])
+        ([?\C-f] . [right])
+        ([?\M-f] . [C-right])
+        ([?\C-p] . [up])
+        ([?\C-n] . [down])
+        ([?\C-a] . [home])
+        ([?\C-e] . [end])
+        ([?\M-v] . [prior])
+        ([?\C-v] . [next])
+        ([?\C-d] . [delete])
+        ([?\M-d] . [S-end delete])
+        ([?\C-k] . [S-end delete])
+        ([?\C-w] . [?\C-x])
+        ([?\s-x] . [?\C-x])
+        ([?\M-w] . [?\C-c])
+        ([?\s-c] . [?\C-c])
+        ([?\C-y] . [?\C-v])
+        ([?\s-v] . [?\C-v])
+        ([?\C-/] . [?\C-z])
+        ([?\s-z] . [?\C-z])
+        ([?\s-f] . [?\C-f])
+        ([?\s-t] . [?\C-t])
+        ([?\s-T] . [?\C-T])
+        ([?\s-w] . [?\C-w])
+        ([?\s-l] . [?\C-l])
+        ([?\s-n] . [?\C-n])
+        ([?\s-N] . [?\C-N])
+        ([?\s-j] . [?\C-j])
+        ;; ([?\C-?\s-j] . [?\C-?\M-j])
+        ([?\C-g] . [?\C-c])))
+
+(visible-frame-list)
+
+;; https://www.reddit.com/r/emacs/comments/7jftjw/comment/dr9iyi6/?utm_source=share&utm_medium=web2x
+;; (push ?\C-b exwm-input-prefix-keys)
+;; (push ?\: exwm-input-prefix-keys)
+
+(use-package exwm
+  :init
+  (efs/start-panel)
+  :config
+  (require 'exwm-randr)
+  (setq exwm-workspace-number 4)
+  ;; (setq exwm-randr-workspace-output-plist '(0 "DVI-I-1" 1 "DVI-I-1-1" 2 "DVI-D-0" 3 "DP-1"))
+  (setq exwm-randr-workspace-output-plist '(0 "DVI-I-1" 1 "DVI-I-1-1" 2 "DP-1" 3 "DVI-D-0"))
+  ;; (setq exwm-randr-workspace-output-plist nil)
+  ;; (setq exwm-randr-workspace-monitor-plist nil)
+  ;; (setq exwm-randr-workspace-output-plist '(0 "DVI-I-1"))
+  ;; (setq exwm-randr-workspace-output-plist '(0 "DP-1"))
+  ;; (setq exwm-randr-workspace-output-plist '(0 "DVI-I-1" 1 "DVI-I-1" 2 "DVI-I-1-1" 3 "DVI-I-1-1" 4 "DP-1" 5 "DP-1" 6 "DVI-D-0" 7 "DVI-D-0"))
+  ;; (setq exwm-randr-workspace-output-plist '(0 "DVI-I-1" 1 "DVI-I-1-1" 2 "DVI-D-0" 3 "DP-1"))
+  ;; (setq exwm-randr-workspace-output-plist '(0 "DVI-I-1" 1"DP-1"))
+  ;; (setq exwm-randr-workspace-monitor-plist '(1 "DVI-I-1" 2 "DVI-I-1-1" 3 "DP-1" 4 "DVI-D-0"))
+
+(add-hook 'exwm-randr-screen-change-hook
+          (lambda ()
+            (start-process-shell-command
+             ;; ideal
+             ;; "xrandr" nil "xrandr --output DVI-I-1 -r 60 --mode 2560x1440 --primary --pos 1440x1080 --output DVI-I-1-1 -r 60 --mode 2560x1440 --pos 0x520 --rotate left --output DP-1 --mode 1920x1080 -r 60 --pos 1440x0 --output DVI-D-0 --auto --pos 4000x520 --rotate right")))
+              ;;really good! before cable switch
+              ;; "xrandr" nil "xrandr --output DVI-I-1 -r 60 --mode 2560x1440 --primary --pos 1440x1080 --output DVI-I-1-1 -r 60 --mode 2560x1440 --pos 0x520 --rotate left --output DVI-D-0 --auto --pos 4000x520 --rotate right --output DP-1 --auto --right-of DVI-D-0")))
+
+                ;;really good! with cable switch
+              "xrandr" nil "xrandr --output DVI-I-1 -r 60 --mode 2560x1440 --primary --pos 1440x1080 --output DVI-I-1-1 -r 60 --mode 2560x1440 --pos 0x520 --rotate left --output DP-1 --auto --pos 4000x520 --rotate right --output DVI-D-0 --auto --right-of DP-1")))
+
+
+              ;; simple but not quite what i want
+             ;; "xrandr" nil "xrandr --output DVI-I-1 -r 60 --mode 2560x1440 --primary --output DVI-I-1-1 -r 60 --mode 2560x1440 --left-of DVI-I-1 --rotate left --output DVI-D-0 --auto --right-of DVI-I-1 --rotate right --output DP-1 --auto --above DVI-I-1")))
+             ;; "xrandr" nil "xrandr --output DVI-I-1 -r 59.95 --mode 2560x1440")))
+  (exwm-randr-enable)
+  ;; (setq exwm-systemtray-height 16)
+  ;; (setq exwm-input-global-keys `(,(kbd "s-&") .
+  ;;                              (lambda (command)
+  ;;                                (interactive (list (read-shell-command "$ ")))
+  ;;                                (start-process-shell-command command nil command))))
+  (exwm-init))
+
+
+(setq exwm-workspace-warp-cursor t)
+
+
+
 ;; Dashboard
 ;; (require 'eliot-dashboard)
 
 ;; Make gc pauses faster by decreasing the threshold.
-(setq gc-cons-threshold (* 2 1000 1000))
+(setq ac-cons-threshold (* 2 1000 1000))
 ;; (global-eldoc-mode -1)
+
+;; (exwm-randr--get-outputs)
+;; (exwm-randr--get-monitors)
