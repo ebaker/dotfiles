@@ -193,6 +193,10 @@ alias cat='bat -p'
 alias find='fd'
 alias grep='rg'
 
+# emacs
+alias e='emacsclient'
+alias se="SUDO_EDITOR=\"emacsclient\" sudo -e"
+
 
 # eliot functions
 
@@ -226,10 +230,10 @@ autoload -U add-zsh-hook
 # load-nvmrc() {
 #   local node_version="$(nvm version)"
 #   local nvmrc_path="$(nvm_find_nvmrc)"
-# 
+#
 #   if [ -n "$nvmrc_path" ]; then
 #     local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
-# 
+#
 #     if [ "$nvmrc_node_version" = "N/A" ]; then
 #       nvm install
 #     elif [ "$nvmrc_node_version" != "$node_version" ]; then
@@ -245,6 +249,11 @@ autoload -U add-zsh-hook
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+#export NIX_PATH=$HOME/.nix-defexpr/channels:/nix/var/nix/profiles/per-user/root/channels${NIX_PATH:+:$NIX_PATH}
+
+#. $HOME/.nix-profile/etc/profile.d/hm-session-vars.sh
+
 source ~/.zshrc.local
 
 eval "$(starship init zsh)"
+source /usr/share/nvm/init-nvm.sh
