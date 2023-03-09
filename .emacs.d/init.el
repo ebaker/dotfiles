@@ -384,8 +384,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ;; (load-theme 'doom-opera-light t))
   ;; (load-theme 'doom-1337))
   ;; (load-theme 'doom-tomorrow-night))
-  ;; (load-theme 'doom-one t))
-  (load-theme 'doom-solarized-light t))
+  (load-theme 'doom-one t))
+  ;; (load-theme 'doom-solarized-light t))
   ;; (load-theme 'doom-molokai t))
   ;; (load-theme 'doom-Iosvkem t))
 
@@ -630,7 +630,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (use-package flyspell
   :ensure nil
   :init
-  (setq ispell-program-name "/home/eliot/.nix-profile/aspell")
+  (setq ispell-program-name "/home/eliot/.nix-profile/bin/aspell")
   (setq ispell-dictionary "en_US") ;; set the default dictionary
   :diminish flyspell-mode: ;; Don't show it in the modeline.
   :hook
