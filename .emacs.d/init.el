@@ -203,6 +203,10 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; (setq default-fill-column 140)		; toggle wrapping text at the 80th character
 (setq initial-scratch-message ";; *scratch*\n\n") ; print a default message in the empty scratch buffer opened at startup
 
+;; https://www.gnu.org/software/emacs/manual/html_node/elisp/File-Locks.html
+(setq lock-file-name-transforms
+      '(("\\`/.*/\\([^/]+\\)\\'" "~/.emacs.d/lockfiles/\\1" t)))
+
 ;; https://emacs.stackexchange.com/questions/28736/emacs-pointcursor-movement-lag/28746
 (setq auto-window-vscroll nil)
 
