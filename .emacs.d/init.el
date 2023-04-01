@@ -345,6 +345,9 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (setq org-agenda-span 'day)
   (require 'eliot-roam))
 
+(use-package org-chef
+  :ensure t)
+
 
 
 ;; https://emacs.stackexchange.com/questions/22405/after-executing-org-narrow-to-subtree-how-do-i-move-between-subtrees-of-the-sam
@@ -1212,6 +1215,8 @@ When using Homebrew, install it using \"brew install trash\"."
 
 ;; Dashboard
 ;; (require 'eliot-dashboard)
+
+
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
