@@ -297,29 +297,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ;; @ebaker - enter normal state after saving
   (add-hook 'after-save-hook #'evil-normal-state))
 
-;;
-(defun ebaker/evilify-org-agenda-mode ()
-  "Org Agenda use some Evil keybindings."
-
-  (define-key org-agenda-mode-map "j" 'org-agenda-next-line)
-  (define-key org-agenda-mode-map "k" 'org-agenda-previous-line)
-  ;; (define-key org-agenda-mode-map "gj" 'org-agenda-next-item)
-  ;; (define-key org-agenda-mode-map "gk" 'org-agenda-previous-item)
-  (define-key org-agenda-mode-map "l" 'forward-char)
-  (define-key org-agenda-mode-map "h" 'backward-char)
-  (define-key org-agenda-mode-map (kbd "C-j") 'org-agenda-next-item)
-  (define-key org-agenda-mode-map (kbd "C-k") 'org-agenda-previous-item)
-  (define-key org-agenda-mode-map (kbd "[") 'org-agenda-earlier)
-  (define-key org-agenda-mode-map (kbd "]") 'org-agenda-later)
-  (define-key org-agenda-mode-map (kbd "f") 'org-agenda-earlier)
-  (define-key org-agenda-mode-map (kbd "b") 'org-agenda-later)
-  (define-key org-agenda-mode-map (kbd "m") 'org-agenda-bulk-toggle)
-  (define-key org-agenda-mode-map (kbd "~") 'org-agenda-bulk-toggle-all)
-  (define-key org-agenda-mode-map (kbd "*") 'org-agenda-bulk-mark-all)
-  (define-key org-agenda-mode-map (kbd "%") 'org-agenda-bulk-mark-regexp)
-  ;; (define-key org-agenda-mode-map (kbd "M") 'org-agenda-bulk-remove-all-marks)
-  )
-
 (use-package evil-collection
   :config
   (evil-collection-init 'magit)
@@ -340,7 +317,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (use-package org
   :demand t
   :config
-  (add-hook 'org-agenda-mode-hook #'ebaker/evilify-org-agenda-mode)
   ;; (require 'eliot-org)
   (setq org-refile-targets '((nil :maxlevel . 1)
                              (org-agenda-files :maxlevel . 1)))
@@ -349,6 +325,29 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (setq org-refile-use-outline-path t)
   (setq org-agenda-span 'day)
   (require 'eliot-roam))
+
+(use-package org-agenda
+  :ensure nil
+  :after (org)
+  :bind
+  (:map org-agenda-mode-map
+    ;; evilify org-agenda-mode
+    ("j" . org-agenda-next-line)
+    ("k" . org-agenda-previous-line)
+    ("<C-j>" . org-agenda-next-item)
+    ("<C-k>" . org-agenda-previous-item)
+    ("l" . forward-char)
+    ("h" . backward-char)
+    ("s" . org-agenda-schedule)
+    ("S" . org-save-all-org-buffers)
+    ("[" . org-agenda-earlier)
+    ("]" . org-agenda-later)
+    ("f" . org-agenda-earlier)
+    ("b" . org-agenda-later)
+    ("m" . org-agenda-bulk-toggle)
+    ("~" . org-agenda-bulk-toggle-all)
+    ("*" . org-agenda-bulk-mark-all)
+    ("%" . org-agenda-bulk-mark-regexp)))
 
 (use-package org-chef
   :ensure t)
