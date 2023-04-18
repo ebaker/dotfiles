@@ -20,7 +20,9 @@
 (setq package-enable-at-startup nil)
 (setq package-archives '(("org"   . "http://orgmode.org/elpa/")
                           ("melpa" . "https://melpa.org/packages/")
+                          ("jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/")
                           ("gnu"   . "https://elpa.gnu.org/packages/")))
+
 
 (package-initialize)
 
@@ -1216,6 +1218,41 @@ When using Homebrew, install it using \"brew install trash\"."
   :config
   (evil-collection-define-key 'normal 'dired-mode-map
     "H" 'dired-hide-dotfiles-mode))
+
+;; AI
+(use-package org-ai
+  :ensure
+  :commands (org-ai-mode)
+  :init
+  (add-hook 'org-mode-hook #'org-ai-mode)
+  :config
+  ;; if you are on the gpt-4 beta:
+  ;; (setq org-ai-default-chat-model "gpt-4")
+  ;; if you are using yasnippet and want `ai` snippets
+  (org-ai-install-yasnippets))
+(setq org-startup-with-inline-images t)
+
+;; Text to Speech
+(use-package whisper
+  :load-path "~/.emacs.d/elisp/whisper.el"
+  :bind ("C-s-r" . whisper-run)
+  :config
+  (setq whisper-install-directory "~/.emacs.d/bin/"
+        whisper-model "base"
+        whisper-language "en"
+    whisper--ffmpeg-input-device ":0"
+    whisper-translate nil))
+
+(use-package greader :ensure)
+(require 'whisper)
+(require 'org-ai-talk)
+
+;; macOS speech settings, optional
+(setq org-ai-talk-say-words-per-minute 210)
+(setq org-ai-talk-say-voice "Karen")
+
+;; OpenAI
+(use-package codegpt :ensure t)
 
 ;; Dashboard
 ;; (require 'eliot-dashboard)
