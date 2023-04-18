@@ -38,3 +38,6 @@
 [submodule ".vim/bundle/vim-yaml"]
 	path = .vim/bundle/vim-yaml
 	url = git@github.com:stephpy/vim-yaml.git
+[submodule ".emacs.d/elisp/whisper.el"]
+	path = .emacs.d/elisp/whisper.el
+	url = git@github.com:natrys/whisper.el.git

@@ -330,6 +330,11 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :config
   (global-evil-surround-mode 1))
 
+;; Location for celestial calculations
+(setq calendar-location-name "San Francisco, CA")
+(setq calendar-latitude 37.773972)
+(setq calendar-longitude -122.431297)
+
 ;; Orgmode
 
 (use-package org
