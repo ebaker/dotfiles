@@ -710,21 +710,24 @@ One for writing code and the other for reading articles."
   (defvar completion-at-point-functions-saved nil)
   :config
   (global-company-mode 1)
+  ;; (setq company-backends '((company-capf company-dabbrev-code)))
+  (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
+  ;;
   ;; (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
   ;; (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
   ;; (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
   ;; (define-key company-active-map (kbd "<backtab>") 'company-select-previous)
-  (define-key company-active-map (kbd "<down>") 'company-complete-common-or-cycle)
-  (define-key company-active-map (kbd "<up>") 'company-select-previous)
-  (define-key company-active-map (kbd "<tab>") 'company-complete-selection)
-  (define-key company-active-map (kbd "C-n") 'company-complete-common-or-cycle)
-  (define-key company-active-map (kbd "C-p") 'company-select-previous)
-  (define-key company-active-map (kbd "<tab>") 'company-complete-selection)
-  (define-key company-active-map (kbd "<right>") 'company-complete-selection)
-  (define-key company-active-map (kbd "TAB") 'company-complete-selection)
-  (define-key company-active-map (kbd "S-TAB") 'company-abort)
-  (define-key company-active-map (kbd "<backtab>") 'company-abort)
-  (define-key company-active-map (kbd "ESC") 'company-abort)
+  ;; (define-key company-active-map (kbd "<down>") 'company-complete-common-or-cycle)
+  ;; (define-key company-active-map (kbd "<up>") 'company-select-previous)
+  ;; (define-key company-active-map (kbd "<tab>") 'company-complete-selection)
+  ;; (define-key company-active-map (kbd "C-n") 'company-complete-common-or-cycle)
+  ;; (define-key company-active-map (kbd "C-p") 'company-select-previous)
+  ;; (define-key company-active-map (kbd "<tab>") 'company-complete-selection)
+  ;; (define-key company-active-map (kbd "<right>") 'company-complete-selection)
+  ;; (define-key company-active-map (kbd "TAB") 'company-complete-selection)
+  ;; (define-key company-active-map (kbd "S-TAB") 'company-abort)
+  ;; (define-key company-active-map (kbd "<backtab>") 'company-abort)
+  ;; (define-key company-active-map (kbd "ESC") 'company-abort)
 
   ;; prevent company from completing on its own when we type regular characters
   ;; ("SPC" . company--my-insert-spc)
@@ -739,8 +742,57 @@ One for writing code and the other for reading articles."
 
   ;; (defun company-complete-common-wrapper ()
   ;;   (let ((completion-at-point-functions completion-at-point-functions-saved))
+  :custom(
+           (company-dabbrev-downcase 'keep-prefix)
+           (company-dabbrev-ignore-case 'keep-prefix)
+           )
   ;;     (company-complete-common)))
+  :bind(:map company-active-map
+  ("<down>" . 'company-complete-common-or-cycle)
+  ("<up>" . company-select-previous)
+  ("<tab>" . company-complete-selection)
+  ("C-n" . company-complete-common-or-cycle)
+  ("C-p" . company-select-previous)
+  ("<tab>" . company-complete-selection)
+  ("<right>" . company-complete-selection)
+  ("TAB" . company-complete-selection)
+  ("S-TAB" . company-abort)
+  ("<backtab>" . company-abort)
+  ("ESC" . company-abort)
+  ("<return>" . nil)
+  ("RET" . nil)
+  ("C-<return>" . company-complete-selection))
   )
+
+
+;; Yasnippet
+;; (require 'eliot-yasnippet)
+(use-package yasnippet
+  :hook (prog-mode . yas-minor-mode)
+  :config
+  (yas-reload-all))
+(use-package yasnippet-snippets)
+(require 'yasnippet-snippets)
+;; Add yasnippet support for all company backends
+;; https://github.com/syl20bnr/spacemacs/pull/179
+(defvar company-mode/enable-yas t
+  "Enable yasnippet for all backends.")
+
+(defun company-mode/backend-with-yas (backend)
+  (if (or (not company-mode/enable-yas) (and (listp backend) (member 'company-yasnippet backend)))
+      backend
+    (append (if (consp backend) backend (list backend))
+            '(:with company-yasnippet))))
+
+
+(use-package js-react-redux-yasnippets)
+;; (setq lsp-completion-provider :capf)
+
+ (setq lsp-completion-provider :none)
+
+(ebaker/leader-keys
+  "y"  '(:ignore t :which-key "yasnippet")
+  "ya" 'yas-insert-snippet)
 
 ;; lsp
 (use-package lsp-mode
@@ -753,11 +805,16 @@ One for writing code and the other for reading articles."
           (:map lsp-mode-map
           ("TAB" . completion-at-point)))
   :commands lsp
+  :after company
   :custom
   (lsp-rust-analyzer-cargo-watch-command "clippy")
   (lsp-eldoc-render-all t)
   (lsp-rust-analyzer-server-display-inlay-hints t)
-  (setq lsp-idle-delay 0.100))
+  (setq lsp-idle-delay 0.100)
+ )
+
+
+
 
 ;; lsp general
 (ebaker/leader-keys
@@ -844,31 +901,7 @@ One for writing code and the other for reading articles."
 ;;   )
 
 
-;; Yasnippet
-;; (require 'eliot-yasnippet)
-(use-package yasnippet
-  :hook (prog-mode . yas-minor-mode)
-  :config
-  (yas-reload-all))
-;; Add yasnippet support for all company backends
-;; https://github.com/syl20bnr/spacemacs/pull/179
-(defvar company-mode/enable-yas t
-  "Enable yasnippet for all backends.")
 
-(defun company-mode/backend-with-yas (backend)
-  (if (or (not company-mode/enable-yas) (and (listp backend) (member 'company-yasnippet backend)))
-      backend
-    (append (if (consp backend) backend (list backend))
-            '(:with company-yasnippet))))
-
-(setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
-
-(use-package js-react-redux-yasnippets)
-(ebaker/leader-keys
-  "y"  '(:ignore t :which-key "yasnippet")
-  "ya" 'yas-insert-snippet)
-(setq lsp-completion-provider :none)
-(setq lsp-completion-provider :capf)
 
 ;;
 ;; Powerline
