@@ -168,6 +168,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (global-set-key (kbd "s-'") 'indent-region)
 (global-set-key (kbd "s-o") 'other-window)
 (global-set-key (kbd "s-O") 'ebaker/other-window-reverse)
+(global-set-key (kbd "s-i") 'window-swap-states)
 (global-set-key (kbd "s-0") 'delete-window)
 (global-set-key (kbd "s-1") 'delete-other-windows)
 (global-set-key (kbd "s-2") 'split-window-below)
@@ -354,7 +355,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (use-package org-chef
   :ensure t)
 
-
+(use-package git-auto-commit-mode)
 
 ;; https://emacs.stackexchange.com/questions/22405/after-executing-org-narrow-to-subtree-how-do-i-move-between-subtrees-of-the-sam
 (defun my/org-narrow-forward ()
@@ -399,6 +400,32 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ;; (load-theme 'doom-molokai t))
   ;; (load-theme 'doom-Iosvkem t))
 
+;; https://emacs.stackexchange.com/questions/24088/make-a-function-to-toggle-themes/44626#44626
+(defvar quick-switch-themes
+  (let ((themes-list (list 'doom-solarized-light
+                       'doom-one
+                       'doom-tomorrow-day
+                       'doom-Iosvkem
+                       )))
+    (nconc themes-list themes-list))
+  "A circular list of themes to keep switching between.
+Make sure that the currently enabled theme is at the head of this
+list always.
+
+A nil value implies no custom theme should be enabled.")
+
+(defun quick-switch-themes* ()
+  "Switch between to commonly used faces in Emacs.
+One for writing code and the other for reading articles."
+  (interactive)
+  (if-let* ((next-theme (cadr quick-switch-themes)))
+      (progn (when-let* ((current-theme (car quick-switch-themes)))
+               (disable-theme (car quick-switch-themes)))
+             (load-theme next-theme t)
+             (message "Loaded theme: %s" next-theme))
+    ;; Always have the dark mode-line theme
+    (mapc #'disable-theme (delq 'smart-mode-line-dark custom-enabled-themes)))
+  (setq quick-switch-themes (cdr quick-switch-themes)))
 
 ;; ivy
 (use-package ivy
@@ -511,6 +538,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
     ;; Toggles
     "t"  '(:ignore t :which-key "toggles")
+    "tt" '(quick-switch-themes* :which-key "switch theme")
 
     ;; Others
     "a" '(:ignore t :which-key "applications")
@@ -519,16 +547,19 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
     ;; org-mode
     "o"   '(:ignore t :which-key "org mode")
 
+    "oa"  '(:ignore t :which-key "agenda")
+    "oaa" '(org-agenda :which-key "status")
+    "oat" '(org-todo-list :which-key "todos")
+
     "oi"  '(:ignore t :which-key "insert")
     "oil" '(org-insert-link :which-key "insert link")
 
-    "on"  '(org-toggle-narrow-to-subtree :which-key "toggle narrow")
+    "os"  '(org-schedule :which-key "schedule")
+    "ot"  '(org-todo :which-key "todo")
 
-    "os"  '(dw/counsel-rg-org-files :which-key "search notes")
-
-    "oa"  '(org-agenda :which-key "status")
-    "ot"  '(org-todo-list :which-key "todos")
     "oc"  '(org-capture t :which-key "capture")
+    "of"  '(dw/counsel-rg-org-files :which-key "find in notes")
+    "on"  '(org-toggle-narrow-to-subtree :which-key "toggle narrow")
     "ox"  '(org-export-dispatch t :which-key "export")))
 
 
