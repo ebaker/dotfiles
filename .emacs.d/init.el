@@ -689,110 +689,186 @@ One for writing code and the other for reading articles."
 ;; LSP
 ;; (require 'eliot-lsp)
 
-;;
-;; Company mode
-;;
-
-(use-package company
-  :init
-  (setq company-minimum-prefix-length 2)
-  (setq company-auto-complete nil)
-  (setq company-idle-delay 0.0)
-  (setq company-require-match 'never)
-  (setq company-frontends
-    '(
-       company-pseudo-tooltip-unless-just-one-frontend
-       company-preview-frontend
-       company-echo-metadata-frontend
-       )
-    )
-  (setq tab-always-indent 'complete)
-  (defvar completion-at-point-functions-saved nil)
-  :config
-  (global-company-mode 1)
-  ;; (setq company-backends '((company-capf company-dabbrev-code)))
-  (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
-  ;;
-  ;; (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
-  ;; (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
-  ;; (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
-  ;; (define-key company-active-map (kbd "<backtab>") 'company-select-previous)
-  ;; (define-key company-active-map (kbd "<down>") 'company-complete-common-or-cycle)
-  ;; (define-key company-active-map (kbd "<up>") 'company-select-previous)
-  ;; (define-key company-active-map (kbd "<tab>") 'company-complete-selection)
-  ;; (define-key company-active-map (kbd "C-n") 'company-complete-common-or-cycle)
-  ;; (define-key company-active-map (kbd "C-p") 'company-select-previous)
-  ;; (define-key company-active-map (kbd "<tab>") 'company-complete-selection)
-  ;; (define-key company-active-map (kbd "<right>") 'company-complete-selection)
-  ;; (define-key company-active-map (kbd "TAB") 'company-complete-selection)
-  ;; (define-key company-active-map (kbd "S-TAB") 'company-abort)
-  ;; (define-key company-active-map (kbd "<backtab>") 'company-abort)
-  ;; (define-key company-active-map (kbd "ESC") 'company-abort)
-
-  ;; prevent company from completing on its own when we type regular characters
-  ;; ("SPC" . company--my-insert-spc)
-  ;; ("."   . company--my-insert-dot)
-
-  ;;   (define-key company-mode-map [remap indent-for-tab-command] 'company-indent-for-tab-command)
-  ;;   (defun company-indent-for-tab-command (&optional arg)
-  ;;     (interactive "P")
-  ;;     (let ((completion-at-point-functions-saved completion-at-point-functions)
-  ;;    (completion-at-point-functions '(company-complete-common-wrapper)))
-  ;;       (indent-for-tab-command arg)))
-
-  ;; (defun company-complete-common-wrapper ()
-  ;;   (let ((completion-at-point-functions completion-at-point-functions-saved))
-  :custom(
-           (company-dabbrev-downcase 'keep-prefix)
-           (company-dabbrev-ignore-case 'keep-prefix)
-           )
-  ;;     (company-complete-common)))
-  :bind(:map company-active-map
-  ("<down>" . 'company-complete-common-or-cycle)
-  ("<up>" . company-select-previous)
-  ("<tab>" . company-complete-selection)
-  ("C-n" . company-complete-common-or-cycle)
-  ("C-p" . company-select-previous)
-  ("<tab>" . company-complete-selection)
-  ("<right>" . company-complete-selection)
-  ("TAB" . company-complete-selection)
-  ("S-TAB" . company-abort)
-  ("<backtab>" . company-abort)
-  ("ESC" . company-abort)
-  ("<return>" . nil)
-  ("RET" . nil)
-  ("C-<return>" . company-complete-selection))
-  )
-
+;; Completion
 
 ;; Yasnippet
 ;; (require 'eliot-yasnippet)
 (use-package yasnippet
-  :hook (prog-mode . yas-minor-mode)
+  ;; :hook (prog-mode . yas-minor-mode)
   :config
-  (yas-reload-all))
+  (yas-reload-all)
+  (yas-global-mode))
 (use-package yasnippet-snippets)
 (require 'yasnippet-snippets)
-;; Add yasnippet support for all company backends
-;; https://github.com/syl20bnr/spacemacs/pull/179
-(defvar company-mode/enable-yas t
-  "Enable yasnippet for all backends.")
-
-(defun company-mode/backend-with-yas (backend)
-  (if (or (not company-mode/enable-yas) (and (listp backend) (member 'company-yasnippet backend)))
-      backend
-    (append (if (consp backend) backend (list backend))
-            '(:with company-yasnippet))))
-
-
 (use-package js-react-redux-yasnippets)
-;; (setq lsp-completion-provider :capf)
-
- (setq lsp-completion-provider :none)
-
 (ebaker/leader-keys
   "y"  '(:ignore t :which-key "yasnippet")
   "ya" 'yas-insert-snippet)
+;; (setq lsp-completion-provider :capf)
+;; ;; Add yasnippet support for all company backends
+;; ;; https://github.com/syl20bnr/spacemacs/pull/179
+;; (defvar company-mode/enable-yas t
+;;   "Enable yasnippet for all backends.")
+
+;; Corfu
+
+(use-package corfu
+  ;; Optional customizations
+  :custom
+  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  (corfu-auto t)                 ;; Enable auto completion
+  ;; (corfu-separator ?\s)          ;; Orderless field separator
+  ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+  ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+  ;; (corfu-preview-current nil)    ;; Disable current candidate preview
+  ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
+  ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+  ;; (corfu-scroll-margin 5)        ;; Use scroll margin
+
+  ;; Enable Corfu only for certain modes.
+  ;; :hook ((prog-mode . corfu-mode)
+  ;;        (shell-mode . corfu-mode)
+  ;;        (eshell-mode . corfu-mode))
+
+  ;; Recommended: Enable Corfu globally.
+  ;; This is recommended since Dabbrev can be used globally (M-/).
+  ;; See also `corfu-exclude-modes'.
+  :init
+  ;; (setq corfu-min-width 40)
+  ;; (setq corfu-max-width corfu-min-width)       ; Always have the same width
+  (global-corfu-mode)
+  :general (:keymaps 'corfu-map :states 'insert
+  "C-n" #'corfu-next
+  "C-p" #'corfu-previous
+  "<escape>" #'corfu-quit
+  "<return>" #'corfu-insert
+  "M-d" #'corfu-popupinfo-documentation
+  "M-l" #'corfu-popupinfo-location)
+  :config
+  ;; https://github.com/minad/corfu/issues/12
+  (evil-make-overriding-map corfu-map)
+  (advice-add 'corfu--setup :after 'evil-normalize-keymaps)
+  (advice-add 'corfu--teardown :after 'evil-normalize-keymaps)
+  )
+
+(use-package corfu-popupinfo
+  :after corfu
+  :ensure nil
+  :init
+  (corfu-popupinfo-mode)
+  :general (:keymaps 'corfu-map
+            ;; Scroll in the documentation window
+            "M-n" #'corfu-popupinfo-scroll-up
+            "M-p" #'corfu-popupinfo-scroll-down)
+  :config
+  (setq corfu-popupinfo-delay 0.1))
+
+;; Use Dabbrev with Corfu!
+(use-package dabbrev
+  ;; Swap M-/ and C-M-/
+  :bind (("M-/" . dabbrev-completion)
+         ("C-M-/" . dabbrev-expand))
+  ;; Other useful Dabbrev configurations.
+  :custom
+  (dabbrev-ignored-buffer-regexps '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
+
+;;;;; kind-icon ;;;;;
+(use-package kind-icon
+  :after corfu
+  :custom
+  (kind-icon-default-face 'corfu-default)
+  :config
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+
+;; ;; Use Company backends as Capfs.
+;; (require 'company-yasnippet)
+;; (add-to-list completion-at-point-functions
+;;   (mapcar #'cape-company-to-capf
+;;     (list #'company-files #'company-ispell #'company-dabbrev)))
+
+;; (require 'cape-yasnippet)
+
+;; Add extensions
+(use-package cape
+  ;; Bind dedicated completion commands
+  ;; Alternative prefix keys: C-c p, M-p, M-+, ...
+  :bind (("C-c p p" . completion-at-point) ;; capf
+         ("C-c p t" . complete-tag)        ;; etags
+         ("C-c p d" . cape-dabbrev)        ;; or dabbrev-completion
+         ("C-c p h" . cape-history)
+         ("C-c p f" . cape-file)
+         ("C-c p k" . cape-keyword)
+         ("C-c p s" . cape-symbol)
+         ("C-c p a" . cape-abbrev)
+         ("C-c p l" . cape-line)
+         ("C-c p w" . cape-dict)
+         ("C-c p \\" . cape-tex)
+         ("C-c p _" . cape-tex)
+         ("C-c p ^" . cape-tex)
+         ("C-c p &" . cape-sgml)
+         ("C-c p r" . cape-rfc1345))
+  :init
+  ;; Add `completion-at-point-functions', used by `completion-at-point'.
+  ;; NOTE: The order matters!
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+  ;;(add-to-list 'completion-at-point-functions #'cape-history)
+  ;;(add-to-list 'completion-at-point-functions #'cape-keyword)
+  ;;(add-to-list 'completion-at-point-functions #'cape-tex)
+  ;;(add-to-list 'completion-at-point-functions #'cape-sgml)
+  ;;(add-to-list 'completion-at-point-functions #'cape-rfc1345)
+  ;;(add-to-list 'completion-at-point-functions #'cape-abbrev)
+  ;;(add-to-list 'completion-at-point-functions #'cape-dict)
+  ;;(add-to-list 'completion-at-point-functions #'cape-symbol)
+  ;;(add-to-list 'completion-at-point-functions #'cape-line)
+  ;; (add-to-list 'completion-at-point-functions #'cape-yasnippet)
+  )
+
+;; (use-package org-block-capf
+;;   ;; :vc (:url "https://github.com/xenodium/org-block-capf"
+;;   ;;      :rev :main)
+;;   ;; :custom
+;;   ;; (company-org-block-edit-style 'auto) ;; 'auto, 'prompt, or 'inline
+;;   ;; :hook ((org-mode . org-block-capf-add-to-completion-at-point-functions))
+;;   :config
+;;   (add-hook 'org-mode-hook #'org-block-capf-add-to-completion-at-point-functions)
+;;   )
+
+;; active Babel languages
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((chatgpt-shell . t)
+   (emacs-lisp . t)))
+
+(require 'org-block-capf)
+
+(add-hook 'org-mode-hook #'org-block-capf-add-to-completion-at-point-functions)
+
+;; A few more useful configurations...
+(use-package emacs
+  :init
+  ;; TAB cycle if there are only few candidates
+  (setq completion-cycle-threshold 3)
+
+  ;; Emacs 28: Hide commands in M-x which do not apply to the current mode.
+  ;; Corfu commands are hidden, since they are not supposed to be used via M-x.
+  ;; (setq read-extended-command-predicate
+  ;;       #'command-completion-default-include-p)
+
+  ;; Enable indentation+completion using the TAB key.
+  ;; `completion-at-point' is often bound to M-TAB.
+  (setq tab-always-indent 'complete))
+
+(require 'company-yasnippet)
+
+  (setq-local completion-at-point-functions
+              (list (cape-super-capf
+                     ;; #'eglot-completion-at-point
+                     #'cape-dabbrev
+                     (cape-company-to-capf #'company-yasnippet))))
+
+ (setq lsp-completion-provider :none)
 
 ;; lsp
 (use-package lsp-mode
