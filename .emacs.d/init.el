@@ -1447,10 +1447,16 @@ When using Homebrew, install it using \"brew install trash\"."
   (evil-collection-define-key 'normal 'dired-mode-map
     "H" 'dired-hide-dotfiles-mode))
 
-;; AI
+;;; AI
+(defvar my-openai-key (shell-command-to-string "$SHELL -c 'echo -n $CHATGPT_OPENAI_KEY'"))
+
+;;;; Org-AI
+
 (use-package org-ai
   :ensure
   :commands (org-ai-mode)
+  :custom
+  (org-ai-openai-api-token my-openai-key)
   :init
   (add-hook 'org-mode-hook #'org-ai-mode)
   :config
@@ -1460,7 +1466,7 @@ When using Homebrew, install it using \"brew install trash\"."
   (org-ai-install-yasnippets))
 (setq org-startup-with-inline-images t)
 
-;; Text to Speech
+;;;; Whisper
 (use-package whisper
   :load-path "~/.emacs.d/elisp/whisper.el"
   :bind ("C-s-r" . whisper-run)
@@ -1479,11 +1485,22 @@ When using Homebrew, install it using \"brew install trash\"."
 (setq org-ai-talk-say-words-per-minute 210)
 (setq org-ai-talk-say-voice "Karen")
 
-;; OpenAI
-(use-package codegpt :ensure t)
+;;;; CodeGPT
 
-;; Dashboard
-;; (require 'eliot-dashboard)
+(use-package codegpt :ensure t)
+(setq openai-key my-openai-key)
+
+;;;; ChatGPT-Shell
+
+(use-package chatgpt-shell
+  :ensure t
+  :custom
+  ((chatgpt-shell-openai-key
+    (lambda ()
+      (auth-source-pass-get 'secret openai-key)))))
+(setq chatgpt-shell-openai-key my-openai-key)
+
+;; (require 'ob-chatgpt-shell)
 
 
 
