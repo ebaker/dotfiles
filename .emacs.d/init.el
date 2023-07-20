@@ -185,9 +185,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (interactive)
   (other-window -1))
 
-;; @ebaker - comment-or-uncomment-region-or-line
-(require 'comment-or-uncomment-region-or-line)
-
 ;; @ebaker - remove keybinding eyebrowse
 (assq-delete-all 'eyebrowse-mode minor-mode-map-alist)
 
@@ -255,7 +252,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (global-set-key (kbd "s-Z") 'evil-redo)
 
 ;; @ebaker - global super custom hotkeys
-(global-set-key (kbd "s-/") 'comment-or-uncomment-region-or-line)
 (global-set-key (kbd "s-'") 'indent-region)
 (global-set-key (kbd "s-o") 'other-window)
 (global-set-key (kbd "s-O") 'ebaker/other-window-reverse)
@@ -1144,6 +1140,11 @@ folder, otherwise delete a word"
   (indent-according-to-mode)
   (forward-line -1)
   (indent-according-to-mode))
+
+;;;; smart-comment
+(use-package smart-comment
+  :bind ("s-/" . smart-comment))
+;; related: https://github.com/redguardtoo/evil-nerd-commenter
 
 ;;;; elisp
 (setq lisp-indent-offset 2)
