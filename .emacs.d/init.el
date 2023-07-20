@@ -1005,11 +1005,19 @@ One for writing code and the other for reading articles."
 ;;   (spaceline-toggle-buffer-size-off)
 ;;   (spaceline-toggle-evil-state-on))
 
+(use-package nerd-icons
+  ;; :custom
+  ;; The Nerd Font you want to use in GUI
+  ;; "Symbols Nerd Font Mono" is the default and is recommended
+  ;; but you can use any other Nerd Font if you want
+  ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
+  )
+
 ;; doom-modeline
 (use-package doom-modeline
   :defer t
   :custom(doom-modeline-height 15)
-  :hook (after-init . doom-modeline-init))
+  :hook (after-init . doom-modeline-mode))
 
 ;; ;; xterm-colors
 ;; (use-package xterm-color
