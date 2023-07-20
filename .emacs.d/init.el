@@ -745,7 +745,8 @@ One for writing code and the other for reading articles."
   "C-n" #'corfu-next
   "C-p" #'corfu-previous
   "<escape>" #'corfu-quit
-  "<return>" #'corfu-insert
+  "<tab>" #'corfu-insert
+  "s-<return>" #'corfu-insert
   "M-d" #'corfu-popupinfo-documentation
   "M-l" #'corfu-popupinfo-location)
   :config
@@ -775,6 +776,12 @@ One for writing code and the other for reading articles."
   ;; Other useful Dabbrev configurations.
   :custom
   (dabbrev-ignored-buffer-regexps '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
+
+(use-package orderless
+  :demand t
+  :config
+  (setq completion-styles '(orderless flex)
+        completion-category-overrides '((eglot (styles . (orderless flex))))))
 
 ;;;;; kind-icon ;;;;;
 (use-package kind-icon
