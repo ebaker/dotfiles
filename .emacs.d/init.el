@@ -465,6 +465,17 @@ One for writing code and the other for reading articles."
   :init
   (ivy-rich-mode 1))
 
+;; preserve minibuffer history
+(use-package savehist
+  :config
+  (setq history-length 25)
+  (savehist-mode 1))
+
+  ;; Individual history elements can be configured separately
+  ;;(put 'minibuffer-history 'history-length 25)
+  ;;(put 'evil-ex-history 'history-length 50)
+  ;;(put 'kill-ring 'history-length 25))
+
 ;; vertico
 (defun dw/minibuffer-backward-kill (arg)
   "When minibuffer is completing a file name delete up to parent
