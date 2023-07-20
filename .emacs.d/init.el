@@ -888,38 +888,6 @@ One for writing code and the other for reading articles."
   ;; `completion-at-point' is often bound to M-TAB.
   (setq tab-always-indent 'complete))
 
-(require 'company-yasnippet)
-
-  (setq-local completion-at-point-functions
-              (list (cape-super-capf
-                     ;; #'eglot-completion-at-point
-                     #'cape-dabbrev
-                     (cape-company-to-capf #'company-yasnippet))))
-
- (setq lsp-completion-provider :none)
-
-;; lsp
-(use-package lsp-mode
-  ;; :config
-  ;; (lsp-headerline-breadcrumb-enable t)
-  :hook (((typescript-mode) . lsp) ;; ((js2-mode rjsx-mode). lsp)
-          ((rustic-mode) . lsp)
-          (lsp-mode . lsp-enable-which-key-integration))
-  :bind (([s-mouse-1] . xref-find-definitions)
-          (:map lsp-mode-map
-          ("TAB" . completion-at-point)))
-  :commands lsp
-  :after company
-  :custom
-  (lsp-rust-analyzer-cargo-watch-command "clippy")
-  (lsp-eldoc-render-all t)
-  (lsp-rust-analyzer-server-display-inlay-hints t)
-  (setq lsp-idle-delay 0.100)
- )
-
-
-
-
 ;; lsp general
 (ebaker/leader-keys
   "l"  '(:ignore t :which-key "lsp")
@@ -932,15 +900,6 @@ One for writing code and the other for reading articles."
   "le" 'lsp-ui-flycheck-list
   "lS" 'lsp-ui-sideline-mode
   "lX" 'lsp-execute-code-action)
-
-(use-package lsp-ui
-  :hook (lsp-mode . lsp-ui-mode)
-  :config
-  ;; (setq lsp-ui-sideline-enable t)
-  ;; (setq lsp-ui-sideline-show-hover nil)
-  (setq lsp-ui-doc-position 'bottom)
-  (setq lsp-headerline-breadcrumb-enable-diagnostics nil)
-  (lsp-ui-doc-show))
 
 ;;; Elementary textual completion backend.
 ;; (setq company-backends
@@ -982,29 +941,6 @@ One for writing code and the other for reading articles."
 ;;             (add-hook 'comint-preoutput-filter-functions 'xterm-color-filter nil t)))
 
 ;; (setenv "TERM" "xterm-256color")
-
-;; Company UI
-(use-package company-box
-  :hook (company-mode . company-box-mode))
-;; (use-package company-posframe
-;;   :ensure t
-;;   :config (company-posframe-mode 1))
-;; (use-package posframe
-;;   :ensure t)
-;; (use-package company-quickhelp
-;;   :ensure t)
-
-;; (use-package eldoc-box
-;; :ensure t)
-;; (use-package company-quickhelp
-;;   :ensure t)
-
-;; eglot
-;; (use-package eglot
-;;   :ensure t
-;;   )
-
-
 
 
 ;;
