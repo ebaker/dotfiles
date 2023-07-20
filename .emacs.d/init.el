@@ -1,19 +1,21 @@
-;; -*- lexical-binding: t; -*-
+;;; init.el -*- lexical-binding: t; -*-
+
+;;; Initialization
+;; heavily inspired by https://blog.jft.rocks/emacs/emacs-from-scratch.html
 
 ;; bug fix gnutls
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
+;; Make startup faster by reducing the frequency of garbage
+;; collection.  The default is 800 kilobytes.  Measured in bytes.
+(setq gc-cons-threshold (* 50 1000 1000))
 
-;; heavily insprired by https://blog.jft.rocks/emacs/emacs-from-scratch.html
+;; lsp-mode performance
+(setq read-process-output-max (* 1024 1024))
+(setq gc-cons-threshold 100000000)
 
-;; Minimal UI
-(scroll-bar-mode -1)
-(tool-bar-mode   -1)
-(tooltip-mode    -1)
-(menu-bar-mode   -1)
 
-;; mac
-(setq mac-pass-command-to-system nil)
+;;; Packaging
 
 ;; Package configs
 (require 'package)
@@ -21,8 +23,8 @@
 (setq package-archives '(("org"   . "http://orgmode.org/elpa/")
                           ("melpa" . "https://melpa.org/packages/")
                           ("jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/")
-                          ("gnu"   . "https://elpa.gnu.org/packages/")))
-
+                          ("gnu"   . "https://elpa.gnu.org/packages/")
+                          ("gnu-devel" . "https://elpa.gnu.org/devel/")))
 
 (package-initialize)
 
@@ -41,6 +43,44 @@
 (setq quelpa-update-melpa-p nil)
 (package-install 'quelpa-use-package)
 (require 'quelpa-use-package)
+
+;; ;; Bootstrap straight.el
+;; (defvar bootstrap-version)
+;; (let ((bootstrap-file
+;;       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+;;       (bootstrap-version 5))
+;;   (unless (file-exists-p bootstrap-file)
+;;     (with-current-buffer
+;;         (url-retrieve-synchronously
+;;         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+;;         'silent 'inhibit-cookies)
+;;       (goto-char (point-max))
+;;       (eval-print-last-sexp)))
+;;   (load bootstrap-file nil 'nomessage))
+
+;; ;; Always use straight to install on systems other than Linux
+;; (setq straight-use-package-by-default (not (eq system-type 'gnu/linux)))
+
+;; ;; Use straight.el for use-package expressions
+;; (straight-use-package 'use-package)
+
+;; ;; Load the helper package for commands like `straight-x-clean-unused-repos'
+;; (require 'straight-x)
+
+;;; UI
+
+;; Minimal UI
+(scroll-bar-mode -1)
+(tool-bar-mode   -1)
+(tooltip-mode    -1)
+(menu-bar-mode   -1)
+
+;; Fancy titlebar for MacOS
+(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+(add-to-list 'default-frame-alist '(ns-appearance . dark)) ;; light
+(setq ns-use-proxy-icon  nil)
+(setq frame-title-format nil)
+
 ;; command-log-mode shows hotkeys used in realtime
 (use-package command-log-mode
   :defer 2)
@@ -73,18 +113,10 @@
 (add-to-list 'default-frame-alist '(height . 44))
 (add-to-list 'default-frame-alist '(width . 100))
 
+;;; General & System
 
-;; Make startup faster by reducing the frequency of garbage
-;; collection.  The default is 800 kilobytes.  Measured in bytes.
-(setq gc-cons-threshold (* 50 1000 1000))
-
-;; lsp-mode performance
-(setq read-process-output-max (* 1024 1024))
-(setq gc-cons-threshold 100000000)
-
-;;
-;; emacs setup
-;;
+;; mac
+(setq mac-pass-command-to-system nil)
 
 ;; Garbage-collect on focus-out, Emacs /should/ feel snappier.
 (add-hook 'focus-out-hook #'garbage-collect)
@@ -101,6 +133,7 @@
 ;; line numbers
 (column-number-mode)
 (global-display-line-numbers-mode t)
+(setq-default display-line-numbers-width 3)
 
 ;; Disable line numbers for some modes
 (dolist (mode '(org-mode-hook
@@ -155,42 +188,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; @ebaker - comment-or-uncomment-region-or-line
 (require 'comment-or-uncomment-region-or-line)
 
-;; Make escape quit prompts
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-
-;; cut, copy, paste, save, save as, undo, redo
-(global-set-key (kbd "s-x") 'kill-region)
-(global-set-key (kbd "s-c") 'kill-ring-save)
-(global-set-key (kbd "s-v") 'yank)
-(global-set-key (kbd "s-s") 'save-buffer)
-(global-set-key (kbd "s-S") 'write-file)
-(global-set-key (kbd "s-z") 'evil-undo)
-(global-set-key (kbd "s-Z") 'evil-redo)
-
-;; @ebaker - global super custom hotkeys
-(global-set-key (kbd "s-/") 'comment-or-uncomment-region-or-line)
-(global-set-key (kbd "s-'") 'indent-region)
-(global-set-key (kbd "s-o") 'other-window)
-(global-set-key (kbd "s-O") 'ebaker/other-window-reverse)
-(global-set-key (kbd "s-i") 'window-swap-states)
-(global-set-key (kbd "s-0") 'delete-window)
-(global-set-key (kbd "s-1") 'delete-other-windows)
-(global-set-key (kbd "s-2") 'split-window-below)
-(global-set-key (kbd "s-3") 'split-window-right)
-;; (global-set-key (kbd "s-b") 'ido-switch-buffer)
-(global-set-key (kbd "s-b") 'persp-ivy-switch-buffer)
-(global-set-key (kbd "s-k") 'ido-kill-buffer)
-(global-set-key (kbd "s-a") 'org-agenda)
-(global-set-key (kbd "s-r") 'revert-buffer)
-(global-set-key (kbd "C-x i") 'find-config)
-(global-set-key (kbd "C-x C-c") 'my-save-buffers-kill-emacs)
-(global-set-key (kbd "C-x C-r") 'counsel-recentf)
-(global-set-key (kbd "C-M-u") 'universal-argument)
-(global-set-key (kbd "C-M-n") 'persp-next)
-(global-set-key (kbd "C-M-p") 'persp-prev)
-(global-set-key (kbd "<f2>") 'vterm-toggle)
-(global-set-key (kbd "C-<f2>") 'vterm-toggle-cd)
-
 ;; @ebaker - remove keybinding eyebrowse
 (assq-delete-all 'eyebrowse-mode minor-mode-map-alist)
 
@@ -243,18 +240,71 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 ;; (global-font-lock-mode t)
 
-;; environment variables
+;;; Global Hotkeys
+
+;; Make escape quit prompts
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+;; cut, copy, paste, save, save as, undo, redo
+(global-set-key (kbd "s-x") 'kill-region)
+(global-set-key (kbd "s-c") 'kill-ring-save)
+(global-set-key (kbd "s-v") 'yank)
+(global-set-key (kbd "s-s") 'save-buffer)
+(global-set-key (kbd "s-S") 'write-file)
+(global-set-key (kbd "s-z") 'evil-undo)
+(global-set-key (kbd "s-Z") 'evil-redo)
+
+;; @ebaker - global super custom hotkeys
+(global-set-key (kbd "s-/") 'comment-or-uncomment-region-or-line)
+(global-set-key (kbd "s-'") 'indent-region)
+(global-set-key (kbd "s-o") 'other-window)
+(global-set-key (kbd "s-O") 'ebaker/other-window-reverse)
+(global-set-key (kbd "s-i") 'window-swap-states)
+(global-set-key (kbd "s-0") 'delete-window)
+(global-set-key (kbd "s-1") 'delete-other-windows)
+(global-set-key (kbd "s-2") 'split-window-below)
+(global-set-key (kbd "s-3") 'split-window-right)
+;; (global-set-key (kbd "s-b") 'ido-switch-buffer)
+(global-set-key (kbd "s-b") 'persp-ivy-switch-buffer)
+;; (global-set-key (kbd "s-b") 'consult-buffer)
+(global-set-key (kbd "s-k") 'ido-kill-buffer)
+(global-set-key (kbd "s-a") 'org-agenda)
+(global-set-key (kbd "s-r") 'revert-buffer)
+(global-set-key (kbd "C-x i") 'find-config)
+(global-set-key (kbd "C-x C-c") 'my-save-buffers-kill-emacs)
+(global-set-key (kbd "C-x C-r") 'counsel-recentf)
+(global-set-key (kbd "C-M-u") 'universal-argument)
+(global-set-key (kbd "C-M-n") 'persp-next)
+(global-set-key (kbd "C-M-p") 'persp-prev)
+(global-set-key (kbd "<f2>") 'vterm-toggle)
+(global-set-key (kbd "C-<f2>") 'vterm-toggle-cd)
+
+;;; Usability Packages
+
+;;;; environment variables
 (use-package exec-path-from-shell
   :config
   (exec-path-from-shell-initialize))
 
-;; Defer Packages you don’t need Immediately with Idle Timers
+;;;; recent files
 (use-package recentf
   :ensure nil
+  ;; :straight nil
   ;; Loads after 1 second of idle time.
   :defer 1)
 
-;; undo-tree
+;;;; minibuffer history
+(use-package savehist
+  :config
+  (setq history-length 25)
+  (savehist-mode 1))
+
+  ;; Individual history elements can be configured separately
+  ;;(put 'minibuffer-history 'history-length 25)
+  ;;(put 'evil-ex-history 'history-length 50)
+  ;;(put 'kill-ring 'history-length 25))
+
+;;;; undo-tree
 (use-package undo-tree
   ;; :diminish undo-tree-mode:
   :init
@@ -276,6 +326,9 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (outline-hide-sublevels 1))
 
 (add-hook 'emacs-lisp-mode-hook #'my-emacs-lisp-hook)
+
+;;; Evil
+
 (defun ebaker/emacsify-evil-mode ()
   "Remove Evil Normal state bindings and add some Emacs bindings in Evil Normal state."
 
@@ -328,6 +381,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :config
   (global-evil-surround-mode 1))
 
+;;; Org-mode
+
 ;; Location for celestial calculations
 (setq calendar-location-name "San Francisco, CA")
 (setq calendar-latitude 37.773972)
@@ -345,10 +400,12 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (setq org-outline-path-complete-in-steps nil)
   (setq org-refile-use-outline-path t)
   (setq org-agenda-span 'day)
+
   (require 'eliot-roam))
 
 (use-package org-agenda
   :ensure nil
+  ;; :straight nil
   :after (org)
   :bind
   (:map org-agenda-mode-map
@@ -404,7 +461,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (use-package org-cliplink
   :after (org))
 
-;; Theme
+;;; Themes
 (use-package doom-themes
   :config
   ;; (load-theme 'doom-tomorrow-day t))
@@ -445,7 +502,9 @@ One for writing code and the other for reading articles."
     (mapc #'disable-theme (delq 'smart-mode-line-dark custom-enabled-themes)))
   (setq quick-switch-themes (cdr quick-switch-themes)))
 
-;; ivy
+;;; Completion
+
+;;;; ivy
 (use-package ivy
   :defer 1
   :diminish
@@ -479,18 +538,7 @@ One for writing code and the other for reading articles."
   :init
   (ivy-rich-mode 1))
 
-;; preserve minibuffer history
-(use-package savehist
-  :config
-  (setq history-length 25)
-  (savehist-mode 1))
-
-  ;; Individual history elements can be configured separately
-  ;;(put 'minibuffer-history 'history-length 25)
-  ;;(put 'evil-ex-history 'history-length 50)
-  ;;(put 'kill-ring 'history-length 25))
-
-;; vertico
+;;;; vertico
 (defun dw/minibuffer-backward-kill (arg)
   "When minibuffer is completing a file name delete up to parent
 folder, otherwise delete a word"
@@ -553,6 +601,8 @@ folder, otherwise delete a word"
   :init
   (marginalia-mode))
 
+;;; Help
+
 (use-package helpful
   :custom
   (counsel-describe-function-function #'helpful-callable)
@@ -576,6 +626,8 @@ folder, otherwise delete a word"
 
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
+
+;;; Keybinding
 
 ;; Custom keybinding
 (use-package general
@@ -654,36 +706,18 @@ folder, otherwise delete a word"
     "on"  '(org-toggle-narrow-to-subtree :which-key "toggle narrow")
     "ox"  '(org-export-dispatch t :which-key "export")))
 
-
-;; Fancy titlebar for MacOS
-(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-(add-to-list 'default-frame-alist '(ns-appearance . dark)) ;; light
-(setq ns-use-proxy-icon  nil)
-(setq frame-title-format nil)
-
-
-;; All The Icons
+;;; Icons
 (use-package all-the-icons)
 
-;; treemacs
-(use-package treemacs
-  :config
-  (setq treemacs-show-cursor t)
-  (global-set-key [f8] 'treemacs))
+(use-package nerd-icons
+  ;; :custom
+  ;; The Nerd Font you want to use in GUI
+  ;; "Symbols Nerd Font Mono" is the default and is recommended
+  ;; but you can use any other Nerd Font if you want
+  ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
+  )
 
-(use-package treemacs-all-the-icons
-  :config
-  (treemacs-load-theme "all-the-icons"))
-
-(use-package treemacs-evil)
-
-;; vertical-center-mode
-(require 'vertical-center-mode)
-(ebaker/leader-keys
-  "tc" 'vertical-center-mode)
-
-;;
-;; Diminish
+;;; Diminish
 ;;
 ;; https://alhassy.github.io/init/
 
@@ -701,9 +735,18 @@ folder, otherwise delete a word"
 ;; ;; (diminish 'org-indent-mode)
 ;; ;; (diminish 'subword-mode)
 
+;;; Editing
+
+;; vertical-center-mode
+(require 'vertical-center-mode)
+(ebaker/leader-keys
+  "tc" 'vertical-center-mode)
+
 ;; rainbow delimiters
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
+
+;;; Hydra
 
 (use-package hydra)
 
@@ -716,7 +759,8 @@ folder, otherwise delete a word"
 (ebaker/leader-keys
   "ts" '(hydra-text-scale/body :which-key "scale text"))
 
-;; Git
+;;; Git
+
 (use-package magit
   :bind ("C-M-;" . magit-status)
   :commands (magit-status magit-get-current-branch)
@@ -742,9 +786,7 @@ folder, otherwise delete a word"
 ;; (use-package forge
 ;;   :after magit)
 
-;;
-;; Flyspell
-;;
+;;; Flyspell
 
 ;; https://emacs.stackexchange.com/questions/20946/generate-mouse-2-event-from-macbook-trackpad
 (defun flyspell-mouse-2-macbook ()
@@ -761,6 +803,7 @@ folder, otherwise delete a word"
 
 (use-package flyspell
   :ensure nil
+  ;; :straight nil
   :init
   (setq ispell-program-name "/usr/local/bin/aspell")
   (setq ispell-dictionary "en_US") ;; set the default dictionary
@@ -778,15 +821,18 @@ folder, otherwise delete a word"
 ;;   :init
 ;;   (setq flyspell-correct-interface #'flyspell-correct-popup))
 
-;; LSP
-;; (require 'eliot-lsp)
 
-;; Completion
+;;; Completion - In buffer
 
-;; Yasnippet
+;;;; Yasnippet
 ;; (require 'eliot-yasnippet)
 (use-package yasnippet
   ;; :hook (prog-mode . yas-minor-mode)
+  :ensure nil
+  :quelpa (yasnippet :fetcher github :repo "joaotavora/yasnippet")
+  :bind (:map yas-minor-mode-map
+         ("TAB" . nil)
+         ("<tab>" . nil))
   :config
   (yas-reload-all)
   (yas-global-mode))
@@ -802,7 +848,7 @@ folder, otherwise delete a word"
 ;; (defvar company-mode/enable-yas t
 ;;   "Enable yasnippet for all backends.")
 
-;; Corfu
+;;;; Corfu
 
 (use-package corfu
   ;; Optional customizations
@@ -849,6 +895,7 @@ folder, otherwise delete a word"
 (use-package corfu-popupinfo
   :after corfu
   :ensure nil
+  ;; :straight nil
   :init
   (corfu-popupinfo-mode)
   :general (:keymaps 'corfu-map
@@ -867,13 +914,15 @@ folder, otherwise delete a word"
   :custom
   (dabbrev-ignored-buffer-regexps '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
 
+;;;; Orderless
+
 (use-package orderless
   :demand t
   :config
   (setq completion-styles '(orderless flex)
         completion-category-overrides '((eglot (styles . (orderless flex))))))
 
-;;;;; kind-icon ;;;;;
+;;;; kind-icon
 (use-package kind-icon
   :after corfu
   :custom
@@ -887,14 +936,27 @@ folder, otherwise delete a word"
 ;;   (mapcar #'cape-company-to-capf
 ;;     (list #'company-files #'company-ispell #'company-dabbrev)))
 
+;;;; Cape
+
 ;; (require 'cape-yasnippet)
 (use-package cape-yasnippet
   :ensure nil
+  ;; :straight (:host github :repo "elken/cape-yasnippet")
   :quelpa (cape-yasnippet :fetcher github :repo "elken/cape-yasnippet")
   :after yasnippet
+  ;; :hook ((prog-mode . yas-setup-capf)
+  ;;        (text-mode . yas-setup-capf)
+  ;;        ;; (lsp-mode  . yas-setup-capf)
+  ;;         ;; (sly-mode  . yas-setup-capf)
+  ;;         )
   :bind (("C-c y" . cape-yasnippet)
          ("M-+"   . yas-insert-snippet))
   :config
+  ;; (defun yas-setup-capf ()
+  ;;   (setq-local completion-at-point-functions
+  ;;               (cons 'cape-yasnippet
+  ;;                     completion-at-point-functions)))
+  ;; (push 'cape-yasnippet completion-at-point-functions)
   (setq cape-yasnippet-lookup-by 'key))
 
 
@@ -935,11 +997,28 @@ folder, otherwise delete a word"
   ;;(add-to-list 'completion-at-point-functions #'cape-line)
   (add-to-list 'completion-at-point-functions #'cape-yasnippet)
 
+  ;; ;; Option 2: Undo the Eglot modification of completion-category-defaults
+  ;; (with-eval-after-load 'eglot
+  ;;  (setq completion-category-defaults nil))
+
 ;; Enable cache busting, depending on if your server returns
 ;; sufficiently many candidates in the first place.
   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
 
   )
+
+;;;; Org-block-capf
+
+
+;; active Babel languages
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((chatgpt-shell . t)
+   (emacs-lisp . t)))
+
+(require 'org-block-capf)
+
+(add-hook 'org-mode-hook #'org-block-capf-add-to-completion-at-point-functions)
 
 ;; (use-package org-block-capf
 ;;   ;; :vc (:url "https://github.com/xenodium/org-block-capf"
@@ -951,15 +1030,7 @@ folder, otherwise delete a word"
 ;;   (add-hook 'org-mode-hook #'org-block-capf-add-to-completion-at-point-functions)
 ;;   )
 
-;; active Babel languages
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((chatgpt-shell . t)
-   (emacs-lisp . t)))
-
-(require 'org-block-capf)
-
-(add-hook 'org-mode-hook #'org-block-capf-add-to-completion-at-point-functions)
+;;;; TAB
 
 ;; A few more useful configurations...
 (use-package emacs
@@ -976,6 +1047,8 @@ folder, otherwise delete a word"
   ;; `completion-at-point' is often bound to M-TAB.
   (setq tab-always-indent 'complete))
 
+;;; LSP
+
 ;; lsp general
 (ebaker/leader-keys
   "l"  '(:ignore t :which-key "lsp")
@@ -988,47 +1061,6 @@ folder, otherwise delete a word"
   "le" 'lsp-ui-flycheck-list
   "lS" 'lsp-ui-sideline-mode
   "lX" 'lsp-execute-code-action)
-
-;;; Elementary textual completion backend.
-;; (setq company-backends
-  ;; (add-to-list 'company-backends 'company-dabbrev))
-
-(use-package vterm)
-
-(use-package vterm-toggle
-  :init (setenv "TERM" "xterm")
-  :bind (:map vterm-mode-map
-          ("C-<return>" . vterm-toggle-insert-cd)
-          ("<f2>" . vterm-toggle)))
-
-(ebaker/leader-keys
-  "tv"  '(:ignore t :which-key "vterm")
-  "tvv" 'vterm-toggle
-  "tvn" 'vterm-toggle-forward
-  "tvp" 'vterm-toggle-backward)
-
-;; UTF-8 support
-;; (prefer-coding-system       'utf-8)
-;; (set-default-coding-systems 'utf-8)
-;; (set-terminal-coding-system 'utf-8)
-;; (set-keyboard-coding-system 'utf-8)
-;; (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
-
-;; (require 'xterm-color)
-
-;; (setq comint-output-filter-functions
-;;       (remove 'ansi-color-process-output comint-output-filter-functions))
-
-;; (add-hook 'shell-mode-hook
-;;           (lambda ()
-;;             ;; Disable font-locking in this buffer to improve performance
-;;             (font-lock-mode -1)
-;;             ;; Prevent font-locking from being re-enabled in this buffer
-;;             (make-local-variable 'font-lock-function)
-;;             (setq font-lock-function (lambda (_) nil))
-;;             (add-hook 'comint-preoutput-filter-functions 'xterm-color-filter nil t)))
-
-;; (setenv "TERM" "xterm-256color")
 
 (defun my/eglot-capf ()
 (setq-local completion-at-point-functions
@@ -1062,9 +1094,7 @@ folder, otherwise delete a word"
   (add-hook 'eglot-managed-mode-hook #'my/eglot-capf)
   (setq corfu-sort-override-function #'my-corfu-combined-sort))
 
-;;
-;; Powerline
-;;
+;;; Modeline
 
 ;; spaceline
 ;; (use-package spaceline
@@ -1077,33 +1107,16 @@ folder, otherwise delete a word"
 ;;   (spaceline-toggle-buffer-size-off)
 ;;   (spaceline-toggle-evil-state-on))
 
-(use-package nerd-icons
-  ;; :custom
-  ;; The Nerd Font you want to use in GUI
-  ;; "Symbols Nerd Font Mono" is the default and is recommended
-  ;; but you can use any other Nerd Font if you want
-  ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
-  )
-
 ;; doom-modeline
 (use-package doom-modeline
   :defer t
   :custom(doom-modeline-height 15)
   :hook (after-init . doom-modeline-mode))
 
-;; ;; xterm-colors
-;; (use-package xterm-color
-;;   :config
-;;   (setq compilation-environment '("TERM=xterm-256color"))
-;; (defun my/advice-compilation-filter (f proc string)
-;;   (funcall f proc (xterm-color-filter string)))
-;; (advice-add 'compilation-filter :around #'my/advice-compilation-filter))
 
-;;;;;;;;;;;;;;;;;;;;;;;
-;; Language Supports ;;
-;;;;;;;;;;;;;;;;;;;;;;;
+;;; Languages
 
-;; editorconfig
+;;;; editorconfig
 (use-package editorconfig
   :config
   (editorconfig-mode 1)
@@ -1118,7 +1131,7 @@ folder, otherwise delete a word"
        js-indent-level 2
        css-indent-offset 2))
 
-;; smartparens
+;;;; smartparens
 (use-package smartparens
   :hook (prog-mode . smartparens-mode)
   :config
@@ -1132,9 +1145,7 @@ folder, otherwise delete a word"
   (forward-line -1)
   (indent-according-to-mode))
 
-
-
-;; elisp
+;;;; elisp
 (setq lisp-indent-offset 2)
 
 (use-package highlight-defined
@@ -1145,33 +1156,12 @@ folder, otherwise delete a word"
 
 (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
 
-;; YAML
+;;;; YAML
 (use-package yaml-mode
   :mode "\\.ya?ml\\'")
 
-;; JavaScript
-;; npm i -g typescript typescrypt-language-server
-;; (use-package js2-mode
-;;   :defer 2
-;;   :init
-;;   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-;;   :config
-;;   (add-hook 'js2-mode 'display-line-numbers-mode)
-;;   (setq js2-mode-show-parse-errors nil)
-;;   (setq js2-mode-show-strict-warnings nil))
+;;;; flymake
 
-;; (add-hook 'js2-mode
-;;   (lambda ()
-;;     (setq-local eldoc-documentation-function #'ignore)))
-
-(use-package tern)
-
-;; (use-package company-tern
-;;   :ensure t
-;;   :config
-;; (add-to-list 'company-backends 'company-tern))
-
-;; flymake
 ;; https://emacs.stackexchange.com/questions/36363/how-to-change-flycheck-symbol-like-spacemacs
 (define-fringe-bitmap 'flymake-fringe-bitmap-ball
   (vector #b00000000
@@ -1224,6 +1214,38 @@ folder, otherwise delete a word"
       (flymake-eslint-enable)))
   )
 
+;;;; JavaScript
+;; npm i -g typescript typescrypt-language-server
+;; (use-package js2-mode
+;;   :defer 2
+;;   :init
+;;   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+;;   :config
+;;   (add-hook 'js2-mode 'display-line-numbers-mode)
+;;   (setq js2-mode-show-parse-errors nil)
+;;   (setq js2-mode-show-strict-warnings nil))
+
+;; (add-hook 'js2-mode
+;;   (lambda ()
+;;     (setq-local eldoc-documentation-function #'ignore)))
+
+;; (use-package tern)
+
+;; (use-package company-tern
+;;   :ensure t
+;;   :config
+;; (add-to-list 'company-backends 'company-tern))
+
+;; import-js
+;; (use-package import-js
+  ;; :config
+  ;; (global-set-key (kbd "s-i") 'import-js-import))
+
+;; needed by yasnippet
+(use-package js2-mode)
+
+;;;; TypeScript
+
 (use-package typescript-mode
   :ensure t
   :init
@@ -1231,9 +1253,11 @@ folder, otherwise delete a word"
   :config
   (setq typescript-indent-level 2)
   (add-hook 'typescript-mode #'subword-mode)
-  (add-to-list 'auto-mode-alist '("\\.[j|t]sx\\'" . typescript-tsx-mode))
-  (add-to-list 'auto-mode-alist '("\\.[j|t]s\\'" . typescript-mode))
+  (add-to-list 'auto-mode-alist '("\\.[t]sx\\'" . typescript-tsx-mode))
+  (add-to-list 'auto-mode-alist '("\\.[t]s\\'" . typescript-mode))
   )
+
+;;;; Treesitter
 
 (use-package tree-sitter
   :ensure t
@@ -1250,6 +1274,8 @@ folder, otherwise delete a word"
 ;; https://github.com/felipeochoa/rjsx-mode/issues/71
 ;; https://gist.github.com/rangeoshun/67cb17392c523579bc6cbd758b2315c1
 
+;;;; Emmet
+
 (use-package emmet-mode
   :commands emmet-mode
   :hook
@@ -1261,7 +1287,6 @@ folder, otherwise delete a word"
   (setq emmet-self-closing-tag-style " /")
   (setq emmet-expand-jsx-className? t)
   (add-to-list 'emmet-jsx-major-modes 'typescript-mode))
-
 
 ;; (defun my-web-mode-hook ()
 ;;   (setq web-mode-enable-auto-pairing nil))
@@ -1275,6 +1300,13 @@ folder, otherwise delete a word"
 
 ;; (sp-local-pair 'web-mode "<" nil :when '(sp-web-mode-is-code-context))
 
+;;;; JS/TS Formatting
+
+(use-package eslintd-fix
+  :config (setq eslintd-fix-executable "/Users/eliot/.volta/bin/eslint_d")
+  :hook ((typescript-mode . eslintd-fix-mode)
+          (json-mode . eslintd-fix-mode)))
+
 ;; (use-package prettier-js
 ;;   :config
 ;;   (add-hook 'typescript-mode-hook 'prettier-js-mode))
@@ -1283,13 +1315,12 @@ folder, otherwise delete a word"
 ;;   :config
 ;;   (add-hook 'typescript-mode-hook 'eslint-fix-auto-mode))
 
-(use-package eslintd-fix
-  :config (setq eslintd-fix-executable "/Users/eliot/.volta/bin/eslint_d")
-  :hook ((typescript-mode . eslintd-fix-mode)
-         (json-mode . eslintd-fix-mode)))
+;;;; JSON
 
 (use-package json-mode
   :mode ("\\.json\\'"))
+
+;;;; RJSX
 
 ;; (use-package rjsx-mode
 ;;   :mode ("/\\(components\\|containers\\|src\\|pages\\)/.*\\.[j|t]s[x]?\\'" . rjsx-mode)
@@ -1300,20 +1331,20 @@ folder, otherwise delete a word"
 ;;   ;; (add-to-list 'lsp-language-id-configuration '(rjsx-mode . "javascript"))
 ;;   )
 
+;;;; Nodejs
+
 (use-package add-node-modules-path
   :hook (;; (js2-mode . add-node-modules-path)
           ;; (rjsx-mode . add-node-modules-path)
           (typescript-mode . add-node-modules-path)))
 
-;; graphql
+;;;; GraphQL
+
 (use-package graphql-mode)
 
-;; import-js
-;; (use-package import-js
-  ;; :config
-  ;; (global-set-key (kbd "s-i") 'import-js-import))
 
-;; rust
+
+;;;; Rust
 (use-package rustic
   :ensure
   :mode ("\\.rs\\'" . rustic-mode)
@@ -1344,20 +1375,20 @@ folder, otherwise delete a word"
   (when buffer-file-name
     (setq-local buffer-save-without-query t)))
 
-;; PHP
+;;;; PHP
 (use-package php-mode
   :mode ("\\.php\\'" . php-mode))
 
-;; dotenv
+;;;; dotenv
 (use-package dotenv-mode
   :mode ("\\.env\\..*\\'" . dotenv-mode))
 
-;; Docker
+;;;; Docker
 (use-package dockerfile-mode
   :mode
   ("Dockerfile\\(-.*\\)?\\'" . dockerfile-mode))
 
-;; Markdown
+;;;; Markdown
 (use-package markdown-mode
   :ensure t
   :mode ("README\\.md\\'" . gfm-mode)
@@ -1367,11 +1398,12 @@ folder, otherwise delete a word"
            ("M-<up>" . markdown-move-up)
            ("M-<down>" . markdown-move-down))))
 
-;; ;; ripgrep
+;;; ripgrep
 (use-package ripgrep)
 ;; (use-package rg)
 ;; (setq ripgrep--base-arguments '("--line-number" "--with-filename"))
 
+;;; Perspective
 (use-package perspective
   :bind (("C-M-k" . persp-switch)
          ("C-M-n" . persp-next)
@@ -1387,7 +1419,7 @@ folder, otherwise delete a word"
   (unless (equal persp-mode t)
     (persp-mode)))
 
-;; Projectile
+;;; Projectile
 (use-package projectile
   :defer 2
   :diminish projectile-mode
@@ -1422,6 +1454,19 @@ folder, otherwise delete a word"
   "pP"  'projectile-test-project
   "pd"  'projectile-dired)
 
+;;; Treemacs
+(use-package treemacs
+  :config
+  (setq treemacs-show-cursor t)
+  (global-set-key [f8] 'treemacs))
+
+(use-package treemacs-all-the-icons
+  :config
+  (treemacs-load-theme "all-the-icons"))
+
+(use-package treemacs-evil)
+
+
 (use-package treemacs-projectile
   :after (treemacs projectile))
 
@@ -1440,8 +1485,11 @@ When using Homebrew, install it using \"brew install trash\"."
       nil 0 nil
       file)))
 
+;;; Dired
+
 (use-package dired
   :ensure nil
+  ;; :straight nil
   :commands (dired dired-jump)
   :bind (("C-x C-j" . dired-jump))
   :custom ((dired-listing-switches "-aFl"))
@@ -1460,6 +1508,57 @@ When using Homebrew, install it using \"brew install trash\"."
   :config
   (evil-collection-define-key 'normal 'dired-mode-map
     "H" 'dired-hide-dotfiles-mode))
+
+;; Elementary textual completion backend.
+;; (setq company-backends
+;; (add-to-list 'company-backends 'company-dabbrev))
+
+;;; Terminal
+
+(use-package vterm)
+
+(use-package vterm-toggle
+  :init (setenv "TERM" "xterm")
+  :bind (:map vterm-mode-map
+          ("C-<return>" . vterm-toggle-insert-cd)
+          ("<f2>" . vterm-toggle)))
+
+(ebaker/leader-keys
+  "tv"  '(:ignore t :which-key "vterm")
+  "tvv" 'vterm-toggle
+  "tvn" 'vterm-toggle-forward
+  "tvp" 'vterm-toggle-backward)
+
+;; UTF-8 support
+;; (prefer-coding-system       'utf-8)
+;; (set-default-coding-systems 'utf-8)
+;; (set-terminal-coding-system 'utf-8)
+;; (set-keyboard-coding-system 'utf-8)
+;; (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+
+;; (require 'xterm-color)
+
+;; (setq comint-output-filter-functions
+;;       (remove 'ansi-color-process-output comint-output-filter-functions))
+
+;; (add-hook 'shell-mode-hook
+;;           (lambda ()
+;;             ;; Disable font-locking in this buffer to improve performance
+;;             (font-lock-mode -1)
+;;             ;; Prevent font-locking from being re-enabled in this buffer
+;;             (make-local-variable 'font-lock-function)
+;;             (setq font-lock-function (lambda (_) nil))
+;;             (add-hook 'comint-preoutput-filter-functions 'xterm-color-filter nil t)))
+
+;; (setenv "TERM" "xterm-256color")
+
+;; ;; xterm-colors
+;; (use-package xterm-color
+;;   :config
+;;   (setq compilation-environment '("TERM=xterm-256color"))
+;; (defun my/advice-compilation-filter (f proc string)
+;;   (funcall f proc (xterm-color-filter string)))
+;; (advice-add 'compilation-filter :around #'my/advice-compilation-filter))
 
 ;;; AI
 (defvar my-openai-key (shell-command-to-string "$SHELL -c 'echo -n $CHATGPT_OPENAI_KEY'"))
@@ -1516,7 +1615,10 @@ When using Homebrew, install it using \"brew install trash\"."
 
 ;; (require 'ob-chatgpt-shell)
 
+;;; Dashboard
+;; (require 'eliot-dashboard)
 
+;;; Optimization
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
