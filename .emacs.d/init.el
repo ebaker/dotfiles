@@ -1305,7 +1305,8 @@ One for writing code and the other for reading articles."
          ("C-M-n" . persp-next)
          ("C-M-p" . persp-prev)
          ("C-x k" . persp-kill-buffer*))
-  ;; :custom
+  :custom
+  (persp-mode-prefix-key (kbd "C-c M-p"))
   ;; (persp-initial-frame-name "Main")
   :config
   ;; Running `persp-mode' multiple times resets the perspective list...
