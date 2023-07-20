@@ -465,6 +465,69 @@ One for writing code and the other for reading articles."
   :init
   (ivy-rich-mode 1))
 
+;; vertico
+(defun dw/minibuffer-backward-kill (arg)
+  "When minibuffer is completing a file name delete up to parent
+folder, otherwise delete a word"
+  (interactive "p")
+  (if minibuffer-completing-file-name
+      ;; Borrowed from https://github.com/raxod502/selectrum/issues/498#issuecomment-803283608
+      (if (string-match-p "/." (minibuffer-contents))
+          (zap-up-to-char (- arg) ?/)
+        (delete-minibuffer-contents))
+      (backward-kill-word arg)))
+
+(use-package vertico
+  :bind (:map vertico-map
+         ("C-j" . vertico-next)
+         ("C-k" . vertico-previous)
+          ("C-f" . vertico-exit)
+          ("M-TAB" . minibuffer-complete)
+          ("M-RET" . minibuffer-force-complete-and-exit)
+         :map minibuffer-local-map
+         ("M-h" . dw/minibuffer-backward-kill))
+  :custom
+  (vertico-cycle t)
+  ;; :init
+  ;; (vertico-mode)
+  )
+
+;; Consult
+(defun dw/get-project-root ()
+  (when (fboundp 'projectile-project-root)
+    (projectile-project-root)))
+
+;; Configure directory extension.
+(use-package vertico-directory
+  :after vertico
+  :ensure nil
+  ;; More convenient directory navigation commands
+  :bind (:map vertico-map
+              ("RET" . vertico-directory-enter)
+              ("DEL" . vertico-directory-delete-char)
+              ("M-DEL" . vertico-directory-delete-word))
+  ;; Tidy shadowed file names
+  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
+
+(use-package consult
+  :demand t
+  ;; :bind (("C-s" . consult-line)
+  ;;        ("C-M-l" . consult-imenu)
+  ;;        ("C-M-j" . persp-switch-to-buffer*)
+  ;;        :map minibuffer-local-map
+  ;;        ("C-r" . consult-history))
+  :custom
+  (consult-project-root-function #'dw/get-project-root)
+  (completion-in-region-function #'consult-completion-in-region))
+
+;; Marginalia
+(use-package marginalia
+  :after vertico
+  :custom
+  (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
+  :init
+  (marginalia-mode))
+
 (use-package helpful
   :custom
   (counsel-describe-function-function #'helpful-callable)
