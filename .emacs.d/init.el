@@ -498,6 +498,85 @@ One for writing code and the other for reading articles."
     (mapc #'disable-theme (delq 'smart-mode-line-dark custom-enabled-themes)))
   (setq quick-switch-themes (cdr quick-switch-themes)))
 
+;;; Keybinding
+
+;; Custom keybinding
+(use-package general
+  :init
+  (setq general-override-states '(insert
+                                   emacs
+                                   hybrid
+                                   normal
+                                   visual
+                                   motion
+                                   operator
+                                   replace))
+  :config
+  (general-create-definer ebaker/leader-keys
+    :states '(normal visual motion)
+    :keymaps 'override
+    :prefix "SPC"
+    :global-prefix "M-SPC")
+  (ebaker/leader-keys
+    "/"   '(counsel-rg :which-key "ripgrep") ; You'll need counsel package for this
+    "TAB" '(switch-to-prev-buffer :which-key "previous buffer")
+    "SPC" '(counsel-M-x :which-key "M-x")
+
+    ;; Buffers
+    "b" '(:ignore t :which-key "buffer")
+    "bb" '(ivy-switch-buffer)
+
+    ;; undo tree
+    "u" '(undo-tree-visualize :which-key u)
+
+    ;; describe-
+    "d" '(:ignore t :which-key "describe-")
+    "dv" '(describe-variable :which-key "describe-variable")
+    "df" '(describe-function :which-key "describe-function")
+    "dk" '(describe-key :which-key "describe-key")
+
+    ;; eval-
+    "e" '(:ignore t :which-key "eval-")
+    "eb" '(eval-buffer :which-key "eval-buffer")
+    "ex" '(eval-expression :which-key "eval-expression")
+    "er" '(eval-region :which-key "eval-region")
+
+    ;; Window
+    "w" '(:ignore t :which-key "windows")
+    "wl"  '(windmove-right :which-key "move right")
+    "wh"  '(windmove-left :which-key "move left")
+    "wk"  '(windmove-up :which-key "move up")
+    "wj"  '(windmove-down :which-key "move bottom")
+    "w3"  '(split-window-right :which-key "split right")
+    "w2"  '(split-window-below :which-key "split bottom")
+    "wx"  '(delete-window :which-key "delete window")
+
+    ;; Toggles
+    "t"  '(:ignore t :which-key "toggles")
+    "tt" '(quick-switch-themes* :which-key "switch theme")
+
+    ;; Others
+    "a" '(:ignore t :which-key "applications")
+    "at"  '(ansi-term :which-key "open terminal")
+
+    ;; org-mode
+    "o"   '(:ignore t :which-key "org mode")
+
+    "oa"  '(:ignore t :which-key "agenda")
+    "oaa" '(org-agenda :which-key "status")
+    "oat" '(org-todo-list :which-key "todos")
+
+    "oi"  '(:ignore t :which-key "insert")
+    "oil" '(org-insert-link :which-key "insert link")
+
+    "os"  '(org-schedule :which-key "schedule")
+    "ot"  '(org-todo :which-key "todo")
+
+    "oc"  '(org-capture t :which-key "capture")
+    "of"  '(dw/counsel-rg-org-files :which-key "find in notes")
+    "on"  '(org-toggle-narrow-to-subtree :which-key "toggle narrow")
+    "ox"  '(org-export-dispatch t :which-key "export")))
+
 ;;; Completion
 
 ;;;; ivy
@@ -596,229 +675,6 @@ folder, otherwise delete a word"
   (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
   :init
   (marginalia-mode))
-
-;;; Help
-
-(use-package helpful
-  :custom
-  (counsel-describe-function-function #'helpful-callable)
-  (counsel-describe-variable-function #'helpful-variable)
-  :bind
-  ([remap describe-function] . helpful-function)
-  ([remap describe-symbol] . helpful-symbol)
-  ([remap describe-variable] . helpful-variable)
-  ([remap describe-command] . helpful-command)
-  ([remap describe-key] . helpful-key))
-
-;; Which Key
-(use-package which-key
-  :init
-  (setq which-key-separator " ")
-  (setq which-key-prefix-prefix "+")
-  :diminish which-key-mode
-  :config
-  (which-key-mode)
-  (setq which-key-idle-delay 0.05))
-
-(use-package expand-region
-  :bind ("C-=" . er/expand-region))
-
-;;; Keybinding
-
-;; Custom keybinding
-(use-package general
-  :init
-  (setq general-override-states '(insert
-                                   emacs
-                                   hybrid
-                                   normal
-                                   visual
-                                   motion
-                                   operator
-                                   replace))
-  :config
-  (general-create-definer ebaker/leader-keys
-    :states '(normal visual motion)
-    :keymaps 'override
-    :prefix "SPC"
-    :global-prefix "M-SPC")
-  (ebaker/leader-keys
-    "/"   '(counsel-rg :which-key "ripgrep") ; You'll need counsel package for this
-    "TAB" '(switch-to-prev-buffer :which-key "previous buffer")
-    "SPC" '(counsel-M-x :which-key "M-x")
-
-    ;; Buffers
-    "b" '(:ignore t :which-key "buffer")
-    "bb" '(ivy-switch-buffer)
-
-    ;; undo tree
-    "u" '(undo-tree-visualize :which-key u)
-
-    ;; describe-
-    "d" '(:ignore t :which-key "describe-")
-    "dv" '(describe-variable :which-key "describe-variable")
-    "df" '(describe-function :which-key "describe-function")
-    "dk" '(describe-key :which-key "describe-key")
-
-    ;; eval-
-    "e" '(:ignore t :which-key "eval-")
-    "eb" '(eval-buffer :which-key "eval-buffer")
-    "ex" '(eval-expression :which-key "eval-expression")
-    "er" '(eval-region :which-key "eval-region")
-
-    ;; Window
-    "w" '(:ignore t :which-key "windows")
-    "wl"  '(windmove-right :which-key "move right")
-    "wh"  '(windmove-left :which-key "move left")
-    "wk"  '(windmove-up :which-key "move up")
-    "wj"  '(windmove-down :which-key "move bottom")
-    "w3"  '(split-window-right :which-key "split right")
-    "w2"  '(split-window-below :which-key "split bottom")
-    "wx"  '(delete-window :which-key "delete window")
-
-    ;; Toggles
-    "t"  '(:ignore t :which-key "toggles")
-    "tt" '(quick-switch-themes* :which-key "switch theme")
-
-    ;; Others
-    "a" '(:ignore t :which-key "applications")
-    "at"  '(ansi-term :which-key "open terminal")
-
-    ;; org-mode
-    "o"   '(:ignore t :which-key "org mode")
-
-    "oa"  '(:ignore t :which-key "agenda")
-    "oaa" '(org-agenda :which-key "status")
-    "oat" '(org-todo-list :which-key "todos")
-
-    "oi"  '(:ignore t :which-key "insert")
-    "oil" '(org-insert-link :which-key "insert link")
-
-    "os"  '(org-schedule :which-key "schedule")
-    "ot"  '(org-todo :which-key "todo")
-
-    "oc"  '(org-capture t :which-key "capture")
-    "of"  '(dw/counsel-rg-org-files :which-key "find in notes")
-    "on"  '(org-toggle-narrow-to-subtree :which-key "toggle narrow")
-    "ox"  '(org-export-dispatch t :which-key "export")))
-
-;;; Icons
-(use-package all-the-icons)
-
-(use-package nerd-icons
-  ;; :custom
-  ;; The Nerd Font you want to use in GUI
-  ;; "Symbols Nerd Font Mono" is the default and is recommended
-  ;; but you can use any other Nerd Font if you want
-  ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
-  )
-
-;;; Diminish
-;;
-;; https://alhassy.github.io/init/
-
-;; eldoc diminish working
-;; (use-package diminish :ensure t
-;;   :config
-;;   (eval-after-load "eldoc" '(diminish 'eldoc-mode)))
-
-;; (use-package delight
-;;   :ensure t
-;;   :config
-;;   (delight '((eldoc-mode nil "eldoc"))))
-
-;; ;; ;; Let's hide some markers.
-;; ;; (diminish 'org-indent-mode)
-;; ;; (diminish 'subword-mode)
-
-;;; Editing
-
-;; vertical-center-mode
-(require 'vertical-center-mode)
-(ebaker/leader-keys
-  "tc" 'vertical-center-mode)
-
-;; rainbow delimiters
-(use-package rainbow-delimiters
-  :hook (prog-mode . rainbow-delimiters-mode))
-
-;;; Hydra
-
-(use-package hydra)
-
-(defhydra hydra-text-scale (:timeout 4)
-  "scale text"
-  ("j" text-scale-increase "in")
-  ("k" text-scale-decrease "out")
-  ("f" nil "finished" :exit t))
-
-(ebaker/leader-keys
-  "ts" '(hydra-text-scale/body :which-key "scale text"))
-
-;;; Git
-
-(use-package magit
-  :bind ("C-M-;" . magit-status)
-  :commands (magit-status magit-get-current-branch)
-  :custom
-  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
-
-(ebaker/leader-keys
-  "g"   '(:ignore t :which-key "git")
-  "gs"  'magit-status
-  "gd"  'magit-diff-unstaged
-  "go"  'magit-branch-or-checkout
-  "gl"   '(:ignore t :which-key "log")
-  "glc" 'magit-log-current
-  "glf" 'magit-log-buffer-file
-  "gb"  'magit-branch
-  "gP"  'magit-push-current
-  "gp"  'magit-pull-branch
-  "gf"  'magit-fetch
-  "gF"  'magit-fetch-all
-  "gr"  'magit-rebase)
-
-;; forge
-;; (use-package forge
-;;   :after magit)
-
-;;; Flyspell
-
-;; https://emacs.stackexchange.com/questions/20946/generate-mouse-2-event-from-macbook-trackpad
-(defun flyspell-mouse-2-macbook ()
-  ;; Do things when flyspell enters of leaves flyspell mode.
-  ;; Added manually
-  ;;
-  ;; Magic Mouse Fixes
-  (if flyspell-mode (progn
-                      (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
-                      (define-key flyspell-mouse-map [mouse-3] #'undefined))
-    nil)
-  ;; End my-flyspell-mode-hook
-  )
-
-(use-package flyspell
-  :ensure nil
-  ;; :straight nil
-  :init
-  (setq ispell-program-name "/usr/local/bin/aspell")
-  (setq ispell-dictionary "en_US") ;; set the default dictionary
-  :diminish flyspell-mode: ;; Don't show it in the modeline.
-  :hook
-  ((text-mode . flyspell-mode)
-    (flyspell-mode . flyspell-mouse-2-macbook)))
-
-;; https://github.com/d12frosted/flyspell-correct/issues/30
-;; (use-package flyspell-correct-popup
-;;   :bind (("C-M-;" . flyspell-correct-wrapper)
-;;	 (:map popup-menu-keymap
-;;        ("TAB" . popup-next)
-;;        ("S-TAB" . popup-previous)))
-;;   :init
-;;   (setq flyspell-correct-interface #'flyspell-correct-popup))
-
-
-;;; Completion - In buffer
 
 ;;;; Yasnippet
 ;; (require 'eliot-yasnippet)
@@ -1000,11 +856,9 @@ folder, otherwise delete a word"
 ;; Enable cache busting, depending on if your server returns
 ;; sufficiently many candidates in the first place.
   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
-
   )
 
 ;;;; Org-block-capf
-
 
 ;; active Babel languages
 (org-babel-do-load-languages
@@ -1026,7 +880,7 @@ folder, otherwise delete a word"
 ;;   (add-hook 'org-mode-hook #'org-block-capf-add-to-completion-at-point-functions)
 ;;   )
 
-;;;; TAB
+;;;; TAB cycle
 
 ;; A few more useful configurations...
 (use-package emacs
@@ -1042,6 +896,149 @@ folder, otherwise delete a word"
   ;; Enable indentation+completion using the TAB key.
   ;; `completion-at-point' is often bound to M-TAB.
   (setq tab-always-indent 'complete))
+
+;;; Help
+
+(use-package helpful
+  :custom
+  (counsel-describe-function-function #'helpful-callable)
+  (counsel-describe-variable-function #'helpful-variable)
+  :bind
+  ([remap describe-function] . helpful-function)
+  ([remap describe-symbol] . helpful-symbol)
+  ([remap describe-variable] . helpful-variable)
+  ([remap describe-command] . helpful-command)
+  ([remap describe-key] . helpful-key))
+
+;; Which Key
+(use-package which-key
+  :init
+  (setq which-key-separator " ")
+  (setq which-key-prefix-prefix "+")
+  :diminish which-key-mode
+  :config
+  (which-key-mode)
+  (setq which-key-idle-delay 0.05))
+
+(use-package expand-region
+  :bind ("C-=" . er/expand-region))
+
+
+;;; Icons
+(use-package all-the-icons)
+
+(use-package nerd-icons
+  ;; :custom
+  ;; The Nerd Font you want to use in GUI
+  ;; "Symbols Nerd Font Mono" is the default and is recommended
+  ;; but you can use any other Nerd Font if you want
+  ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
+  )
+
+;;; Diminish
+;;
+;; https://alhassy.github.io/init/
+
+;; eldoc diminish working
+;; (use-package diminish :ensure t
+;;   :config
+;;   (eval-after-load "eldoc" '(diminish 'eldoc-mode)))
+
+;; (use-package delight
+;;   :ensure t
+;;   :config
+;;   (delight '((eldoc-mode nil "eldoc"))))
+
+;; ;; ;; Let's hide some markers.
+;; ;; (diminish 'org-indent-mode)
+;; ;; (diminish 'subword-mode)
+
+;;; Editing
+
+;; vertical-center-mode
+(require 'vertical-center-mode)
+(ebaker/leader-keys
+  "tc" 'vertical-center-mode)
+
+;; rainbow delimiters
+(use-package rainbow-delimiters
+  :hook (prog-mode . rainbow-delimiters-mode))
+
+;;; Hydra
+
+(use-package hydra)
+
+(defhydra hydra-text-scale (:timeout 4)
+  "scale text"
+  ("j" text-scale-increase "in")
+  ("k" text-scale-decrease "out")
+  ("f" nil "finished" :exit t))
+
+(ebaker/leader-keys
+  "ts" '(hydra-text-scale/body :which-key "scale text"))
+
+;;; Git
+
+(use-package magit
+  :bind ("C-M-;" . magit-status)
+  :commands (magit-status magit-get-current-branch)
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
+(ebaker/leader-keys
+  "g"   '(:ignore t :which-key "git")
+  "gs"  'magit-status
+  "gd"  'magit-diff-unstaged
+  "go"  'magit-branch-or-checkout
+  "gl"   '(:ignore t :which-key "log")
+  "glc" 'magit-log-current
+  "glf" 'magit-log-buffer-file
+  "gb"  'magit-branch
+  "gP"  'magit-push-current
+  "gp"  'magit-pull-branch
+  "gf"  'magit-fetch
+  "gF"  'magit-fetch-all
+  "gr"  'magit-rebase)
+
+;; forge
+;; (use-package forge
+;;   :after magit)
+
+;;; Flyspell
+
+;; https://emacs.stackexchange.com/questions/20946/generate-mouse-2-event-from-macbook-trackpad
+(defun flyspell-mouse-2-macbook ()
+  ;; Do things when flyspell enters of leaves flyspell mode.
+  ;; Added manually
+  ;;
+  ;; Magic Mouse Fixes
+  (if flyspell-mode (progn
+                      (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
+                      (define-key flyspell-mouse-map [mouse-3] #'undefined))
+    nil)
+  ;; End my-flyspell-mode-hook
+  )
+
+(use-package flyspell
+  :ensure nil
+  ;; :straight nil
+  :init
+  (setq ispell-program-name "/usr/local/bin/aspell")
+  (setq ispell-dictionary "en_US") ;; set the default dictionary
+  :diminish flyspell-mode: ;; Don't show it in the modeline.
+  :hook
+  ((text-mode . flyspell-mode)
+    (flyspell-mode . flyspell-mouse-2-macbook)))
+
+;; https://github.com/d12frosted/flyspell-correct/issues/30
+;; (use-package flyspell-correct-popup
+;;   :bind (("C-M-;" . flyspell-correct-wrapper)
+;;	 (:map popup-menu-keymap
+;;        ("TAB" . popup-next)
+;;        ("S-TAB" . popup-previous)))
+;;   :init
+;;   (setq flyspell-correct-interface #'flyspell-correct-popup))
+
 
 ;;; LSP
 
