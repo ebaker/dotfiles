@@ -942,6 +942,37 @@ One for writing code and the other for reading articles."
 
 ;; (setenv "TERM" "xterm-256color")
 
+(defun my/eglot-capf ()
+(setq-local completion-at-point-functions
+            (list (cape-super-capf
+                   #'eglot-completion-at-point
+                   #'cape-yasnippet
+                    ;; (cape-company-to-capf #'company-yasnippet)
+                   #'cape-file))))
+
+(defun my-corfu-combined-sort (candidates)
+  "Sort CANDIDATES using both display-sort-function and corfu-sort-function."
+  (let ((candidates
+         (let ((display-sort-func (corfu--metadata-get 'display-sort-function)))
+           (if display-sort-func
+               (funcall display-sort-func candidates)
+             candidates))))
+    (if corfu-sort-function
+        (funcall corfu-sort-function candidates)
+      candidates)))
+
+;; ;; https://gist.github.com/gsj987/64d48bf49a374c96421ad20df886e947
+(use-package eglot
+  :ensure t
+  :defer 3
+  :hook
+  ((js-mode
+    typescript-mode
+    typescript-tsx-mode) . eglot-ensure)
+  :config
+  (cl-pushnew '((js-mode typescript-mode typescript-tsx-mode) . ("typescript-language-server" "--stdio")) eglot-server-programs :test #'equal)
+  (add-hook 'eglot-managed-mode-hook #'my/eglot-capf)
+  (setq corfu-sort-override-function #'my-corfu-combined-sort))
 
 ;;
 ;; Powerline
