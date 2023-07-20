@@ -1285,6 +1285,16 @@ One for writing code and the other for reading articles."
   :mode
   ("Dockerfile\\(-.*\\)?\\'" . dockerfile-mode))
 
+;; Markdown
+(use-package markdown-mode
+  :ensure t
+  :mode ("README\\.md\\'" . gfm-mode)
+  :init (setq markdown-command "multimarkdown")
+  :bind (:map markdown-mode-map
+          (("C-c C-e" . markdown-do)
+           ("M-<up>" . markdown-move-up)
+           ("M-<down>" . markdown-move-down))))
+
 ;; ;; ripgrep
 (use-package ripgrep)
 ;; (use-package rg)
