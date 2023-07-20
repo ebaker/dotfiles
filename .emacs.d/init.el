@@ -262,6 +262,20 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :config
   (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo"))))
 
+;;;; outli
+(use-package outli
+  :ensure nil
+  :quelpa (cape-yasnippet :fetcher github :repo "elken/cape-yasnippet")
+  ;; :after lispy ; only if you use lispy; it also sets speed keys on headers!
+  :bind (:map outli-mode-map ; convenience key to get back to containing heading
+        ("C-c C-p" . (lambda () (interactive) (outline-back-to-heading))))
+  :custom ((outli-default-nobar t))
+  :hook ((emacs-lisp-mode) . outli-mode)) ; or whichever modes you prefer
+
+(defun my-emacs-lisp-hook ()
+  (outline-hide-sublevels 1))
+
+(add-hook 'emacs-lisp-mode-hook #'my-emacs-lisp-hook)
 (defun ebaker/emacsify-evil-mode ()
   "Remove Evil Normal state bindings and add some Emacs bindings in Evil Normal state."
 
