@@ -800,9 +800,19 @@ One for writing code and the other for reading articles."
 ;;     (list #'company-files #'company-ispell #'company-dabbrev)))
 
 ;; (require 'cape-yasnippet)
+(use-package cape-yasnippet
+  :ensure nil
+  :quelpa (cape-yasnippet :fetcher github :repo "elken/cape-yasnippet")
+  :after yasnippet
+  :bind (("C-c y" . cape-yasnippet)
+         ("M-+"   . yas-insert-snippet))
+  :config
+  (setq cape-yasnippet-lookup-by 'key))
+
 
 ;; Add extensions
 (use-package cape
+  :after cape-yasnippet
   ;; Bind dedicated completion commands
   ;; Alternative prefix keys: C-c p, M-p, M-+, ...
   :bind (("C-c p p" . completion-at-point) ;; capf
@@ -835,7 +845,12 @@ One for writing code and the other for reading articles."
   ;;(add-to-list 'completion-at-point-functions #'cape-dict)
   ;;(add-to-list 'completion-at-point-functions #'cape-symbol)
   ;;(add-to-list 'completion-at-point-functions #'cape-line)
-  ;; (add-to-list 'completion-at-point-functions #'cape-yasnippet)
+  (add-to-list 'completion-at-point-functions #'cape-yasnippet)
+
+;; Enable cache busting, depending on if your server returns
+;; sufficiently many candidates in the first place.
+  (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
+
   )
 
 ;; (use-package org-block-capf
