@@ -37,6 +37,10 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+;; Install and load `quelpa-use-package'.
+(setq quelpa-update-melpa-p nil)
+(package-install 'quelpa-use-package)
+(require 'quelpa-use-package)
 ;; command-log-mode shows hotkeys used in realtime
 (use-package command-log-mode
   :defer 2)
