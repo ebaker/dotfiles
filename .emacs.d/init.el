@@ -1,4 +1,6 @@
-;;; init.el -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t; eval: (save-place-local-mode -1); eval: (outline-hide-sublevels 1); -*-
+
+
 
 ;;; Initialization
 ;; heavily inspired by https://blog.jft.rocks/emacs/emacs-from-scratch.html
