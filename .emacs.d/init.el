@@ -463,12 +463,14 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (setq gac-default-message #'my-commit-message))
 
 ;;;; Bullets
+
 (use-package org-bullets
   :defer 2
   :after (org)
   :hook (org-mode . org-bullets-mode))
 
 ;;;; Prettify
+
 (setq-default prettify-symbols-alist '(("#+BEGIN_SRC" . "↦") ;; "†"
                                        ("#+END_SRC" . "⇤")
                                        ("#+begin_src" . "↦")
@@ -479,13 +481,15 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (setq prettify-symbols-unprettify-at-point 'right-edge)
 (add-hook 'org-mode-hook 'prettify-symbols-mode)
 
-;;;; Active Babel languages
+;;;; Active Babel Languages
+
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((chatgpt-shell . t)
    (emacs-lisp . t)))
 
 ;;;; Cliplink
+
 (use-package org-cliplink
   :after (org))
 
