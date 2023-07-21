@@ -454,7 +454,13 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 ;;;; Git Auto-commit
 
-(use-package git-auto-commit-mode)
+(defun my-commit-message (filename)
+  "Specify auto-commit from system name"
+  (concat "Auto-commit from " (system-name)))
+
+(use-package git-auto-commit-mode
+  :config
+  (setq gac-default-message #'my-commit-message))
 
 ;;;; Bullets
 (use-package org-bullets
