@@ -263,14 +263,15 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (global-set-key (kbd "s-2") 'split-window-below)
 (global-set-key (kbd "s-3") 'split-window-right)
 ;; (global-set-key (kbd "s-b") 'ido-switch-buffer)
-(global-set-key (kbd "s-b") 'persp-ivy-switch-buffer)
-;; (global-set-key (kbd "s-b") 'consult-buffer)
+;; (global-set-key (kbd "s-b") 'persp-ivy-switch-buffer)
+(global-set-key (kbd "s-b") 'consult-buffer)
 (global-set-key (kbd "s-k") 'ido-kill-buffer)
 (global-set-key (kbd "s-a") 'org-agenda)
 (global-set-key (kbd "s-r") 'revert-buffer)
 (global-set-key (kbd "C-x i") 'find-config)
 (global-set-key (kbd "C-x C-c") 'my-save-buffers-kill-emacs)
-(global-set-key (kbd "C-x C-r") 'counsel-recentf)
+;; (global-set-key (kbd "C-x C-r") 'counsel-recentf)
+(global-set-key (kbd "C-x C-r") 'consult-recent-file)
 (global-set-key (kbd "C-M-u") 'universal-argument)
 (global-set-key (kbd "C-M-n") 'persp-next)
 (global-set-key (kbd "C-M-p") 'persp-prev)
@@ -289,7 +290,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :ensure nil
   ;; :straight nil
   ;; Loads after 1 second of idle time.
-  :defer 1)
+  :hook (after-init . recentf-mode))
 
 ;;;; minibuffer history
 (use-package savehist
@@ -322,7 +323,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 (defun my-emacs-lisp-hook ()
   (outline-hide-sublevels 1))
-
 (add-hook 'emacs-lisp-mode-hook #'my-emacs-lisp-hook)
 
 ;;;; Ripgrep
@@ -525,13 +525,16 @@ One for writing code and the other for reading articles."
     :prefix "SPC"
     :global-prefix "M-SPC")
   (ebaker/leader-keys
-    "/"   '(counsel-rg :which-key "ripgrep") ; You'll need counsel package for this
+    ;; "/"   '(counsel-rg :which-key "ripgrep")
+    "/"   '(consult-ripgrep :which-key "ripgrep")
     "TAB" '(switch-to-prev-buffer :which-key "previous buffer")
-    "SPC" '(counsel-M-x :which-key "M-x")
+    ;; "SPC" '(counsel-M-x :which-key "M-x")
+    "SPC" '(execute-extended-command :which-key "M-x")
 
     ;; Buffers
     "b" '(:ignore t :which-key "buffer")
-    "bb" '(ivy-switch-buffer)
+    "bi" '(ivy-switch-buffer)
+    "bb" '(consult-buffer)
 
     ;; undo tree
     "u" '(undo-tree-visualize :which-key u)
@@ -607,18 +610,21 @@ One for writing code and the other for reading articles."
   (setq ivy-use-virtual-buffers t
     ivy-count-format "%d/%d "
     ivy-initial-inputs-alist nil)
-  (ivy-mode 1))
+  ;; (ivy-mode 1)
+  )
 
 (use-package counsel
-  :bind (("M-x" . counsel-M-x)
-          ;; ("C-x b" . counsel-ibuffer)
-          ;; ("C-x C-f" . counsel-find-file)
-          :map minibuffer-local-map
-          ("C-r" . 'counsel-minibuffer-history)))
+  ;; :bind (("M-x" . counsel-M-x)
+  ;;         ;; ("C-x b" . counsel-ibuffer)
+  ;;         ;; ("C-x C-f" . counsel-find-file)
+  ;;         :map minibuffer-local-map
+  ;;         ("C-r" . 'counsel-minibuffer-history))
+  )
 
 (use-package ivy-rich
-  :init
-  (ivy-rich-mode 1))
+  ;; :init
+  ;; (ivy-rich-mode 1)
+  )
 
 ;;;; vertico
 (defun dw/minibuffer-backward-kill (arg)
@@ -634,17 +640,18 @@ folder, otherwise delete a word"
 
 (use-package vertico
   :bind (:map vertico-map
-         ("C-j" . vertico-next)
-         ("C-k" . vertico-previous)
-          ("C-f" . vertico-exit)
-          ("M-TAB" . minibuffer-complete)
-          ("M-RET" . minibuffer-force-complete-and-exit)
+         ;; ("C-j" . vertico-next)
+         ;; ("C-k" . vertico-previous)
+         ;; ("C-f" . vertico-exit)
+         ("C-M-j" . vertico-exit-input)
+         ("M-TAB" . minibuffer-complete)
+         ("s-<return>" . minibuffer-force-complete-and-exit)
          :map minibuffer-local-map
          ("M-h" . dw/minibuffer-backward-kill))
   :custom
   (vertico-cycle t)
-  ;; :init
-  ;; (vertico-mode)
+  :init
+  (vertico-mode)
   )
 
 ;; Consult
@@ -674,6 +681,25 @@ folder, otherwise delete a word"
   :custom
   (consult-project-root-function #'dw/get-project-root)
   (completion-in-region-function #'consult-completion-in-region))
+
+;; https://github.com/minad/consult/wiki#shorten-recent-files-in-consult-buffer
+(defun my-consult--source-recentf-items ()
+  (let ((ht (consult--buffer-file-hash))
+        file-name-handler-alist ;; No Tramp slowdown please.
+        items)
+    (dolist (file recentf-list (nreverse items))
+      ;; Emacs 29 abbreviates file paths by default, see
+      ;; `recentf-filename-handlers'.
+      (unless (eq (aref file 0) ?/)
+        (setq file (expand-file-name file)))
+      (unless (gethash file ht)
+        (push (propertize
+               (file-name-nondirectory file)
+               'multi-category `(file . ,file))
+              items)))))
+
+(plist-put consult--source-recent-file
+           :items #'my-consult--source-recentf-items)
 
 ;; Marginalia
 (use-package marginalia
@@ -1057,7 +1083,8 @@ folder, otherwise delete a word"
   "lb" 'xref-pop-marker-stack
   "ln" 'lsp-ui-find-next-reference
   "lp" 'lsp-ui-find-prev-reference
-  "ls" 'counsel-imenu
+  ;; "ls" 'counsel-imenu
+  "ls" 'consult-imenu
   "le" 'lsp-ui-flycheck-list
   "lS" 'lsp-ui-sideline-mode
   "lX" 'lsp-execute-code-action)
@@ -1416,6 +1443,9 @@ folder, otherwise delete a word"
   ;; Running `persp-mode' multiple times resets the perspective list...
   ;; (setq persp-state-default-file "~/.emacs-persp-default"')
   (customize-set-variable persp-sort 'created)
+  ;; ;; consult
+  ;; (consult-customize consult--source-buffer :hidden t :default nil)
+  ;; (add-to-list 'consult-buffer-sources persp-consult-source)
   (unless (equal persp-mode t)
     (persp-mode)))
 
