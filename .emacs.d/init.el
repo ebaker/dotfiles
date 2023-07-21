@@ -690,7 +690,13 @@ folder, otherwise delete a word"
       (if (string-match-p "/." (minibuffer-contents))
           (zap-up-to-char (- arg) ?/)
         (delete-minibuffer-contents))
-      (backward-kill-word arg)))
+    (backward-kill-word arg)))
+
+;; related: https://github.com/oantolin/embark/issues/477
+(defun my-embark-kill-buffer ()
+  "Simulate pressing 'C-. k' to kill a buffer via Embark."
+  (interactive)
+  (execute-kbd-macro (kbd "C-. k")))
 
 (use-package vertico
   :bind (:map vertico-map
@@ -701,17 +707,13 @@ folder, otherwise delete a word"
          ("M-TAB" . minibuffer-complete)
          ("s-<return>" . minibuffer-force-complete-and-exit)
          :map minibuffer-local-map
-         ("M-h" . dw/minibuffer-backward-kill))
+          ("M-h" . dw/minibuffer-backward-kill)
+          ("s-k" . my-embark-kill-buffer))
   :custom
   (vertico-cycle t)
   :init
   (vertico-mode)
   )
-
-;; Consult
-(defun dw/get-project-root ()
-  (when (fboundp 'projectile-project-root)
-    (projectile-project-root)))
 
 ;; Configure directory extension.
 (use-package vertico-directory
@@ -724,6 +726,12 @@ folder, otherwise delete a word"
               ("M-DEL" . vertico-directory-delete-word))
   ;; Tidy shadowed file names
   :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
+
+;; Consult
+(defun dw/get-project-root ()
+  (when (fboundp 'projectile-project-root)
+    (projectile-project-root)))
+
 
 (use-package consult
   :demand t
