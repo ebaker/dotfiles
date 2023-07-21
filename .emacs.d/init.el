@@ -934,6 +934,17 @@ folder, otherwise delete a word"
   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
   )
 
+(defun make-add-to-completion-at-point-functions (func)
+  "Return a function that, when called, adds FUNC to `completion-at-point-functions`
+   if FUNC is not already a member of the list.
+
+   FUNC is expected to be a symbol representing a function."
+
+  (lambda ()
+    (let ((capf func))
+      (unless (memq capf completion-at-point-functions)
+        (add-hook 'completion-at-point-functions capf nil 'local)))))
+
 ;;;; Org-roam Cape Workaround
 
 ;; (defun my/org-capf ()
@@ -947,31 +958,14 @@ folder, otherwise delete a word"
 ;;               #'cape-file))))
 ;; (add-hook 'org-mode-hook #'my/org-capf)
 
-(defun cape-file-add-to-completion-at-point-functions ()
-  "Add `cape-file' to `completion-at-point-functions'."
-  (let ((capf #'cape-file))
-    (unless (memq capf completion-at-point-functions)
-      (add-hook 'completion-at-point-functions capf nil 'local))))
-(add-hook 'org-mode-hook #'cape-file-add-to-completion-at-point-functions)
-
-(defun cape-yasnippet-add-to-completion-at-point-functions ()
-  "Add `cape-yasnippet' to `completion-at-point-functions'."
-  (let ((capf #'cape-yasnippet))
-    (unless (memq capf completion-at-point-functions)
-      (add-hook 'completion-at-point-functions capf nil 'local))))
-(add-hook 'org-mode-hook #'cape-yasnippet-add-to-completion-at-point-functions)
+(add-hook 'org-mode-hook (make-add-to-completion-at-point-functions #'cape-file))
+(add-hook 'org-mode-hook (make-add-to-completion-at-point-functions #'cape-yasnippet))
+(add-hook 'org-mode-hook (make-add-to-completion-at-point-functions #'cape-dabbrev))
 
 (defun cape-yasnippet-lookup-by-name ()
-  "Add `cape-yasnippet-lookup-by' to `name'."
+  "Set `cape-yasnippet-lookup-by' to `name'."
   (setq-local cape-yasnippet-lookup-by 'name))
 (add-hook 'org-mode-hook #'cape-yasnippet-lookup-by-name)
-
-(defun cape-dabbrev-add-to-completion-at-point-functions ()
-  "Add `cape-dabbrev' to `completion-at-point-functions'."
-  (let ((capf #'cape-dabbrev))
-    (unless (memq capf completion-at-point-functions)
-      (add-hook 'completion-at-point-functions capf nil 'local))))
-(add-hook 'org-mode-hook #'cape-dabbrev-add-to-completion-at-point-functions)
 
 ;;;; Org-block-capf
 
