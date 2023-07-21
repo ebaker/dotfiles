@@ -239,6 +239,10 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (setq show-paren-delay 0)
 (show-paren-mode 1)
 
+;; select help window on open
+(custom-set-variables
+ '(help-window-select t))
+
 ;; (global-font-lock-mode t)
 
 ;;; Global Keybindings
