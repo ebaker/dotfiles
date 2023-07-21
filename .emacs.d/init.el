@@ -237,7 +237,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 ;; (global-font-lock-mode t)
 
-;;; Global Hotkeys
+;;; Global Keybindings
 
 ;; Make escape quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -275,7 +275,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (global-set-key (kbd "<f2>") 'vterm-toggle)
 (global-set-key (kbd "C-<f2>") 'vterm-toggle-cd)
 
-;;; Usability Packages
+;;; Usability
 
 ;;;; environment variables
 (use-package exec-path-from-shell
@@ -322,6 +322,11 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (outline-hide-sublevels 1))
 
 (add-hook 'emacs-lisp-mode-hook #'my-emacs-lisp-hook)
+
+;;;; Ripgrep
+(use-package ripgrep)
+;; (use-package rg)
+;; (setq ripgrep--base-arguments '("--line-number" "--with-filename"))
 
 ;;; Evil
 
@@ -1395,11 +1400,6 @@ folder, otherwise delete a word"
           (("C-c C-e" . markdown-do)
            ("M-<up>" . markdown-move-up)
            ("M-<down>" . markdown-move-down))))
-
-;;; ripgrep
-(use-package ripgrep)
-;; (use-package rg)
-;; (setq ripgrep--base-arguments '("--line-number" "--with-filename"))
 
 ;;; Perspective
 (use-package perspective
