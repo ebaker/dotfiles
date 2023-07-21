@@ -8,7 +8,7 @@
   :custom
   (org-roam-directory "~/Dropbox/roam")
   (org-roam-dailies-directory "journals/")
-  (org-roam-completion-everywhere t)
+  (org-roam-completion-everywhere nil)
   :bind (("s-d l" . org-roam-buffer-toggle)
          ("s-d f" . org-roam-node-find)
          ("s-d i" . org-roam-node-insert)
