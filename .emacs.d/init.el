@@ -869,7 +869,6 @@ folder, otherwise delete a word"
   ;; (push 'cape-yasnippet completion-at-point-functions)
   (setq cape-yasnippet-lookup-by 'key))
 
-
 ;; Add extensions
 (use-package cape
   :after cape-yasnippet
