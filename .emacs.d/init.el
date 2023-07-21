@@ -113,7 +113,7 @@
 
 ;; https://emacs.stackexchange.com/questions/16818/cocoa-emacs-24-5-font-issues-inconsolata-dz
 (add-to-list 'default-frame-alist '(height . 44))
-(add-to-list 'default-frame-alist '(width . 100))
+(add-to-list 'default-frame-alist '(width . 110))
 
 ;;; System
 
@@ -323,10 +323,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :custom ((outli-default-nobar t))
   :hook ((emacs-lisp-mode) . outli-mode)) ; or whichever modes you prefer
 
-(defun my-emacs-lisp-hook ()
-  (outline-hide-sublevels 1))
-(add-hook 'emacs-lisp-mode-hook #'my-emacs-lisp-hook)
-
 ;;;; Ripgrep
 (use-package ripgrep)
 ;; (use-package rg)
@@ -388,12 +384,12 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 ;;; Org-mode
 
-;; Location for celestial calculations
+;;;; Location for celestial calculations
 (setq calendar-location-name "San Francisco, CA")
 (setq calendar-latitude 37.773972)
 (setq calendar-longitude -122.431297)
 
-;; Orgmode
+;;;; Orgmode
 
 (use-package org
   :demand t
@@ -407,6 +403,16 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (setq org-agenda-span 'day)
 
   (require 'eliot-roam))
+
+;; https://emacs.stackexchange.com/questions/22405/after-executing-org-narrow-to-subtree-how-do-i-move-between-subtrees-of-the-sam
+(defun my/org-narrow-forward ()
+  "Move to the next subtree at same level, and narrow to it."
+  (interactive)
+  (widen)
+  (org-forward-heading-same-level 1)
+  (org-narrow-to-subtree))
+
+;;;; Agenda
 
 (use-package org-agenda
   :ensure nil
@@ -432,26 +438,22 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
     ("*" . org-agenda-bulk-mark-all)
     ("%" . org-agenda-bulk-mark-regexp)))
 
+;;;; Chef
+
 (use-package org-chef
   :ensure t)
 
+;;;; Git Auto-commit
+
 (use-package git-auto-commit-mode)
 
-;; https://emacs.stackexchange.com/questions/22405/after-executing-org-narrow-to-subtree-how-do-i-move-between-subtrees-of-the-sam
-(defun my/org-narrow-forward ()
-  "Move to the next subtree at same level, and narrow to it."
-  (interactive)
-  (widen)
-  (org-forward-heading-same-level 1)
-  (org-narrow-to-subtree))
-
-;; ore pretty bullets
+;;;; Bullets
 (use-package org-bullets
   :defer 2
   :after (org)
   :hook (org-mode . org-bullets-mode))
 
-;; org-mode prettify
+;;;; Prettify
 (setq-default prettify-symbols-alist '(("#+BEGIN_SRC" . "↦") ;; "†"
                                        ("#+END_SRC" . "⇤")
                                        ("#+begin_src" . "↦")
@@ -462,7 +464,13 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (setq prettify-symbols-unprettify-at-point 'right-edge)
 (add-hook 'org-mode-hook 'prettify-symbols-mode)
 
-;; org-clip
+;;;; Active Babel languages
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((chatgpt-shell . t)
+   (emacs-lisp . t)))
+
+;;;; Cliplink
 (use-package org-cliplink
   :after (org))
 
@@ -901,19 +909,19 @@ folder, otherwise delete a word"
  '((chatgpt-shell . t)
    (emacs-lisp . t)))
 
-(require 'org-block-capf)
+;;;; Org-block-capf
 
-(add-hook 'org-mode-hook #'org-block-capf-add-to-completion-at-point-functions)
 
-;; (use-package org-block-capf
-;;   ;; :vc (:url "https://github.com/xenodium/org-block-capf"
-;;   ;;      :rev :main)
-;;   ;; :custom
-;;   ;; (company-org-block-edit-style 'auto) ;; 'auto, 'prompt, or 'inline
-;;   ;; :hook ((org-mode . org-block-capf-add-to-completion-at-point-functions))
-;;   :config
-;;   (add-hook 'org-mode-hook #'org-block-capf-add-to-completion-at-point-functions)
-;;   )
+(use-package org-block-capf
+  :ensure nil
+  :quelpa (org-block-capf :fetcher github :repo "xenodium/org-block-capf")
+  :after yasnippet
+  ;; :custom
+  ;; (company-org-block-edit-style 'auto) ;; 'auto, 'prompt, or 'inline
+  ;; :hook ((org-mode . org-block-capf-add-to-completion-at-point-functions))
+  :config
+  (add-hook 'org-mode-hook #'org-block-capf-add-to-completion-at-point-functions)
+  )
 
 ;;;; TAB cycle
 
