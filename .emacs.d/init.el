@@ -1256,8 +1256,9 @@ folder, otherwise delete a word"
   :hook (prog-mode . smartparens-mode)
   :config
   (sp-local-pair 'prog-mode "{" nil :post-handlers '((indent-between-pair "RET")))
-(sp-local-pair 'prog-mode "[" nil :post-handlers '((indent-between-pair "RET")))
-(sp-local-pair 'prog-mode "(" nil :post-handlers '((indent-between-pair "RET"))))
+  (sp-local-pair 'prog-mode "[" nil :post-handlers '((indent-between-pair "RET")))
+  (sp-local-pair 'prog-mode "(" nil :post-handlers '((indent-between-pair "RET")))
+  (sp-local-pair '(emacs-lisp-mode) "'" "'" :actions nil))
 
 (defun indent-between-pair (&rest _ignored)
   (newline)
