@@ -748,8 +748,8 @@ folder, otherwise delete a word"
 (use-package corfu
   ;; Optional customizations
   :custom
-  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-  (corfu-auto t)                 ;; Enable auto completion
+  ;; (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  ;; (corfu-auto t)                 ;; Enable auto completion
   (corfu-separator ?\s)          ;; Orderless field separator
   ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
   ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
@@ -758,7 +758,7 @@ folder, otherwise delete a word"
   ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
   ;; (corfu-scroll-margin 5)        ;; Use scroll margin
   ;; (corfu-auto-delay 0.1)
-  (corfu-auto-prefix 1)
+  ;; (corfu-auto-prefix 1)
 
   ;; Enable Corfu only for certain modes.
   ;; :hook ((prog-mode . corfu-mode)
@@ -808,6 +808,21 @@ folder, otherwise delete a word"
   ;; Other useful Dabbrev configurations.
   :custom
   (dabbrev-ignored-buffer-regexps '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
+
+(use-package corfu-candidate-overlay
+  ;; :straight (:type git
+  ;;            :repo "https://code.bsdgeek.org/adam/corfu-candidate-overlay"
+  ;;            :files (:defaults "*.el"))
+  :after corfu
+  :config
+  ;; enable corfu-candidate-overlay mode globally
+  ;; this relies on having corfu-auto set to nil
+  (corfu-candidate-overlay-mode +1)
+  ;; bind Ctrl + TAB to trigger the completion popup of corfu
+  (global-set-key (kbd "C-<tab>") 'completion-at-point)
+  ;; bind Ctrl + Shift + Tab to trigger completion of the first candidate
+  ;; (keybing <iso-lefttab> may not work for your keyboard model)
+  (global-set-key (kbd "C-S-<tab>") 'corfu-candidate-overlay-complete-at-point))
 
 ;;;; Orderless
 
@@ -929,7 +944,7 @@ folder, otherwise delete a word"
 (use-package emacs
   :init
   ;; TAB cycle if there are only few candidates
-  (setq completion-cycle-threshold 3)
+  (setq completion-cycle-threshold 1)
 
   ;; Emacs 28: Hide commands in M-x which do not apply to the current mode.
   ;; Corfu commands are hidden, since they are not supposed to be used via M-x.
