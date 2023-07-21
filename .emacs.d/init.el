@@ -1,6 +1,18 @@
 ;; -*- lexical-binding: t; eval: (save-place-local-mode -1); eval: (outline-hide-sublevels 1); -*-
 
-
+;;; Tasks
+;;;; TODO Review emacs-lisp-mode completion-at-point
+;;;; TODO Setup and test projectile
+;;;; TODO Review cape super capf for org-roam
+;;;; TODO Add embark
+;;;; TODO Swap out swiper for consult
+;;;; TODO Setup and test treemacs or nerdtree
+;;;; TODO Review perspective
+;;;; TODO Merge eliot-roam into init.el
+;;;; TODO Migrate from quelpa to straight
+;;;; TODO Review org-mode archive strategy
+;;;; TODO Merge this branch to main
+;;;; TODO Start looking at linux machine w/ exwm
 
 ;;; Initialization
 ;; heavily inspired by https://blog.jft.rocks/emacs/emacs-from-scratch.html
