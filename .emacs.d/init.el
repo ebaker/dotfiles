@@ -1,9 +1,12 @@
 ;; -*- lexical-binding: t; eval: (save-place-local-mode -1); eval: (outline-hide-sublevels 1); -*-
 
 ;;; Tasks
+;;;; DONE Set s-a to go to day/week and s-A to go to agenda options
 ;;;; TODO Review emacs-lisp-mode completion-at-point
 ;;;; TODO Setup and test projectile
 ;;;; TODO Review cape super capf for org-roam
+;;;; TODO Add work frequency dict
+;;;;; - https://github.com/hermitdave/FrequencyWords/tree/master/content/2018/en
 ;;;; TODO Add embark
 ;;;; TODO Swap out swiper for consult
 ;;;; TODO Setup and test treemacs or nerdtree
@@ -197,9 +200,6 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;; load-path
 (push "~/.emacs.d/elisp/" load-path)
 
-(defun ebaker/other-window-reverse ()
-  (interactive)
-  (other-window -1))
 
 ;; @ebaker - remove keybinding eyebrowse
 (assq-delete-all 'eyebrowse-mode minor-mode-map-alist)
@@ -253,7 +253,18 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 ;; select help window on open
 (custom-set-variables
- '(help-window-select t))
+  '(help-window-select t))
+
+;; helper functions
+(defun ebaker/other-window-reverse ()
+  "Select another window in reverse cyclic ordering of windows."
+  (interactive)
+  (other-window -1))
+
+(defun ebaker/open-org-agenda-day-or-week ()
+  "Open org-agenda day or week"
+  (interactive)
+  (org-agenda nil "a"))
 
 ;; (global-font-lock-mode t)
 
@@ -287,7 +298,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 (global-set-key (kbd "s-k") 'ido-kill-buffer)
 (global-set-key (kbd "s-h") 'previous-buffer)
 (global-set-key (kbd "s-l") 'next-buffer)
-(global-set-key (kbd "s-a") 'org-agenda)
+(global-set-key (kbd "s-a") 'ebaker/open-org-agenda-day-or-week)
+(global-set-key (kbd "s-A") 'org-agenda)
 (global-set-key (kbd "s-r") 'revert-buffer)
 (global-set-key (kbd "C-x i") 'find-config)
 (global-set-key (kbd "C-x C-c") 'my-save-buffers-kill-emacs)
@@ -406,6 +418,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 ;;; Org-mode
 
 ;;;; Location for celestial calculations
+
 (setq calendar-location-name "San Francisco, CA")
 (setq calendar-latitude 37.773972)
 (setq calendar-longitude -122.431297)
