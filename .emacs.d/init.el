@@ -916,13 +916,6 @@ folder, otherwise delete a word"
   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
   )
 
-;;;; Org-block-capf
-
-;; active Babel languages
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((chatgpt-shell . t)
-   (emacs-lisp . t)))
 
 ;;;; Org-block-capf
 
