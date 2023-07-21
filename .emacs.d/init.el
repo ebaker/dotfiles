@@ -113,17 +113,19 @@
 (add-to-list 'default-frame-alist '(height . 44))
 (add-to-list 'default-frame-alist '(width . 100))
 
-;;; General & System
+;;; System
 
 ;; mac
 (setq mac-pass-command-to-system nil)
 
-;; Garbage-collect on focus-out, Emacs /should/ feel snappier.
-(add-hook 'focus-out-hook #'garbage-collect)
-
 ;; super & meta on mac
 (setq mac-command-modifier 'super
   mac-option-modifier  'meta)
+
+;;; Defaults
+
+;; Garbage-collect on focus-out, Emacs /should/ feel snappier.
+(add-hook 'focus-out-hook #'garbage-collect)
 
 ;; spaces for tabs
 (setq-default indent-tabs-mode nil)
