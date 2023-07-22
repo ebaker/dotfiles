@@ -1717,9 +1717,9 @@ When using Homebrew, install it using \"brew install trash\"."
   :commands (dired-sidebar-toggle-sidebar)
   :init
   (add-hook 'dired-sidebar-mode-hook
-            (lambda ()
-              (unless (file-remote-p default-directory)
-                (auto-revert-mode))))
+    (lambda ()
+      (unless (file-remote-p default-directory)
+        (auto-revert-mode))))
   :config
   (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
   (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
