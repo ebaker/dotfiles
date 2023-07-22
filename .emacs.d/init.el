@@ -1256,7 +1256,11 @@ folder, otherwise delete a word"
      typescript-mode
      typescript-tsx-mode) . eglot-ensure)
   :config
-  (cl-pushnew '((js-mode typescript-mode typescript-tsx-mode) . ("typescript-language-server" "--stdio")) eglot-server-programs :test #'equal)
+  ;; language servers
+  (add-to-list 'eglot-server-programs '(js-mode . ("typescript-language-server" "--stdio")))
+  (add-to-list 'eglot-server-programs '(typescript-mode . ("typescript-language-server" "--stdio")))
+  (add-to-list 'eglot-server-programs '(typescript-tsx-mode . ("typescript-language-server" "--stdio")))
+  ;; corfu
   (add-hook 'eglot-managed-mode-hook #'my/eglot-capf)
   (setq corfu-sort-override-function #'my-corfu-combined-sort))
 
@@ -1426,8 +1430,9 @@ folder, otherwise delete a word"
   :config
   (setq typescript-indent-level 2)
   (add-hook 'typescript-mode #'subword-mode)
-  (add-to-list 'auto-mode-alist '("\\.[t]sx\\'" . typescript-tsx-mode))
-  (add-to-list 'auto-mode-alist '("\\.[t]s\\'" . typescript-mode))
+  (add-to-list 'auto-mode-alist '("\\.[jt]sx\\'" . typescript-tsx-mode))
+  (add-to-list 'auto-mode-alist '("\\.js\\'" . typescript-tsx-mode))
+  (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
   )
 
 ;;;; Treesitter
