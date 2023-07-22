@@ -4,15 +4,15 @@
 ;;;; DONE Set s-a to go to day/week and s-A to go to agenda options
 ;;;; DONE Add embark
 ;;;; DONE Swap out swiper for consult
+;;;; DONE Setup and test treemacs or nerdtree
+;;;; DONE Review perspective
+;;;; CANCELED Migrate from quelpa to straight
 ;;;; TODO Review emacs-lisp-mode completion-at-point
 ;;;; TODO Setup and test projectile
 ;;;; TODO Review cape super capf for org-roam
-;;;; TODO Add work frequency dict
+;;;; TODO Add word frequency dict
 ;;;;; - https://github.com/hermitdave/FrequencyWords/tree/master/content/2018/en
-;;;; TODO Setup and test treemacs or nerdtree
-;;;; TODO Review perspective
 ;;;; TODO Merge eliot-roam into init.el
-;;;; TODO Migrate from quelpa to straight
 ;;;; TODO Review org-mode archive strategy
 ;;;; TODO Merge this branch to main
 ;;;; TODO Start looking at linux machine w/ exwm
@@ -1704,7 +1704,7 @@ When using Homebrew, install it using \"brew install trash\"."
 ;; :hook (dired-mode . all-the-icons-dired-mode))
 
 (use-package dired-hide-dotfiles
-  :hook (dired-mode . dired-hide-dotfiles-mode)
+  ;; :hook (dired-mode . dired-hide-dotfiles-mode)
   :config
   (evil-collection-define-key 'normal 'dired-mode-map
     "H" 'dired-hide-dotfiles-mode))
@@ -1715,7 +1715,6 @@ When using Homebrew, install it using \"brew install trash\"."
 
 (use-package dired-sidebar
   :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
-  :ensure t
   :commands (dired-sidebar-toggle-sidebar)
   :init
   (add-hook 'dired-sidebar-mode-hook
@@ -1726,10 +1725,12 @@ When using Homebrew, install it using \"brew install trash\"."
   (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
   (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
 
-  (setq dired-sidebar-subtree-line-prefix "__")
+  ;; (setq dired-sidebar-subtree-line-prefix "__")
   (setq dired-sidebar-theme 'vscode)
   (setq dired-sidebar-use-term-integration t)
-  (setq dired-sidebar-use-custom-font nil))
+  (setq dired-sidebar-use-custom-font nil)
+  ;; hide from consult-buffer-list
+  (add-to-list 'consult-buffer-filter "^:"))
 
 (use-package vscode-icon
   :ensure t
