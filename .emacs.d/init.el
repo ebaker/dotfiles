@@ -673,6 +673,11 @@ One for writing code and the other for reading articles."
   ;; (ivy-mode 1)
   )
 
+(use-package ivy-rich
+  ;; :init
+  ;; (ivy-rich-mode 1)
+  )
+
 (use-package counsel
   ;; :bind (("M-x" . counsel-M-x)
   ;;         ;; ("C-x b" . counsel-ibuffer)
@@ -681,10 +686,12 @@ One for writing code and the other for reading articles."
   ;;         ("C-r" . 'counsel-minibuffer-history))
   )
 
-(use-package ivy-rich
-  ;; :init
-  ;; (ivy-rich-mode 1)
-  )
+;; (use-package counsel-projectile
+;;   :after projectile
+;;   ;; :bind (("s-p" . counsel-projectile-find-file))
+;;   :config
+;;   (counsel-projectile-mode)
+;;   (define-key projectile-mode-map [remap projectile-ripgrep] nil))
 
 ;;;; vertico
 (defun dw/minibuffer-backward-kill (arg)
@@ -1071,9 +1078,9 @@ folder, otherwise delete a word"
 ;;; Help
 
 (use-package helpful
-  :custom
-  (counsel-describe-function-function #'helpful-callable)
-  (counsel-describe-variable-function #'helpful-variable)
+  ;; :custom
+  ;; (counsel-describe-function-function #'helpful-callable)
+  ;; (counsel-describe-variable-function #'helpful-variable)
   :bind
   ([remap describe-function] . helpful-function)
   ([remap describe-symbol] . helpful-symbol)
@@ -1628,24 +1635,15 @@ folder, otherwise delete a word"
   :init
   ;; NOTE: Set this to the folder where you keep your Git repos!
   (setq projectile-require-project-root nil)
-  (when (file-directory-p "~/r/tawkify")
-    (setq projectile-project-search-path '("~/r/tawkify")))
   (setq projectile-switch-project-action #'projectile-dired))
-
-;; (use-package counsel-projectile
-;;   :after projectile
-;;   :bind (("s-p" . counsel-projectile-find-file))
-;;   :config
-;;   (counsel-projectile-mode)
-;;   (define-key projectile-mode-map [remap projectile-ripgrep] nil))
 
 (ebaker/leader-keys
   "p" '(:ignore t :which-key "projectile")
-  "pf"  'counsel-projectile-find-file
-  "ps"  '(counsel-projectile-switch-project :which-key "[s]witch project")
-  "pr"  'counsel-projectile-rg
+  "pf"  'project-find-file
+  "ps"  '(project-switch-project :which-key "[s]witch project")
+  "pr"  'consult-ripgrep
   "pF"  'projectile-ripgrep
-  "pp"  'counsel-projectile
+  "pp"  'consult-project-buffer
   "pc"  'projectile-compile-project
   "pP"  'projectile-test-project
   "pd"  'projectile-dired)
