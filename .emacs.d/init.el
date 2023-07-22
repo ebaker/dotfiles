@@ -1313,6 +1313,7 @@ folder, otherwise delete a word"
 
 ;;;; elisp
 (setq lisp-indent-offset 2)
+(customize-set-variable lisp-indent-function nil)
 
 (use-package highlight-defined
   :defer 2
