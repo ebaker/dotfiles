@@ -2,13 +2,13 @@
 
 ;;; Tasks
 ;;;; DONE Set s-a to go to day/week and s-A to go to agenda options
+;;;; DONE Add embark
+;;;; DONE Swap out swiper for consult
 ;;;; TODO Review emacs-lisp-mode completion-at-point
 ;;;; TODO Setup and test projectile
 ;;;; TODO Review cape super capf for org-roam
 ;;;; TODO Add work frequency dict
 ;;;;; - https://github.com/hermitdave/FrequencyWords/tree/master/content/2018/en
-;;;; DONE Add embark
-;;;; TODO Swap out swiper for consult
 ;;;; TODO Setup and test treemacs or nerdtree
 ;;;; TODO Review perspective
 ;;;; TODO Merge eliot-roam into init.el
@@ -651,7 +651,8 @@ One for writing code and the other for reading articles."
   :defer 1
   :diminish
   :bind
-  (("C-s" . swiper)
+  (
+    ;; ("C-s" . swiper)
     :map ivy-minibuffer-map
     ("TAB" . ivy-alt-done)
     ("C-l" . ivy-alt-done)
