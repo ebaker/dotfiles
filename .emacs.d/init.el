@@ -140,6 +140,16 @@
 (setq mac-command-modifier 'super
   mac-option-modifier  'meta)
 
+(setq delete-by-moving-to-trash t)
+(when (string= system-type "darwin")
+  (setq dired-use-ls-dired nil)
+  (defun system-move-file-to-trash (file)
+    "Use \"trash\" to move FILE to the system trash.
+When using Homebrew, install it using \"brew install trash\"."
+    (call-process (executable-find "trash")
+      nil 0 nil
+      file)))
+
 ;;; Defaults
 
 ;; Garbage-collect on focus-out, Emacs /should/ feel snappier.
@@ -1671,16 +1681,6 @@ folder, otherwise delete a word"
   :after (treemacs perspective) ;;or perspective vs. persp-mode
   :ensure t
   :config (treemacs-set-scope-type 'Perspectives))
-
-(setq delete-by-moving-to-trash t)
-(when (string= system-type "darwin")
-  (setq dired-use-ls-dired nil)
-  (defun system-move-file-to-trash (file)
-    "Use \"trash\" to move FILE to the system trash.
-When using Homebrew, install it using \"brew install trash\"."
-    (call-process (executable-find "trash")
-      nil 0 nil
-      file)))
 
 ;;; Dired
 
