@@ -1652,6 +1652,10 @@ folder, otherwise delete a word"
 
 ;;; Treemacs
 (use-package treemacs
+  :defer t
+  :bind
+  (:map global-map
+    ("s-t" . treemacs-add-and-display-current-project-exclusively))
   :config
   (setq treemacs-show-cursor t)
   (global-set-key [f8] 'treemacs))
@@ -1661,7 +1665,6 @@ folder, otherwise delete a word"
   (treemacs-load-theme "all-the-icons"))
 
 (use-package treemacs-evil)
-
 
 (use-package treemacs-projectile
   :after (treemacs projectile))
