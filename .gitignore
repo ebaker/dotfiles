@@ -15,7 +15,6 @@
 
 # emacs
 projectile.cache
-.emacs.d/.custom.el
-.emacs.d/.lsp-session-v1
-.emacs.d/backup
-.emacs.d/auto-save-list
+
+# logs
+logs/

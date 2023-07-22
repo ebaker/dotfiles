@@ -44,3 +44,15 @@ site-lisp/package/
 /forge-database.sqlite
 /transient
 /places
+/.custom.el
+/.lsp-session-v1
+/backup
+/auto-save-list
+/bookmarks
+/chatgpt
+/elpa*
+/org-roam.db
+/projects
+/quelpa
+/request
+/straight
