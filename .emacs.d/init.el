@@ -7,13 +7,14 @@
 ;;;; DONE Setup and test treemacs or nerdtree
 ;;;; DONE Review perspective
 ;;;; CANCELED Migrate from quelpa to straight
+;;;; DONE Setup and test projectile
 ;;;; TODO Review emacs-lisp-mode completion-at-point
-;;;; TODO Setup and test projectile
 ;;;; TODO Review cape super capf for org-roam
 ;;;; TODO Add word frequency dict
 ;;;;; - https://github.com/hermitdave/FrequencyWords/tree/master/content/2018/en
 ;;;; TODO Merge eliot-roam into init.el
 ;;;; TODO Review org-mode archive strategy
+;;;; TODO Review project switch to project dir
 ;;;; TODO Merge this branch to main
 ;;;; TODO Start looking at linux machine w/ exwm
 
