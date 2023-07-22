@@ -1582,6 +1582,15 @@ folder, otherwise delete a word"
       ("M-<down>" . markdown-move-down))))
 
 ;;; Perspective
+;; https://github.com/minad/consult/wiki#perspective
+(defvar consult--source-perspective
+  (list :name     "Perspective"
+    :narrow   ?s
+    :category 'buffer
+    :state    #'consult--buffer-state
+    :default  t
+    :items    #'persp-get-buffer-names))
+
 (use-package perspective
   :bind
   (("C-M-k" . persp-switch)
@@ -1592,12 +1601,13 @@ folder, otherwise delete a word"
   (persp-mode-prefix-key (kbd "C-c M-p"))
   ;; (persp-initial-frame-name "Main")
   :config
-  ;; Running `persp-mode' multiple times resets the perspective list...
   ;; (setq persp-state-default-file "~/.emacs-persp-default"')
   (customize-set-variable persp-sort 'created)
-  ;; ;; consult
-  ;; (consult-customize consult--source-buffer :hidden t :default nil)
-  ;; (add-to-list 'consult-buffer-sources persp-consult-source)
+  ;; consult
+  (consult-customize consult--source-buffer :hidden t :default nil)
+  (push consult--source-perspective consult-buffer-sources)
+  ;; start persp-mode
+  ;; Running `persp-mode' multiple times resets the perspective list...
   (unless (equal persp-mode t)
     (persp-mode)))
 
