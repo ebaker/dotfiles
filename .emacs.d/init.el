@@ -739,14 +739,13 @@ folder, otherwise delete a word"
   (when (fboundp 'projectile-project-root)
     (projectile-project-root)))
 
-
 (use-package consult
   :demand t
-  ;; :bind (("C-s" . consult-line)
-  ;;        ("C-M-l" . consult-imenu)
-  ;;        ("C-M-j" . persp-switch-to-buffer*)
-  ;;        :map minibuffer-local-map
-  ;;        ("C-r" . consult-history))
+  :bind (("C-s" . consult-line)
+          ("C-M-l" . consult-imenu)
+          ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
+          :map minibuffer-local-map
+          ("C-r" . consult-history))
   :custom
   (consult-project-root-function #'dw/get-project-root)
   (completion-in-region-function #'consult-completion-in-region))
@@ -1040,7 +1039,6 @@ folder, otherwise delete a word"
 (add-hook 'org-mode-hook #'cape-yasnippet-lookup-by-name)
 
 ;;;; Org-block-capf
-
 
 (use-package org-block-capf
   :ensure nil
@@ -1625,7 +1623,8 @@ folder, otherwise delete a word"
   :bind-keymap
   ("C-c C-p" . projectile-command-map)
   ;; ("C-M-p" . projectile-command-map)
-  :bind(("s-F" . projectile-ripgrep))
+  :bind (("s-F" . projectile-ripgrep)
+          ("s-p" . project-find-file))
   :init
   ;; NOTE: Set this to the folder where you keep your Git repos!
   (setq projectile-require-project-root nil)
@@ -1633,12 +1632,12 @@ folder, otherwise delete a word"
     (setq projectile-project-search-path '("~/r/tawkify")))
   (setq projectile-switch-project-action #'projectile-dired))
 
-(use-package counsel-projectile
-  :after projectile
-  :bind (("s-p" . counsel-projectile-find-file))
-  :config
-  (counsel-projectile-mode)
-  (define-key projectile-mode-map [remap projectile-ripgrep] nil))
+;; (use-package counsel-projectile
+;;   :after projectile
+;;   :bind (("s-p" . counsel-projectile-find-file))
+;;   :config
+;;   (counsel-projectile-mode)
+;;   (define-key projectile-mode-map [remap projectile-ripgrep] nil))
 
 (ebaker/leader-keys
   "p" '(:ignore t :which-key "projectile")
