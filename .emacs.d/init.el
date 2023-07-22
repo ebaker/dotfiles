@@ -1435,6 +1435,10 @@ folder, otherwise delete a word"
   (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
   )
 
+;; (use-package tsi
+;;   :ensure nil
+;;   :quelpa (tsi :fetcher github :repo "orzechowskid/tsi.el"))
+
 ;;;; Treesitter
 
 (use-package tree-sitter
