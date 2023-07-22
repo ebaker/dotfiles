@@ -37,11 +37,12 @@
 ;; Package configs
 (require 'package)
 (setq package-enable-at-startup nil)
-(setq package-archives '(("org"   . "http://orgmode.org/elpa/")
-                          ("melpa" . "https://melpa.org/packages/")
-                          ("jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/")
-                          ("gnu"   . "https://elpa.gnu.org/packages/")
-                          ("gnu-devel" . "https://elpa.gnu.org/devel/")))
+(setq package-archives
+  '(("org"   . "http://orgmode.org/elpa/")
+     ("melpa" . "https://melpa.org/packages/")
+     ("jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/")
+     ("gnu"   . "https://elpa.gnu.org/packages/")
+     ("gnu-devel" . "https://elpa.gnu.org/devel/")))
 
 (package-initialize)
 
@@ -222,7 +223,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/File-Locks.html
 (setq lock-file-name-transforms
-      '(("\\`/.*/\\([^/]+\\)\\'" "~/.emacs.d/lockfiles/\\1" t)))
+  '(("\\`/.*/\\([^/]+\\)\\'" "~/.emacs.d/lockfiles/\\1" t)))
 
 ;; https://emacs.stackexchange.com/questions/28736/emacs-pointcursor-movement-lag/28746
 (setq auto-window-vscroll nil)
@@ -331,10 +332,10 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (setq history-length 25)
   (savehist-mode 1))
 
-  ;; Individual history elements can be configured separately
-  ;;(put 'minibuffer-history 'history-length 25)
-  ;;(put 'evil-ex-history 'history-length 50)
-  ;;(put 'kill-ring 'history-length 25))
+;; Individual history elements can be configured separately
+;;(put 'minibuffer-history 'history-length 25)
+;;(put 'evil-ex-history 'history-length 50)
+;;(put 'kill-ring 'history-length 25))
 
 ;;;; undo-tree
 (use-package undo-tree
@@ -350,7 +351,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :quelpa (cape-yasnippet :fetcher github :repo "elken/cape-yasnippet")
   ;; :after lispy ; only if you use lispy; it also sets speed keys on headers!
   :bind (:map outli-mode-map ; convenience key to get back to containing heading
-        ("C-c C-p" . (lambda () (interactive) (outline-back-to-heading))))
+          ("C-c C-p" . (lambda () (interactive) (outline-back-to-heading))))
   :custom ((outli-default-nobar t))
   :hook ((emacs-lisp-mode) . outli-mode)) ; or whichever modes you prefer
 
@@ -430,7 +431,7 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   :config
   ;; (require 'eliot-org)
   (setq org-refile-targets '((nil :maxlevel . 1)
-                             (org-agenda-files :maxlevel . 1)))
+                              (org-agenda-files :maxlevel . 1)))
 
   (setq org-outline-path-complete-in-steps nil)
   (setq org-refile-use-outline-path t)
@@ -496,22 +497,23 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
 
 ;;;; Prettify
 
-(setq-default prettify-symbols-alist '(("#+BEGIN_SRC" . "↦") ;; "†"
-                                       ("#+END_SRC" . "⇤")
-                                       ("#+begin_src" . "↦")
-                                       ("#+end_src" .  "⇤")
-                                       ;; (">=" . "≥")
-                                        ;; ("=>" . "⇨")
-                                        ))
+(setq-default prettify-symbols-alist
+  '(("#+BEGIN_SRC" . "↦") ;; "†"
+     ("#+END_SRC" . "⇤")
+     ("#+begin_src" . "↦")
+     ("#+end_src" .  "⇤")
+     ;; (">=" . "≥")
+     ;; ("=>" . "⇨")
+     ))
 (setq prettify-symbols-unprettify-at-point 'right-edge)
 (add-hook 'org-mode-hook 'prettify-symbols-mode)
 
 ;;;; Active Babel Languages
 
 (org-babel-do-load-languages
- 'org-babel-load-languages
- '((chatgpt-shell . t)
-   (emacs-lisp . t)))
+  'org-babel-load-languages
+  '((chatgpt-shell . t)
+     (emacs-lisp . t)))
 
 ;;;; Cliplink
 
@@ -529,8 +531,8 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   ;; (load-theme 'doom-tomorrow-night))
   ;; (load-theme 'doom-one t))
   (load-theme 'doom-solarized-light t))
-  ;; (load-theme 'doom-molokai t))
-  ;; (load-theme 'doom-Iosvkem t))
+;; (load-theme 'doom-molokai t))
+;; (load-theme 'doom-Iosvkem t))
 
 ;; https://emacs.stackexchange.com/questions/24088/make-a-function-to-toggle-themes/44626#44626
 (defvar quick-switch-themes
@@ -551,10 +553,10 @@ A nil value implies no custom theme should be enabled.")
 One for writing code and the other for reading articles."
   (interactive)
   (if-let* ((next-theme (cadr quick-switch-themes)))
-      (progn (when-let* ((current-theme (car quick-switch-themes)))
-               (disable-theme (car quick-switch-themes)))
-             (load-theme next-theme t)
-             (message "Loaded theme: %s" next-theme))
+    (progn (when-let* ((current-theme (car quick-switch-themes)))
+             (disable-theme (car quick-switch-themes)))
+      (load-theme next-theme t)
+      (message "Loaded theme: %s" next-theme))
     ;; Always have the dark mode-line theme
     (mapc #'disable-theme (delq 'smart-mode-line-dark custom-enabled-themes)))
   (setq quick-switch-themes (cdr quick-switch-themes)))
@@ -564,14 +566,15 @@ One for writing code and the other for reading articles."
 ;; Custom keybinding
 (use-package general
   :init
-  (setq general-override-states '(insert
-                                   emacs
-                                   hybrid
-                                   normal
-                                   visual
-                                   motion
-                                   operator
-                                   replace))
+  (setq general-override-states
+    '(insert
+       emacs
+       hybrid
+       normal
+       visual
+       motion
+       operator
+       replace))
   :config
   (general-create-definer ebaker/leader-keys
     :states '(normal visual motion)
@@ -647,19 +650,20 @@ One for writing code and the other for reading articles."
 (use-package ivy
   :defer 1
   :diminish
-  :bind (("C-s" . swiper)
-          :map ivy-minibuffer-map
-          ("TAB" . ivy-alt-done)
-          ("C-l" . ivy-alt-done)
-          ("C-j" . ivy-next-line)
-          ("C-k" . ivy-previous-line)
-          :map ivy-switch-buffer-map
-          ("C-k" . ivy-previous-line)
-          ("C-l" . ivy-done)
-          ("C-d" . ivy-switch-buffer-kill)
-          :map ivy-reverse-i-search-map
-          ("C-k" . ivy-previous-line)
-          ("C-d" . ivy-reverse-i-search-kill))
+  :bind
+  (("C-s" . swiper)
+    :map ivy-minibuffer-map
+    ("TAB" . ivy-alt-done)
+    ("C-l" . ivy-alt-done)
+    ("C-j" . ivy-next-line)
+    ("C-k" . ivy-previous-line)
+    :map ivy-switch-buffer-map
+    ("C-k" . ivy-previous-line)
+    ("C-l" . ivy-done)
+    ("C-d" . ivy-switch-buffer-kill)
+    :map ivy-reverse-i-search-map
+    ("C-k" . ivy-previous-line)
+    ("C-d" . ivy-reverse-i-search-kill))
   :config
   (setq ivy-use-virtual-buffers t
     ivy-count-format "%d/%d "
@@ -686,10 +690,10 @@ One for writing code and the other for reading articles."
 folder, otherwise delete a word"
   (interactive "p")
   (if minibuffer-completing-file-name
-      ;; Borrowed from https://github.com/raxod502/selectrum/issues/498#issuecomment-803283608
-      (if (string-match-p "/." (minibuffer-contents))
-          (zap-up-to-char (- arg) ?/)
-        (delete-minibuffer-contents))
+    ;; Borrowed from https://github.com/raxod502/selectrum/issues/498#issuecomment-803283608
+    (if (string-match-p "/." (minibuffer-contents))
+      (zap-up-to-char (- arg) ?/)
+      (delete-minibuffer-contents))
     (backward-kill-word arg)))
 
 ;; related: https://github.com/oantolin/embark/issues/477
@@ -699,16 +703,17 @@ folder, otherwise delete a word"
   (execute-kbd-macro (kbd "C-. k")))
 
 (use-package vertico
-  :bind (:map vertico-map
-         ;; ("C-j" . vertico-next)
-         ;; ("C-k" . vertico-previous)
-         ;; ("C-f" . vertico-exit)
-         ("C-M-j" . vertico-exit-input)
-         ("M-TAB" . minibuffer-complete)
-         ("s-<return>" . minibuffer-force-complete-and-exit)
-         :map minibuffer-local-map
-          ("M-h" . dw/minibuffer-backward-kill)
-          ("s-k" . my-embark-kill-buffer))
+  :bind
+  (:map vertico-map
+    ;; ("C-j" . vertico-next)
+    ;; ("C-k" . vertico-previous)
+    ;; ("C-f" . vertico-exit)
+    ("C-M-j" . vertico-exit-input)
+    ("M-TAB" . minibuffer-complete)
+    ("s-<return>" . minibuffer-force-complete-and-exit)
+    :map minibuffer-local-map
+    ("M-h" . dw/minibuffer-backward-kill)
+    ("s-k" . my-embark-kill-buffer))
   :custom
   (vertico-cycle t)
   :init
@@ -721,9 +726,9 @@ folder, otherwise delete a word"
   :ensure nil
   ;; More convenient directory navigation commands
   :bind (:map vertico-map
-              ("RET" . vertico-directory-enter)
-              ("DEL" . vertico-directory-delete-char)
-              ("M-DEL" . vertico-directory-delete-word))
+          ("RET" . vertico-directory-enter)
+          ("DEL" . vertico-directory-delete-char)
+          ("M-DEL" . vertico-directory-delete-word))
   ;; Tidy shadowed file names
   :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
 
@@ -747,8 +752,8 @@ folder, otherwise delete a word"
 ;; https://github.com/minad/consult/wiki#shorten-recent-files-in-consult-buffer
 (defun my-consult--source-recentf-items ()
   (let ((ht (consult--buffer-file-hash))
-        file-name-handler-alist ;; No Tramp slowdown please.
-        items)
+         file-name-handler-alist ;; No Tramp slowdown please.
+         items)
     (dolist (file recentf-list (nreverse items))
       ;; Emacs 29 abbreviates file paths by default, see
       ;; `recentf-filename-handlers'.
@@ -756,12 +761,12 @@ folder, otherwise delete a word"
         (setq file (expand-file-name file)))
       (unless (gethash file ht)
         (push (propertize
-               (file-name-nondirectory file)
-               'multi-category `(file . ,file))
-              items)))))
+                (file-name-nondirectory file)
+                'multi-category `(file . ,file))
+          items)))))
 
 (plist-put consult--source-recent-file
-           :items #'my-consult--source-recentf-items)
+  :items #'my-consult--source-recentf-items)
 
 ;; Marginalia
 (use-package marginalia
@@ -777,8 +782,8 @@ folder, otherwise delete a word"
 
   :bind
   (("C-." . embark-act)         ;; pick some comfortable binding
-   ("C-;" . embark-dwim)        ;; good alternative: M-.
-   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+    ("C-;" . embark-dwim)        ;; good alternative: M-.
+    ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
 
   :init
 
@@ -789,9 +794,9 @@ folder, otherwise delete a word"
 
   ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist
-               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-                 nil
-                 (window-parameters (mode-line-format . none)))))
+    '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+       nil
+       (window-parameters (mode-line-format . none)))))
 
 ;; Consult users will also want the embark-consult package.
 (use-package embark-consult
@@ -810,8 +815,8 @@ folder, otherwise delete a word"
   :ensure nil
   :quelpa (yasnippet :fetcher github :repo "joaotavora/yasnippet")
   :bind (:map yas-minor-mode-map
-         ("TAB" . nil)
-         ("<tab>" . nil))
+          ("TAB" . nil)
+          ("<tab>" . nil))
   :config
   (yas-reload-all)
   (yas-global-mode))
@@ -856,20 +861,20 @@ folder, otherwise delete a word"
   ;; (setq corfu-min-width 40)
   ;; (setq corfu-max-width corfu-min-width)       ; Always have the same width
   (global-corfu-mode)
-  :general (:keymaps 'corfu-map :states 'insert
-  "C-n" #'corfu-next
-  "C-p" #'corfu-previous
-  "<escape>" #'corfu-quit
-  "<tab>" #'corfu-insert
-  "s-<return>" #'corfu-insert
-  "M-d" #'corfu-popupinfo-documentation
-  "M-l" #'corfu-popupinfo-location)
+  :general
+  (:keymaps 'corfu-map :states 'insert
+    "C-n" #'corfu-next
+    "C-p" #'corfu-previous
+    "<escape>" #'corfu-quit
+    "<tab>" #'corfu-insert
+    "s-<return>" #'corfu-insert
+    "M-d" #'corfu-popupinfo-documentation
+    "M-l" #'corfu-popupinfo-location)
   :config
   ;; https://github.com/minad/corfu/issues/12
   (evil-make-overriding-map corfu-map)
   (advice-add 'corfu--setup :after 'evil-normalize-keymaps)
-  (advice-add 'corfu--teardown :after 'evil-normalize-keymaps)
-  )
+  (advice-add 'corfu--teardown :after 'evil-normalize-keymaps))
 
 (use-package corfu-popupinfo
   :after corfu
@@ -878,9 +883,9 @@ folder, otherwise delete a word"
   :init
   (corfu-popupinfo-mode)
   :general (:keymaps 'corfu-map
-            ;; Scroll in the documentation window
-            "M-n" #'corfu-popupinfo-scroll-up
-            "M-p" #'corfu-popupinfo-scroll-down)
+             ;; Scroll in the documentation window
+             "M-n" #'corfu-popupinfo-scroll-up
+             "M-p" #'corfu-popupinfo-scroll-down)
   :config
   (setq corfu-popupinfo-delay 0.1))
 
@@ -888,7 +893,7 @@ folder, otherwise delete a word"
 (use-package dabbrev
   ;; Swap M-/ and C-M-/
   :bind (("M-/" . dabbrev-completion)
-         ("C-M-/" . dabbrev-expand))
+          ("C-M-/" . dabbrev-expand))
   ;; Other useful Dabbrev configurations.
   :custom
   (dabbrev-ignored-buffer-regexps '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
@@ -914,7 +919,7 @@ folder, otherwise delete a word"
   :demand t
   :config
   (setq completion-styles '(orderless flex)
-        completion-category-overrides '((eglot (styles . (orderless flex))))))
+    completion-category-overrides '((eglot (styles . (orderless flex))))))
 
 ;;;; kind-icon
 (use-package kind-icon
@@ -944,7 +949,7 @@ folder, otherwise delete a word"
   ;;         ;; (sly-mode  . yas-setup-capf)
   ;;         )
   :bind (("C-c y" . cape-yasnippet)
-         ("M-+"   . yas-insert-snippet))
+          ("M-+"   . yas-insert-snippet))
   :config
   ;; (defun yas-setup-capf ()
   ;;   (setq-local completion-at-point-functions
@@ -958,21 +963,22 @@ folder, otherwise delete a word"
   :after cape-yasnippet
   ;; Bind dedicated completion commands
   ;; Alternative prefix keys: C-c p, M-p, M-+, ...
-  :bind (("C-c p p" . completion-at-point) ;; capf
-         ("C-c p t" . complete-tag)        ;; etags
-         ("C-c p d" . cape-dabbrev)        ;; or dabbrev-completion
-         ("C-c p h" . cape-history)
-         ("C-c p f" . cape-file)
-         ("C-c p k" . cape-keyword)
-         ("C-c p s" . cape-symbol)
-         ("C-c p a" . cape-abbrev)
-         ("C-c p l" . cape-line)
-         ("C-c p w" . cape-dict)
-         ("C-c p \\" . cape-tex)
-         ("C-c p _" . cape-tex)
-         ("C-c p ^" . cape-tex)
-         ("C-c p &" . cape-sgml)
-         ("C-c p r" . cape-rfc1345))
+  :bind
+  (("C-c p p" . completion-at-point) ;; capf
+    ("C-c p t" . complete-tag)        ;; etags
+    ("C-c p d" . cape-dabbrev)        ;; or dabbrev-completion
+    ("C-c p h" . cape-history)
+    ("C-c p f" . cape-file)
+    ("C-c p k" . cape-keyword)
+    ("C-c p s" . cape-symbol)
+    ("C-c p a" . cape-abbrev)
+    ("C-c p l" . cape-line)
+    ("C-c p w" . cape-dict)
+    ("C-c p \\" . cape-tex)
+    ("C-c p _" . cape-tex)
+    ("C-c p ^" . cape-tex)
+    ("C-c p &" . cape-sgml)
+    ("C-c p r" . cape-rfc1345))
   :init
   ;; Add `completion-at-point-functions', used by `completion-at-point'.
   ;; NOTE: The order matters!
@@ -994,10 +1000,9 @@ folder, otherwise delete a word"
   ;; (with-eval-after-load 'eglot
   ;;  (setq completion-category-defaults nil))
 
-;; Enable cache busting, depending on if your server returns
-;; sufficiently many candidates in the first place.
-  (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
-  )
+  ;; Enable cache busting, depending on if your server returns
+  ;; sufficiently many candidates in the first place.
+  (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster))
 
 (defun make-add-to-completion-at-point-functions (func)
   "Return a function that, when called, adds FUNC to `completion-at-point-functions`
@@ -1223,22 +1228,22 @@ folder, otherwise delete a word"
   "lX" 'lsp-execute-code-action)
 
 (defun my/eglot-capf ()
-(setq-local completion-at-point-functions
-            (list (cape-super-capf
-                   #'eglot-completion-at-point
-                   #'cape-yasnippet
-                    ;; (cape-company-to-capf #'company-yasnippet)
-                   #'cape-file))))
+  (setq-local completion-at-point-functions
+    (list (cape-super-capf
+            #'eglot-completion-at-point
+            #'cape-yasnippet
+            ;; (cape-company-to-capf #'company-yasnippet)
+            #'cape-file))))
 
 (defun my-corfu-combined-sort (candidates)
   "Sort CANDIDATES using both display-sort-function and corfu-sort-function."
   (let ((candidates
-         (let ((display-sort-func (corfu--metadata-get 'display-sort-function)))
-           (if display-sort-func
-               (funcall display-sort-func candidates)
-             candidates))))
+          (let ((display-sort-func (corfu--metadata-get 'display-sort-function)))
+            (if display-sort-func
+              (funcall display-sort-func candidates)
+              candidates))))
     (if corfu-sort-function
-        (funcall corfu-sort-function candidates)
+      (funcall corfu-sort-function candidates)
       candidates)))
 
 ;; ;; https://gist.github.com/gsj987/64d48bf49a374c96421ad20df886e947
@@ -1247,8 +1252,8 @@ folder, otherwise delete a word"
   :defer 3
   :hook
   ((js-mode
-    typescript-mode
-    typescript-tsx-mode) . eglot-ensure)
+     typescript-mode
+     typescript-tsx-mode) . eglot-ensure)
   :config
   (cl-pushnew '((js-mode typescript-mode typescript-tsx-mode) . ("typescript-language-server" "--stdio")) eglot-server-programs :test #'equal)
   (add-hook 'eglot-managed-mode-hook #'my/eglot-capf)
@@ -1281,15 +1286,15 @@ folder, otherwise delete a word"
   :config
   (editorconfig-mode 1)
   (setq  web-mode-markup-indent-offset 2
-       web-mode-css-indent-offset 2
-       web-mode-code-indent-offset 2
-       web-mode-indent-style 2
-       web-mode-block-padding 2
-       web-mode-style-padding 2
-       web-mode-script-padding 2
-       js2-basic-offset 2
-       js-indent-level 2
-       css-indent-offset 2))
+    web-mode-css-indent-offset 2
+    web-mode-code-indent-offset 2
+    web-mode-indent-style 2
+    web-mode-block-padding 2
+    web-mode-style-padding 2
+    web-mode-script-padding 2
+    js2-basic-offset 2
+    js-indent-level 2
+    css-indent-offset 2))
 
 ;;;; smartparens
 (use-package smartparens
@@ -1405,8 +1410,8 @@ folder, otherwise delete a word"
 
 ;; import-js
 ;; (use-package import-js
-  ;; :config
-  ;; (global-set-key (kbd "s-i") 'import-js-import))
+;; :config
+;; (global-set-key (kbd "s-i") 'import-js-import))
 
 ;; needed by yasnippet
 (use-package js2-mode)
@@ -1429,7 +1434,7 @@ folder, otherwise delete a word"
 (use-package tree-sitter
   :ensure t
   :hook ((typescript-mode . tree-sitter-hl-mode)
-   (typescript-tsx-mode . tree-sitter-hl-mode)))
+          (typescript-tsx-mode . tree-sitter-hl-mode)))
 
 (use-package tree-sitter-langs
   :ensure t
@@ -1509,21 +1514,21 @@ folder, otherwise delete a word"
 
 (use-package graphql-mode)
 
-
-
 ;;;; Rust
+
 (use-package rustic
   :ensure
   :mode ("\\.rs\\'" . rustic-mode)
-  :bind (:map rustic-mode-map
-              ("M-j" . lsp-ui-imenu)
-              ("M-?" . lsp-find-references)
-              ("C-c C-c l" . flycheck-list-errors)
-              ("C-c C-c a" . lsp-execute-code-action)
-              ("C-c C-c r" . lsp-rename)
-              ("C-c C-c q" . lsp-workspace-restart)
-              ("C-c C-c Q" . lsp-workspace-shutdown)
-              ("C-c C-c s" . lsp-rust-analyzer-status))
+  :bind
+  (:map rustic-mode-map
+    ("M-j" . lsp-ui-imenu)
+    ("M-?" . lsp-find-references)
+    ("C-c C-c l" . flycheck-list-errors)
+    ("C-c C-c a" . lsp-execute-code-action)
+    ("C-c C-c r" . lsp-rename)
+    ("C-c C-c q" . lsp-workspace-restart)
+    ("C-c C-c Q" . lsp-workspace-shutdown)
+    ("C-c C-c s" . lsp-rust-analyzer-status))
   :config
   ;; uncomment for less flashiness
   ;; (setq lsp-eldoc-hook nil)
@@ -1543,34 +1548,40 @@ folder, otherwise delete a word"
     (setq-local buffer-save-without-query t)))
 
 ;;;; PHP
+
 (use-package php-mode
   :mode ("\\.php\\'" . php-mode))
 
 ;;;; dotenv
+
 (use-package dotenv-mode
   :mode ("\\.env\\..*\\'" . dotenv-mode))
 
 ;;;; Docker
+
 (use-package dockerfile-mode
   :mode
   ("Dockerfile\\(-.*\\)?\\'" . dockerfile-mode))
 
 ;;;; Markdown
+
 (use-package markdown-mode
   :ensure t
   :mode ("README\\.md\\'" . gfm-mode)
   :init (setq markdown-command "multimarkdown")
-  :bind (:map markdown-mode-map
-          (("C-c C-e" . markdown-do)
-           ("M-<up>" . markdown-move-up)
-           ("M-<down>" . markdown-move-down))))
+  :bind
+  (:map markdown-mode-map
+    (("C-c C-e" . markdown-do)
+      ("M-<up>" . markdown-move-up)
+      ("M-<down>" . markdown-move-down))))
 
 ;;; Perspective
 (use-package perspective
-  :bind (("C-M-k" . persp-switch)
-         ("C-M-n" . persp-next)
-         ("C-M-p" . persp-prev)
-         ("C-x k" . persp-kill-buffer*))
+  :bind
+  (("C-M-k" . persp-switch)
+    ("C-M-n" . persp-next)
+    ("C-M-p" . persp-prev)
+    ("C-x k" . persp-kill-buffer*))
   :custom
   (persp-mode-prefix-key (kbd "C-c M-p"))
   ;; (persp-initial-frame-name "Main")
@@ -1750,8 +1761,8 @@ When using Homebrew, install it using \"brew install trash\"."
   :bind ("C-s-r" . whisper-run)
   :config
   (setq whisper-install-directory "~/.emacs.d/bin/"
-        whisper-model "base"
-        whisper-language "en"
+    whisper-model "base"
+    whisper-language "en"
     whisper--ffmpeg-input-device ":0"
     whisper-translate nil))
 
@@ -1774,8 +1785,8 @@ When using Homebrew, install it using \"brew install trash\"."
   :ensure t
   :custom
   ((chatgpt-shell-openai-key
-    (lambda ()
-      (auth-source-pass-get 'secret openai-key)))))
+     (lambda ()
+       (auth-source-pass-get 'secret openai-key)))))
 (setq chatgpt-shell-openai-key my-openai-key)
 
 ;; (require 'ob-chatgpt-shell)
