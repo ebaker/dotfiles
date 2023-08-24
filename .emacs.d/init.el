@@ -279,6 +279,10 @@ With prefix ARG, silently save all file-visiting buffers, then kill."
   (interactive)
   (org-agenda nil "a"))
 
+;; warnings & compile errors in background
+(customize-set-variable 'warning-minimum-level :error)
+(setq native-comp-async-report-warnings-errors 'silent)
+
 ;; (global-font-lock-mode t)
 
 ;;; Global Keybindings
