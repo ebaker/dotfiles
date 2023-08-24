@@ -1269,14 +1269,14 @@ folder, otherwise delete a word"
   :ensure t
   :defer 3
   :hook
-  ((js-mode
-     typescript-mode
-     typescript-tsx-mode) . eglot-ensure)
+  ((js-ts-mode
+     typescript-ts-mode
+     tsx-ts-mode) . eglot-ensure)
   :config
   ;; language servers
-  (add-to-list 'eglot-server-programs '(js-mode . ("typescript-language-server" "--stdio")))
-  (add-to-list 'eglot-server-programs '(typescript-mode . ("typescript-language-server" "--stdio")))
-  (add-to-list 'eglot-server-programs '(typescript-tsx-mode . ("typescript-language-server" "--stdio")))
+  (add-to-list 'eglot-server-programs '(js-ts-mode . ("typescript-language-server" "--stdio")))
+  (add-to-list 'eglot-server-programs '(typescript-ts-mode . ("typescript-language-server" "--stdio")))
+  (add-to-list 'eglot-server-programs '(tsx-ts-mode . ("typescript-language-server" "--stdio")))
   ;; corfu
   (add-hook 'eglot-managed-mode-hook #'my/eglot-capf)
   (setq corfu-sort-override-function #'my-corfu-combined-sort))
@@ -1349,6 +1349,15 @@ folder, otherwise delete a word"
   (add-hook 'emacs-lisp-mode-hook 'display-line-numbers-mode))
 
 (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
+
+;;;; Treesitter
+
+(use-package treesit-auto
+  :demand t
+  :config
+  (setq treesit-auto-install 'prompt)
+  (global-treesit-auto-mode))
+
 
 ;;;; YAML
 (use-package yaml-mode
@@ -1438,54 +1447,19 @@ folder, otherwise delete a word"
 ;; needed by yasnippet
 (use-package js2-mode)
 
-;;;; TypeScript
-
-(use-package typescript-mode
-  :ensure t
-  :init
-  (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
-  :config
-  (setq typescript-indent-level 2)
-  (add-hook 'typescript-mode #'subword-mode)
-  (add-to-list 'auto-mode-alist '("\\.[jt]sx\\'" . typescript-tsx-mode))
-  (add-to-list 'auto-mode-alist '("\\.js\\'" . typescript-tsx-mode))
-  (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
-  )
-
-;; (use-package tsi
-;;   :ensure nil
-;;   :quelpa (tsi :fetcher github :repo "orzechowskid/tsi.el"))
-
-;;;; Treesitter
-
-(use-package tree-sitter
-  :ensure t
-  :hook ((typescript-mode . tree-sitter-hl-mode)
-          (typescript-tsx-mode . tree-sitter-hl-mode)))
-
-(use-package tree-sitter-langs
-  :ensure t
-  :after tree-sitter
-  :config
-  (tree-sitter-require 'tsx)
-  (add-to-list 'tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx)))
-
-;; https://github.com/felipeochoa/rjsx-mode/issues/71
-;; https://gist.github.com/rangeoshun/67cb17392c523579bc6cbd758b2315c1
-
 ;;;; Emmet
 
 (use-package emmet-mode
   :commands emmet-mode
   :hook
-  (typescript-mode)
+  (tsx-ts-mode)
   :bind("C-;" . emmet-expand-line)
   :config
   (setq emmet-indent-after-insert nil)
   ;; (setq emmet-indentation 2)
   (setq emmet-self-closing-tag-style " /")
   (setq emmet-expand-jsx-className? t)
-  (add-to-list 'emmet-jsx-major-modes 'typescript-mode))
+  (add-to-list 'emmet-jsx-major-modes 'tsx-ts-mode))
 
 ;; (defun my-web-mode-hook ()
 ;;   (setq web-mode-enable-auto-pairing nil))
@@ -1503,12 +1477,12 @@ folder, otherwise delete a word"
 
 (use-package eslintd-fix
   :config (setq eslintd-fix-executable "/Users/eliot/.volta/bin/eslint_d")
-  :hook ((typescript-mode . eslintd-fix-mode)
-          (json-mode . eslintd-fix-mode)))
+  :hook ((js-ts-mode . eslintd-fix-mode)
+          (typescript-ts-mode . eslintd-fix-mode)
+          (tsx-ts-mode . eslintd-fix-mode)
+          (json-ts-mode . eslintd-fix-mode)))
 
-;; (use-package prettier-js
-;;   :config
-;;   (add-hook 'typescript-mode-hook 'prettier-js-mode))
+(use-package prettier-js)
 
 ;; (use-package eslint-fix
 ;;   :config
@@ -1535,7 +1509,8 @@ folder, otherwise delete a word"
 (use-package add-node-modules-path
   :hook (;; (js2-mode . add-node-modules-path)
           ;; (rjsx-mode . add-node-modules-path)
-          (typescript-mode . add-node-modules-path)))
+          (js-ts-mode . add-node-modules-path)
+          (typescript-ts-mode . add-node-modules-path)))
 
 ;;;; GraphQL
 
